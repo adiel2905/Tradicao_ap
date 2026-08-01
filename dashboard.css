@@ -1015,3 +1015,214 @@ body.tema-claro {
   }
 }
 
+/* =========================
+   CELULAR E TELAS PEQUENAS
+   ========================= */
+
+@media (max-width: 700px) {
+  body {
+    overflow: auto;
+  }
+
+  .sistema {
+    min-height: 100vh;
+    height: auto;
+    flex-direction: column;
+  }
+
+  .menu-lateral {
+    width: 100%;
+    padding: 16px 14px 12px;
+    border-right: none;
+    border-bottom: 1px solid #c99b42;
+  }
+
+  .menu-lateral h1 {
+    margin: 0 0 14px;
+    font-size: 20px;
+  }
+
+  #menu {
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .botao-menu {
+    width: auto;
+    min-width: max-content;
+    padding: 10px 13px;
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .conteudo {
+    flex: initial;
+    padding: 16px 12px;
+  }
+
+  .cabecalho {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 16px;
+  }
+
+  .cabecalho h2,
+  .topo-gerenciamento h3 {
+    font-size: 23px;
+  }
+
+  .escolher-barbeiro select {
+    min-width: 0;
+  }
+
+  .agenda-area {
+    min-height: 560px;
+    padding: 12px;
+  }
+
+  .agenda-titulo {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .agenda-titulo h3 {
+    font-size: 20px;
+  }
+
+  .controles-zoom {
+    justify-content: space-between;
+  }
+
+  .botao-zoom {
+    width: 40px;
+    height: 40px;
+  }
+
+  .agenda-scroll {
+    min-height: 440px;
+  }
+
+  .tela-gerenciamento {
+    min-height: 560px;
+    flex: initial;
+    padding: 16px 12px;
+  }
+
+  .linha-principal {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .botao-cadastrar,
+  .barra-pesquisa {
+    max-width: none;
+    width: 100%;
+  }
+
+  .form-cadastro {
+    max-width: none;
+    padding: 14px;
+  }
+
+  .item-lista {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .botao-excluir {
+    width: 100%;
+  }
+
+  .resumo-relatorio {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filtros-relatorio select {
+    width: 100%;
+  }
+
+  .calendario-area {
+    padding: 12px;
+    overflow-x: auto;
+  }
+
+  .topo-calendario,
+  .dias-semana-calendario,
+  .grade-calendario {
+    min-width: 620px;
+  }
+
+  .grafico-area {
+    overflow-x: auto;
+    padding: 12px;
+  }
+
+  #grafico-status {
+    min-width: 580px;
+  }
+
+  .cabecalho-segundo-grafico {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .cabecalho-segundo-grafico select {
+    width: 100%;
+  }
+
+  .cartao-configuracao {
+    padding: 16px;
+  }
+
+  .opcoes-tema {
+    flex-direction: column;
+  }
+
+  .opcao-tema {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .janela {
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    padding: 25px 18px;
+  }
+
+  .botoes-modal {
+    flex-direction: column;
+  }
+
+  .botoes-modal button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .cabecalho h2,
+  .topo-gerenciamento h3 {
+    font-size: 21px;
+  }
+
+  .menu-lateral h1 {
+    font-size: 18px;
+  }
+
+  .texto-pequeno {
+    font-size: 12px;
+  }
+
+  .agenda-area,
+  .tela-gerenciamento {
+    border-radius: 6px;
+  }
+}
+
