@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tradição Barbearia | Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+
+  <body>
+    <div class="sistema">
+      <aside class="menu-lateral">
+        <h1>Tradição<br />Barbearia</h1>
+        <nav id="menu"></nav>
+      </aside>
+
+      <main class="conteudo">
+        <header class="cabecalho">
+          <div>
+            <p class="texto-pequeno">Área do sistema</p>
+            <h2 id="boas-vindas">Boas-vindas!</h2>
+          </div>
+
+          <div id="escolher-barbeiro" class="escolher-barbeiro">
+            <label for="select-barbeiro">Visualizar agenda de:</label>
+
+            <select id="select-barbeiro">
+              <option value="">Escolha um barbeiro</option>
+            </select>
+          </div>
+        </header>
+
+        <section id="tela-dashboard" class="agenda-area">
+          <div class="agenda-titulo">
+            <div>
+              <h3>Agenda</h3>
+              <p id="texto-agenda">Carregando agenda...</p>
+            </div>
+
+            <div class="controles-zoom">
+              <span>Zoom da grade</span>
+
+              <button
+                id="diminuir-zoom"
+                class="botao-zoom"
+                type="button"
+                aria-label="Diminuir zoom da grade"
+              >
+                −
+              </button>
+
+              <button
+                id="aumentar-zoom"
+                class="botao-zoom"
+                type="button"
+                aria-label="Aumentar zoom da grade"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div id="agenda-scroll" class="agenda-scroll">
+            <div id="agenda" class="agenda"></div>
+          </div>
+        </section>
+
+        <section id="tela-barbeiros" class="tela-gerenciamento escondida">
+          <div class="topo-gerenciamento">
+            <div>
+              <p class="texto-pequeno">Área do administrador</p>
+              <h3>Barbeiros</h3>
+            </div>
+          </div>
+
+          <div class="linha-principal">
+            <button
+              id="botao-mostrar-cadastro-barbeiro"
+              class="botao-principal botao-cadastrar"
+              type="button"
+            >
+              Cadastrar barbeiro
+            </button>
+
+            <input
+              id="pesquisa-barbeiro"
+              class="barra-pesquisa"
+              type="text"
+              placeholder="Pesquisar barbeiro..."
+              autocomplete="off"
+            />
+          </div>
+
+          <form id="form-cadastro-barbeiro" class="form-cadastro escondida">
+            <label for="nome-novo-barbeiro">Nome do barbeiro</label>
+
+            <input
+              id="nome-novo-barbeiro"
+              type="text"
+              placeholder="Digite o nome do barbeiro"
+              autocomplete="off"
+              required
+            />
+
+            <button class="botao-principal botao-salvar" type="submit">
+              Salvar barbeiro
+            </button>
+          </form>
+
+          <p id="mensagem-barbeiro" class="mensagem"></p>
+
+          <div
+            id="lista-gerenciar-barbeiros"
+            class="lista-gerenciamento"
+          ></div>
+        </section>
+
+        <section id="tela-clientes" class="tela-gerenciamento escondida">
+          <div class="topo-gerenciamento">
+            <div>
+              <p class="texto-pequeno">Área do sistema</p>
+              <h3>Clientes cadastrados</h3>
+            </div>
+          </div>
+
+          <div class="linha-principal">
+            <button
+              id="botao-mostrar-cadastro-cliente"
+              class="botao-principal botao-cadastrar"
+              type="button"
+            >
+              Cadastrar cliente
+            </button>
+
+            <input
+              id="pesquisa-cliente"
+              class="barra-pesquisa"
+              type="text"
+              placeholder="Pesquisar cliente ou celular..."
+              autocomplete="off"
+            />
+          </div>
+
+          <form id="form-cadastro-cliente" class="form-cadastro escondida">
+            <label for="nome-novo-cliente">Nome do cliente</label>
+
+            <input
+              id="nome-novo-cliente"
+              type="text"
+              placeholder="Digite o nome do cliente"
+              autocomplete="off"
+              required
+            />
+
+            <label for="celular-novo-cliente">Número de celular</label>
+
+            <input
+              id="celular-novo-cliente"
+              type="text"
+              inputmode="numeric"
+              maxlength="15"
+              placeholder="(00) 00000-0000"
+              autocomplete="off"
+              required
+            />
+
+            <button class="botao-principal botao-salvar" type="submit">
+              Salvar cliente
+            </button>
+          </form>
+
+          <p id="mensagem-cliente" class="mensagem"></p>
+
+          <div
+            id="lista-gerenciar-clientes"
+            class="lista-gerenciamento"
+          ></div>
+        </section>
+
+        <section id="tela-configuracoes" class="tela-gerenciamento escondida">
+          <div class="topo-gerenciamento">
+            <div>
+              <p class="texto-pequeno">Área do sistema</p>
+              <h3>Configurações</h3>
+            </div>
+          </div>
+
+          <div class="cartao-configuracao">
+            <h4>Tema do sistema</h4>
+            <p>Escolha como o sistema aparecerá em todos os computadores.</p>
+
+            <div class="opcoes-tema">
+              <label class="opcao-tema">
+                <input type="radio" name="tema" value="escuro" checked />
+                <span>
+                  <strong>Tema escuro</strong>
+                  <small>Preto e dourado</small>
+                </span>
+              </label>
+
+              <label class="opcao-tema">
+                <input type="radio" name="tema" value="claro" />
+                <span>
+                  <strong>Tema claro</strong>
+                  <small>Branco e dourado</small>
+                </span>
+              </label>
+            </div>
+
+            <p id="mensagem-tema" class="mensagem"></p>
+          </div>
+
+          <div id="configuracao-senha" class="cartao-configuracao escondida">
+            <h4>Senha geral de entrada</h4>
+            <p>Essa senha libera o acesso ao sistema para todos.</p>
+
+            <form id="form-alterar-senha" class="form-configuracao">
+              <label for="nova-senha">Nova senha</label>
+              <input id="nova-senha" type="password" minlength="4" required />
+
+              <label for="confirmar-nova-senha">Confirmar nova senha</label>
+              <input
+                id="confirmar-nova-senha"
+                type="password"
+                minlength="4"
+                required
+              />
+
+              <button class="botao-principal" type="submit">
+                Salvar nova senha
+              </button>
+            </form>
+
+            <p id="mensagem-senha" class="mensagem"></p>
+          </div>
+        </section>
+
+        <section id="tela-relatorio" class="tela-gerenciamento escondida">
+          <div class="topo-gerenciamento">
+            <div>
+              <p class="texto-pequeno">Área do sistema</p>
+              <h3>Relatório</h3>
+            </div>
+          </div>
+
+          <div class="filtros-relatorio">
+            <select id="filtro-relatorio-barbeiro">
+              <option value="todos">Barbearia inteira</option>
+            </select>
+          </div>
+
+          <div class="resumo-relatorio">
+            <div class="cartao-resumo">
+              <span>Total concluído</span>
+              <strong id="total-concluido">0</strong>
+            </div>
+
+            <div class="cartao-resumo">
+              <span>Horário mais atendido</span>
+              <strong id="horario-mais-atendido">—</strong>
+            </div>
+
+            <div class="cartao-resumo">
+              <span>Dia da semana com mais atendimentos</span>
+              <strong id="dia-mais-atendido">—</strong>
+            </div>
+          </div>
+
+          <div class="calendario-area">
+            <div class="topo-calendario">
+              <button
+                id="mes-anterior"
+                class="botao-mes"
+                type="button"
+                aria-label="Mês anterior"
+              >
+                ←
+              </button>
+
+              <h4 id="titulo-calendario">Mês</h4>
+
+              <button
+                id="proximo-mes"
+                class="botao-mes"
+                type="button"
+                aria-label="Próximo mês"
+              >
+                →
+              </button>
+            </div>
+
+            <div class="dias-semana-calendario">
+              <span>Seg</span>
+              <span>Ter</span>
+              <span>Qua</span>
+              <span>Qui</span>
+              <span>Sex</span>
+              <span>Sáb</span>
+              <span>Dom</span>
+            </div>
+
+            <div id="calendario-relatorio" class="grade-calendario"></div>
+          </div>
+
+          <div class="grafico-area">
+            <div class="cabecalho-segundo-grafico">
+              <h4 id="titulo-segundo-grafico">Horário que mais atende</h4>
+
+              <select id="filtro-segundo-grafico">
+                <option value="horario">Horário que mais atende</option>
+                <option value="dia-semana">
+                  Dia da semana que mais atende
+                </option>
+              </select>
+            </div>
+
+            <canvas id="grafico-status"></canvas>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="modal-novo" class="modal escondido">
+      <div class="janela">
+        <button class="fechar-modal" type="button" data-fechar="modal-novo">
+          ×
+        </button>
+
+        <h2>Novo agendamento</h2>
+        <p id="informacao-horario"></p>
+
+        <form id="form-agendamento">
+          <input id="data-agendamento" type="hidden" />
+          <input id="hora-agendamento" type="hidden" />
+
+          <div class="tipo-agendamento">
+            <p>Tipo de atendimento</p>
+
+            <label>
+              <input
+                type="radio"
+                name="tipo-agendamento"
+                value="Horário marcado"
+                checked
+              />
+              Horário marcado
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                name="tipo-agendamento"
+                value="Atendimento agora"
+              />
+              Atendimento agora
+            </label>
+          </div>
+
+          <label for="pesquisa-cliente-agendamento">Cliente</label>
+
+          <input
+            id="pesquisa-cliente-agendamento"
+            type="text"
+            placeholder="Pesquisar cliente..."
+            autocomplete="off"
+          />
+
+          <div
+            id="lista-clientes-agendamento"
+            class="lista-clientes-agendamento"
+          ></div>
+
+          <div class="botoes-modal">
+            <button
+              class="botao-secundario"
+              type="button"
+              data-fechar="modal-novo"
+            >
+              Cancelar
+            </button>
+
+            <button class="botao-principal" type="submit">
+              Salvar agendamento
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-detalhes" class="modal escondido">
+      <div class="janela">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-detalhes"
+        >
+          ×
+        </button>
+
+        <h2>Agendamento</h2>
+
+        <p><strong>Cliente:</strong> <span id="detalhe-cliente"></span></p>
+        <p><strong>Data:</strong> <span id="detalhe-data"></span></p>
+        <p><strong>Horário:</strong> <span id="detalhe-hora"></span></p>
+
+        <div class="botoes-modal">
+          <button
+            id="concluir-agendamento"
+            class="botao-concluir"
+            type="button"
+          >
+            Agendamento concluído
+          </button>
+
+          <button
+            id="nao-realizado-agendamento"
+            class="botao-nao-realizado"
+            type="button"
+          >
+            Agendamento não realizado
+          </button>
+
+          <button
+            id="cancelar-agendamento"
+            class="botao-perigo"
+            type="button"
+          >
+            Agendamento cancelado
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="dashboard.js"></script>
+  </body>
+</html>

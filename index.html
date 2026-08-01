@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tradição Barbearia | Entrar</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="login1.css" />
+  </head>
+
+  <body>
+    <main class="login-page">
+      <div class="background"></div>
+      <div class="background-overlay"></div>
+
+      <section class="login-card">
+        <header class="brand">
+          <div class="brand-mark">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <p class="brand-overline">Desde 1998</p>
+          <h1>Tradição</h1>
+          <p class="brand-name">Barbearia</p>
+        </header>
+
+        <div class="divider"><span></span></div>
+
+        <div class="welcome">
+          <h2>Bem-vindo de volta</h2>
+          <p>Digite sua senha para acessar o sistema.</p>
+        </div>
+
+        <form id="login-form">
+          <label for="password">Senha</label>
+
+          <div class="password-field">
+            <svg class="lock-icon" viewBox="0 0 24 24">
+              <path
+                d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Zm6 4v3"
+              />
+            </svg>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Digite sua senha"
+              required
+            />
+
+            <button
+              id="toggle-password"
+              class="toggle-password"
+              type="button"
+              aria-label="Mostrar senha"
+            >
+              <svg class="eye-open" viewBox="0 0 24 24">
+                <path
+                  d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                />
+                <circle cx="12" cy="12" r="2.8" />
+              </svg>
+
+              <svg class="eye-closed" viewBox="0 0 24 24">
+                <path d="m3 3 18 18" />
+                <path
+                  d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a17.7 17.7 0 0 1-3.2 3.8"
+                />
+                <path
+                  d="M6.2 6.2A17.8 17.8 0 0 0 2.5 12s3.5 6 9.5 6c1.1 0 2.1-.2 3-.5"
+                />
+                <path d="M9.8 9.8a3.1 3.1 0 0 0 4.4 4.4" />
+              </svg>
+            </button>
+          </div>
+
+          <p id="form-message" class="form-message"></p>
+
+          <button class="submit-button" type="submit">
+            Entrar <span>→</span>
+          </button>
+        </form>
+
+        <p class="footer-text">Tradição, estilo e excelência.</p>
+      </section>
+    </main>
+
+    <script type="module" src="login1.js"></script>
+
+    <div id="modal-sair" class="modal escondido">
+      <div class="janela">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-sair"
+        >
+          ×
+        </button>
+
+        <h2>Sair do sistema</h2>
+
+        <p>Tem certeza que deseja sair?</p>
+
+        <div class="botoes-modal">
+          <button
+            class="botao-secundario"
+            type="button"
+            data-fechar="modal-sair"
+          >
+            Cancelar
+          </button>
+
+          <button
+            id="confirmar-sair"
+            class="botao-perigo"
+            type="button"
+          >
+            Sim, sair
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>
