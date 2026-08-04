@@ -27,6 +27,13 @@ const telaConfiguracoes = document.querySelector("#tela-configuracoes");
 const textoAgenda = document.querySelector("#texto-agenda");
 const agenda = document.querySelector("#agenda");
 const agendaScroll = document.querySelector("#agenda-scroll");
+const listaProximosAgendamentos = document.querySelector(
+  "#lista-proximos-agendamentos"
+);
+
+const quantidadeProximosAgendamentos = document.querySelector(
+  "#quantidade-proximos-agendamentos"
+);
 
 const botaoDiminuirZoom = document.querySelector("#diminuir-zoom");
 const botaoAumentarZoom = document.querySelector("#aumentar-zoom");
@@ -64,6 +71,14 @@ const formCadastroBarbeiro = document.querySelector(
   "#form-cadastro-barbeiro"
 );
 const nomeNovoBarbeiro = document.querySelector("#nome-novo-barbeiro");
+
+const senhaNovoBarbeiro = document.querySelector(
+  "#senha-novo-barbeiro"
+);
+
+const confirmarSenhaNovoBarbeiro = document.querySelector(
+  "#confirmar-senha-novo-barbeiro"
+);
 const pesquisaBarbeiro = document.querySelector("#pesquisa-barbeiro");
 const mensagemBarbeiro = document.querySelector("#mensagem-barbeiro");
 const listaGerenciarBarbeiros = document.querySelector(
@@ -106,6 +121,9 @@ const tituloSegundoGrafico = document.querySelector(
 
 const configuracaoSenha = document.querySelector("#configuracao-senha");
 const formAlterarSenha = document.querySelector("#form-alterar-senha");
+const usuarioAlterarSenha = document.querySelector(
+  "#usuario-alterar-senha"
+);
 const novaSenha = document.querySelector("#nova-senha");
 const confirmarNovaSenha = document.querySelector("#confirmar-nova-senha");
 const mensagemSenha = document.querySelector("#mensagem-senha");
@@ -263,20 +281,43 @@ function aplicarTema(tema) {
   });
 }
 
-function abrirTelaConfiguracoes() {
+async function abrirTelaConfiguracoes() {
   telaDashboard.classList.add("escondida");
   telaBarbeiros.classList.add("escondida");
   telaClientes.classList.add("escondida");
   telaRelatorio.classList.add("escondida");
   telaConfiguracoes.classList.remove("escondida");
 
+  const administradorLogado =
+    tipoUsuario === "administrador";
+
   configuracaoSenha.classList.toggle(
     "escondida",
-    tipoUsuario !== "administrador"
+    !administradorLogado
   );
 
   mensagemTema.textContent = "";
   mensagemSenha.textContent = "";
+
+  if (formAlterarSenha) {
+    formAlterarSenha.reset();
+  }
+
+  if (administradorLogado) {
+    try {
+      await carregarBarbeiros();
+      preencherUsuariosParaAlterarSenha();
+    } catch (erro) {
+      console.log(
+        "Erro ao carregar usuários para alterar senha:",
+        erro
+      );
+
+      mensagemSenha.textContent =
+        "Não foi possível carregar os usuários.";
+    }
+  }
+
   marcarBotaoAtivo("Configurações");
 }
 
@@ -346,7 +387,7 @@ function montarMenu() {
       }
 
       if (nomeBotao === "Configurações") {
-        abrirTelaConfiguracoes();
+        await abrirTelaConfiguracoes();
         return;
       }
 
@@ -391,6 +432,38 @@ function preencherSelectDeBarbeiros() {
 
     selectBarbeiro.appendChild(opcao);
   });
+}
+
+function preencherUsuariosParaAlterarSenha() {
+  if (!usuarioAlterarSenha) {
+    return;
+  }
+
+  usuarioAlterarSenha.innerHTML = `
+    <option value="">
+      Selecione um usuário
+    </option>
+
+    <option value="administrador">
+      Administrador
+    </option>
+  `;
+
+  [...barbeiros]
+    .sort((barbeiroA, barbeiroB) => {
+      return barbeiroA.nome.localeCompare(
+        barbeiroB.nome,
+        "pt-BR"
+      );
+    })
+    .forEach((barbeiro) => {
+      const opcao = document.createElement("option");
+
+      opcao.value = barbeiro.id;
+      opcao.textContent = barbeiro.nome;
+
+      usuarioAlterarSenha.appendChild(opcao);
+    });
 }
 
 function mostrarClientesNoAgendamento() {
@@ -465,6 +538,122 @@ async function carregarAgendamentos() {
 function encontrarAgendamento(data, hora) {
   return agendamentos.find((agendamento) => {
     return agendamento.data === data && agendamento.hora === hora;
+  });
+}
+
+function mostrarProximosAgendamentos() {
+  listaProximosAgendamentos.innerHTML = "";
+
+  if (!barbeiroAtual) {
+    quantidadeProximosAgendamentos.textContent = "0 horários";
+
+    listaProximosAgendamentos.innerHTML = `
+      <p class="lista-agendamentos-vazia">
+        Escolha um barbeiro para visualizar os horários marcados.
+      </p>
+    `;
+
+    return;
+  }
+
+  const proximosAgendamentos = agendamentos
+    .filter((agendamento) => {
+      return (
+        agendamento.status !== "cancelado" &&
+        agendamento.status !== "concluido" &&
+        agendamento.status !== "nao_realizado"
+      );
+    })
+    .sort((agendamentoA, agendamentoB) => {
+      const dataHoraA = new Date(
+        `${agendamentoA.data}T${agendamentoA.hora}:00`
+      );
+
+      const dataHoraB = new Date(
+        `${agendamentoB.data}T${agendamentoB.hora}:00`
+      );
+
+      return dataHoraA - dataHoraB;
+    });
+
+  const quantidade = proximosAgendamentos.length;
+
+  quantidadeProximosAgendamentos.textContent =
+    quantidade === 1
+      ? "1 horário"
+      : `${quantidade} horários`;
+
+  if (quantidade === 0) {
+    listaProximosAgendamentos.innerHTML = `
+      <p class="lista-agendamentos-vazia">
+        Nenhum horário marcado para ${barbeiroAtual}.
+      </p>
+    `;
+
+    return;
+  }
+
+  proximosAgendamentos.forEach((agendamento) => {
+    const botao = document.createElement("button");
+
+    botao.type = "button";
+    botao.className = "item-proximo-agendamento";
+
+    const data = dataPorTexto(agendamento.data);
+
+    const dataFormatada = data.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+
+    const diaDaSemana = data.toLocaleDateString("pt-BR", {
+      weekday: "long"
+    });
+
+    const dataElemento = document.createElement("div");
+    dataElemento.className = "data-proximo-agendamento";
+    dataElemento.textContent = dataFormatada;
+
+    const horaElemento = document.createElement("div");
+    horaElemento.className = "hora-proximo-agendamento";
+    horaElemento.textContent = agendamento.hora;
+
+    const clienteElemento = document.createElement("div");
+    clienteElemento.className = "cliente-proximo-agendamento";
+
+    const tituloCliente = document.createElement("strong");
+    tituloCliente.textContent = agendamento.cliente;
+
+    const textoDia = document.createElement("small");
+    textoDia.textContent = diaDaSemana;
+
+    clienteElemento.appendChild(tituloCliente);
+    clienteElemento.appendChild(textoDia);
+
+    const servicoElemento = document.createElement("div");
+    servicoElemento.className = "servico-proximo-agendamento";
+
+    const tituloServico = document.createElement("strong");
+    tituloServico.textContent =
+      agendamento.tipo || "Horário marcado";
+
+    const textoBarbeiro = document.createElement("small");
+    textoBarbeiro.textContent = agendamento.barbeiro;
+
+    servicoElemento.appendChild(tituloServico);
+    servicoElemento.appendChild(textoBarbeiro);
+
+    botao.appendChild(dataElemento);
+    botao.appendChild(horaElemento);
+    botao.appendChild(clienteElemento);
+    botao.appendChild(servicoElemento);
+
+    botao.addEventListener("click", () => {
+      abrirDetalhes(agendamento);
+    });
+
+    listaProximosAgendamentos.appendChild(botao);
   });
 }
 
@@ -560,6 +749,7 @@ function mostrarAgenda() {
 
   agenda.innerHTML = "";
   agenda.appendChild(grade);
+  mostrarProximosAgendamentos();
 }
 
 async function abrirNovoAgendamento(data, hora) {
@@ -607,10 +797,14 @@ async function atualizarAgenda() {
 }
 
 function mostrarListaDeBarbeiros() {
-  const pesquisa = pesquisaBarbeiro.value.trim().toLowerCase();
+  const pesquisa = pesquisaBarbeiro.value
+    .trim()
+    .toLowerCase();
 
   const barbeirosFiltrados = barbeiros.filter((barbeiro) => {
-    return barbeiro.nome.toLowerCase().includes(pesquisa);
+    return barbeiro.nome
+      .toLowerCase()
+      .includes(pesquisa);
   });
 
   listaGerenciarBarbeiros.innerHTML = "";
@@ -618,6 +812,7 @@ function mostrarListaDeBarbeiros() {
   if (barbeirosFiltrados.length === 0) {
     listaGerenciarBarbeiros.innerHTML =
       '<p class="lista-vazia">Nenhum barbeiro encontrado.</p>';
+
     return;
   }
 
@@ -634,30 +829,62 @@ function mostrarListaDeBarbeiros() {
     botaoExcluir.textContent = "Excluir";
 
     botaoExcluir.addEventListener("click", async () => {
-      const resposta = await getDocs(collection(db, "agendamentos"));
+      mensagemBarbeiro.textContent = "";
 
-      const temHorarioMarcado = resposta.docs.some((documento) => {
-        return documento.data().barbeiro === barbeiro.nome;
-      });
+      try {
+        const resposta = await getDocs(
+          collection(db, "agendamentos")
+        );
 
-      if (temHorarioMarcado) {
+        const temHorarioPendente = resposta.docs.some((documento) => {
+          const agendamento = documento.data();
+
+          const pertenceAoBarbeiro =
+            agendamento.barbeiro === barbeiro.nome;
+
+          const estaPendente =
+            agendamento.status === "pendente" ||
+            !agendamento.status;
+
+          return pertenceAoBarbeiro && estaPendente;
+        });
+
+        if (temHorarioPendente) {
+          mensagemBarbeiro.textContent =
+            "Não é possível excluir este barbeiro porque ele possui um horário pendente.";
+
+          return;
+        }
+
+        const confirmouExclusao = confirm(
+          `Deseja excluir o barbeiro ${barbeiro.nome}?`
+        );
+
+        if (!confirmouExclusao) {
+          return;
+        }
+
+        await deleteDoc(
+          doc(db, "barbeiros", barbeiro.id)
+        );
+
         mensagemBarbeiro.textContent =
-          "Não é possível excluir este barbeiro porque ele tem horário marcado.";
-        return;
+          `${barbeiro.nome} foi excluído com sucesso.`;
+
+        if (barbeiroAtual === barbeiro.nome) {
+          barbeiroAtual = "";
+        }
+
+        await carregarBarbeiros();
+
+        preencherSelectDeBarbeiros();
+        mostrarListaDeBarbeiros();
+      } catch (erro) {
+        console.log("Erro ao excluir barbeiro:", erro);
+
+        mensagemBarbeiro.textContent =
+          "Não foi possível excluir o barbeiro.";
       }
-
-      if (!confirm(`Deseja excluir o barbeiro ${barbeiro.nome}?`)) {
-        return;
-      }
-
-      await deleteDoc(doc(db, "barbeiros", barbeiro.id));
-
-      mensagemBarbeiro.textContent =
-        `${barbeiro.nome} foi excluído com sucesso.`;
-
-      await carregarBarbeiros();
-      preencherSelectDeBarbeiros();
-      mostrarListaDeBarbeiros();
     });
 
     linha.appendChild(nome);
@@ -682,58 +909,87 @@ function mostrarListaDeClientes() {
   if (clientesFiltrados.length === 0) {
     listaGerenciarClientes.innerHTML =
       '<p class="lista-vazia">Nenhum cliente encontrado.</p>';
+
     return;
   }
 
   clientesFiltrados.forEach((cliente) => {
     const linha = document.createElement("div");
+
     linha.className = "item-lista";
 
     const informacoes = document.createElement("div");
 
     const nome = document.createElement("strong");
+
     nome.textContent = cliente.nome;
 
     const celular = document.createElement("small");
+
     celular.textContent = cliente.celular;
 
     informacoes.appendChild(nome);
     informacoes.appendChild(celular);
 
     const botaoExcluir = document.createElement("button");
+
     botaoExcluir.type = "button";
     botaoExcluir.className = "botao-excluir";
     botaoExcluir.textContent = "Excluir";
 
     botaoExcluir.addEventListener("click", async () => {
-      const resposta = await getDocs(collection(db, "agendamentos"));
+      mensagemCliente.textContent = "";
 
-      const temHorarioMarcado = resposta.docs.some((documento) => {
-        const agendamento = documento.data();
-
-        return (
-          agendamento.clienteId === cliente.id ||
-          agendamento.cliente === cliente.nome
+      try {
+        const resposta = await getDocs(
+          collection(db, "agendamentos")
         );
-      });
 
-      if (temHorarioMarcado) {
+        const temHorarioPendente = resposta.docs.some((documento) => {
+          const agendamento = documento.data();
+
+          const pertenceAoCliente =
+            agendamento.clienteId === cliente.id ||
+            agendamento.cliente === cliente.nome;
+
+          const estaPendente =
+            agendamento.status !== "cancelado" &&
+            agendamento.status !== "concluido" &&
+            agendamento.status !== "nao_realizado";
+
+          return pertenceAoCliente && estaPendente;
+        });
+
+        if (temHorarioPendente) {
+          mensagemCliente.textContent =
+            "Não é possível excluir este cliente porque ele possui um horário pendente.";
+
+          return;
+        }
+
+        const confirmouExclusao = confirm(
+          `Deseja excluir o cliente ${cliente.nome}?`
+        );
+
+        if (!confirmouExclusao) {
+          return;
+        }
+
+        await deleteDoc(
+          doc(db, "clientes", cliente.id)
+        );
+
         mensagemCliente.textContent =
-          "Não é possível excluir este cliente porque ele tem horário marcado.";
-        return;
+          `${cliente.nome} foi excluído com sucesso.`;
+
+        await carregarClientes();
+        mostrarListaDeClientes();
+      } catch (erro) {
+        console.log("Erro ao excluir cliente:", erro);
+
+        mensagemCliente.textContent =
+          "Não foi possível excluir o cliente.";
       }
-
-      if (!confirm(`Deseja excluir o cliente ${cliente.nome}?`)) {
-        return;
-      }
-
-      await deleteDoc(doc(db, "clientes", cliente.id));
-
-      mensagemCliente.textContent =
-        `${cliente.nome} foi excluído com sucesso.`;
-
-      await carregarClientes();
-      mostrarListaDeClientes();
     });
 
     linha.appendChild(informacoes);
@@ -793,9 +1049,19 @@ botaoCancelarAgendamento.addEventListener("click", async () => {
 });
 
 botaoMostrarCadastroBarbeiro.addEventListener("click", () => {
+  if (tipoUsuario !== "administrador") {
+    mensagemBarbeiro.textContent =
+      "Somente o administrador pode cadastrar barbeiros.";
+
+    return;
+  }
+
   formCadastroBarbeiro.classList.toggle("escondida");
 
+  mensagemBarbeiro.textContent = "";
+
   if (!formCadastroBarbeiro.classList.contains("escondida")) {
+    formCadastroBarbeiro.reset();
     nomeNovoBarbeiro.focus();
   }
 });
@@ -803,21 +1069,79 @@ botaoMostrarCadastroBarbeiro.addEventListener("click", () => {
 formCadastroBarbeiro.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const nome = nomeNovoBarbeiro.value.trim();
+  mensagemBarbeiro.textContent = "";
 
-  if (barbeiros.some((barbeiro) => barbeiro.nome.toLowerCase() === nome.toLowerCase())) {
-    mensagemBarbeiro.textContent = "Esse barbeiro já está cadastrado.";
+  const nome = nomeNovoBarbeiro.value.trim();
+  const senha = senhaNovoBarbeiro.value.trim();
+  const confirmarSenha = confirmarSenhaNovoBarbeiro.value.trim();
+
+  if (tipoUsuario !== "administrador") {
+    mensagemBarbeiro.textContent =
+      "Somente o administrador pode cadastrar barbeiros.";
+
     return;
   }
 
-  await addDoc(collection(db, "barbeiros"), { nome: nome });
+  if (nome === "") {
+    mensagemBarbeiro.textContent =
+      "Digite o nome do barbeiro.";
 
-  nomeNovoBarbeiro.value = "";
-  mensagemBarbeiro.textContent = `${nome} foi cadastrado com sucesso.`;
+    nomeNovoBarbeiro.focus();
+    return;
+  }
 
-  await carregarBarbeiros();
-  preencherSelectDeBarbeiros();
-  mostrarListaDeBarbeiros();
+  if (senha.length < 4) {
+    mensagemBarbeiro.textContent =
+      "A senha precisa ter pelo menos 4 caracteres.";
+
+    senhaNovoBarbeiro.focus();
+    return;
+  }
+
+  if (senha !== confirmarSenha) {
+    mensagemBarbeiro.textContent =
+      "As senhas digitadas não são iguais.";
+
+    confirmarSenhaNovoBarbeiro.value = "";
+    confirmarSenhaNovoBarbeiro.focus();
+
+    return;
+  }
+
+  const barbeiroJaExiste = barbeiros.some((barbeiro) => {
+    return barbeiro.nome.toLowerCase() === nome.toLowerCase();
+  });
+
+  if (barbeiroJaExiste) {
+    mensagemBarbeiro.textContent =
+      "Esse barbeiro já está cadastrado.";
+
+    nomeNovoBarbeiro.focus();
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "barbeiros"), {
+      nome: nome,
+      senha: senha,
+      ativo: true,
+      dataCadastro: Date.now()
+    });
+
+    formCadastroBarbeiro.reset();
+
+    mensagemBarbeiro.textContent =
+      `${nome} foi cadastrado com sucesso.`;
+
+    await carregarBarbeiros();
+    preencherSelectDeBarbeiros();
+    mostrarListaDeBarbeiros();
+  } catch (erro) {
+    console.log("Erro ao cadastrar barbeiro:", erro);
+
+    mensagemBarbeiro.textContent =
+      "Não foi possível cadastrar o barbeiro.";
+  }
 });
 
 botaoMostrarCadastroCliente.addEventListener("click", () => {
@@ -1313,31 +1637,90 @@ opcoesTema.forEach((opcao) => {
 formAlterarSenha.addEventListener("submit", async (event) => {
   event.preventDefault();
 
+  mensagemSenha.textContent = "";
+
+  if (tipoUsuario !== "administrador") {
+    mensagemSenha.textContent =
+      "Somente o administrador pode alterar senhas.";
+
+    return;
+  }
+
+  const usuarioSelecionado = usuarioAlterarSenha.value;
   const senha = novaSenha.value.trim();
   const confirmacao = confirmarNovaSenha.value.trim();
 
+  if (usuarioSelecionado === "") {
+    mensagemSenha.textContent =
+      "Selecione o usuário que terá a senha alterada.";
+
+    usuarioAlterarSenha.focus();
+    return;
+  }
+
   if (senha.length < 4) {
-    mensagemSenha.textContent = "A senha precisa ter pelo menos 4 caracteres.";
+    mensagemSenha.textContent =
+      "A senha precisa ter pelo menos 4 caracteres.";
+
+    novaSenha.focus();
     return;
   }
 
   if (senha !== confirmacao) {
-    mensagemSenha.textContent = "As duas senhas não são iguais.";
+    mensagemSenha.textContent =
+      "As duas senhas não são iguais.";
+
+    confirmarNovaSenha.value = "";
+    confirmarNovaSenha.focus();
+
     return;
   }
 
   try {
-    await setDoc(
-      configuracaoGeral,
-      { senha: senha },
-      { merge: true }
-    );
+    if (usuarioSelecionado === "administrador") {
+      await setDoc(
+        configuracaoGeral,
+        {
+          senhaAdministrador: senha
+        },
+        {
+          merge: true
+        }
+      );
+
+      mensagemSenha.textContent =
+        "Senha do administrador alterada com sucesso.";
+    } else {
+      const barbeiroSelecionado = barbeiros.find(
+        (barbeiro) => barbeiro.id === usuarioSelecionado
+      );
+
+      if (!barbeiroSelecionado) {
+        mensagemSenha.textContent =
+          "Barbeiro não encontrado.";
+
+        return;
+      }
+
+      await updateDoc(
+        doc(db, "barbeiros", usuarioSelecionado),
+        {
+          senha: senha
+        }
+      );
+
+      mensagemSenha.textContent =
+        `Senha de ${barbeiroSelecionado.nome} alterada com sucesso.`;
+    }
 
     formAlterarSenha.reset();
-    mensagemSenha.textContent = "Senha alterada com sucesso.";
+
+    usuarioAlterarSenha.value = "";
   } catch (erro) {
-    mensagemSenha.textContent = "Não foi possível alterar a senha.";
-    console.log(erro);
+    console.log("Erro ao alterar senha:", erro);
+
+    mensagemSenha.textContent =
+      "Não foi possível alterar a senha.";
   }
 });
 

@@ -1226,3 +1226,163 @@ body.tema-claro {
   }
 }
 
+.form-configuracao select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #777;
+  border-radius: 5px;
+  outline: none;
+  color: #171717;
+  background-color: white;
+}
+
+.form-configuracao select:focus {
+  border-color: #c99b42;
+}
+
+.tema-claro .form-configuracao select {
+  color: #242424;
+  background-color: white;
+}
+
+.proximos-agendamentos {
+  flex-shrink: 0;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #4b4b4b;
+  border-radius: 8px;
+  background-color: #202020;
+}
+
+.titulo-proximos-agendamentos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.titulo-proximos-agendamentos h3 {
+  margin: 0 0 5px;
+  color: #e1b763;
+  font-size: 19px;
+}
+
+.titulo-proximos-agendamentos p {
+  margin: 0;
+  color: #b7b7b7;
+  font-size: 13px;
+}
+
+#quantidade-proximos-agendamentos {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #c99b42;
+  border-radius: 20px;
+  color: #e1b763;
+  font-size: 12px;
+}
+
+.lista-proximos-agendamentos {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #505050;
+  border-radius: 7px;
+}
+
+.item-proximo-agendamento {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 100px 90px minmax(150px, 1fr) minmax(130px, 1fr);
+  align-items: center;
+  gap: 15px;
+  padding: 14px 16px;
+  border: none;
+  border-bottom: 1px solid #444;
+  cursor: pointer;
+  text-align: left;
+  color: white;
+  background-color: #181818;
+}
+
+.item-proximo-agendamento:last-child {
+  border-bottom: none;
+}
+
+.item-proximo-agendamento:hover {
+  background-color: #292929;
+}
+
+.data-proximo-agendamento {
+  color: #e1b763;
+  font-weight: bold;
+}
+
+.hora-proximo-agendamento {
+  color: #f0d191;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.cliente-proximo-agendamento strong,
+.servico-proximo-agendamento strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #f2f2f2;
+  font-size: 14px;
+}
+
+.cliente-proximo-agendamento small,
+.servico-proximo-agendamento small {
+  color: #aaa;
+  font-size: 11px;
+}
+
+.lista-agendamentos-vazia {
+  margin: 0;
+  padding: 22px;
+  color: #aaa;
+  text-align: center;
+  font-size: 13px;
+}
+
+.tema-claro .proximos-agendamentos,
+.tema-claro .lista-proximos-agendamentos,
+.tema-claro .item-proximo-agendamento {
+  border-color: #cbbd9d;
+  background-color: white;
+}
+
+.tema-claro .item-proximo-agendamento:hover {
+  background-color: #f1eadb;
+}
+
+.tema-claro .cliente-proximo-agendamento strong,
+.tema-claro .servico-proximo-agendamento strong {
+  color: #292929;
+}
+
+.tema-claro .cliente-proximo-agendamento small,
+.tema-claro .servico-proximo-agendamento small,
+.tema-claro .titulo-proximos-agendamentos p {
+  color: #555;
+}
+
+@media (max-width: 800px) {
+  .titulo-proximos-agendamentos {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .item-proximo-agendamento {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .item-proximo-agendamento {
+    grid-template-columns: 1fr;
+  }
+}
+

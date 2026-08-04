@@ -66,6 +66,26 @@
           </div>
         </section>
 
+        <section class="proximos-agendamentos">
+          <div class="titulo-proximos-agendamentos">
+            <div>
+              <h3>Próximos horários</h3>
+              <p>Agendamentos organizados por data e horário.</p>
+            </div>
+
+            <span id="quantidade-proximos-agendamentos">0 horários</span>
+          </div>
+
+          <div
+            id="lista-proximos-agendamentos"
+            class="lista-proximos-agendamentos"
+          >
+            <p class="lista-agendamentos-vazia">
+              Nenhum horário marcado.
+            </p>
+          </div>
+        </section>
+
         <section id="tela-barbeiros" class="tela-gerenciamento escondida">
           <div class="topo-gerenciamento">
             <div>
@@ -93,7 +113,9 @@
           </div>
 
           <form id="form-cadastro-barbeiro" class="form-cadastro escondida">
-            <label for="nome-novo-barbeiro">Nome do barbeiro</label>
+            <label for="nome-novo-barbeiro">
+              Nome do barbeiro
+            </label>
 
             <input
               id="nome-novo-barbeiro"
@@ -103,7 +125,36 @@
               required
             />
 
-            <button class="botao-principal botao-salvar" type="submit">
+            <label for="senha-novo-barbeiro">
+              Senha do barbeiro
+            </label>
+
+            <input
+              id="senha-novo-barbeiro"
+              type="password"
+              minlength="4"
+              placeholder="Digite uma senha com pelo menos 4 caracteres"
+              autocomplete="new-password"
+              required
+            />
+
+            <label for="confirmar-senha-novo-barbeiro">
+              Confirmar senha
+            </label>
+
+            <input
+              id="confirmar-senha-novo-barbeiro"
+              type="password"
+              minlength="4"
+              placeholder="Digite novamente a senha"
+              autocomplete="new-password"
+              required
+            />
+
+            <button
+              class="botao-principal botao-salvar"
+              type="submit"
+            >
               Salvar barbeiro
             </button>
           </form>
@@ -212,28 +263,64 @@
           </div>
 
           <div id="configuracao-senha" class="cartao-configuracao escondida">
-            <h4>Senha geral de entrada</h4>
-            <p>Essa senha libera o acesso ao sistema para todos.</p>
+            <h4>Senhas dos usuários</h4>
+
+            <p>
+              Altere a senha do administrador ou de qualquer barbeiro cadastrado.
+            </p>
 
             <form id="form-alterar-senha" class="form-configuracao">
-              <label for="nova-senha">Nova senha</label>
-              <input id="nova-senha" type="password" minlength="4" required />
+              <label for="usuario-alterar-senha">
+                Usuário
+              </label>
 
-              <label for="confirmar-nova-senha">Confirmar nova senha</label>
+              <select id="usuario-alterar-senha" required>
+                <option value="">
+                  Selecione um usuário
+                </option>
+
+                <option value="administrador">
+                  Administrador
+                </option>
+              </select>
+
+              <label for="nova-senha">
+                Nova senha
+              </label>
+
+              <input
+                id="nova-senha"
+                type="password"
+                minlength="4"
+                placeholder="Digite a nova senha"
+                autocomplete="new-password"
+                required
+              />
+
+              <label for="confirmar-nova-senha">
+                Confirmar nova senha
+              </label>
+
               <input
                 id="confirmar-nova-senha"
                 type="password"
                 minlength="4"
+                placeholder="Digite novamente a senha"
+                autocomplete="new-password"
                 required
               />
 
-              <button class="botao-principal" type="submit">
+              <button
+                class="botao-principal"
+                type="submit"
+              >
                 Salvar nova senha
               </button>
             </form>
 
             <p id="mensagem-senha" class="mensagem"></p>
           </div>
+
         </section>
 
         <section id="tela-relatorio" class="tela-gerenciamento escondida">
