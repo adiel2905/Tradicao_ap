@@ -2,8 +2,13 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tradição Barbearia | Dashboard</title>
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Tradição Barber Shop | Dashboard</title>
 
     <link rel="stylesheet" href="dashboard.css" />
   </head>
@@ -11,35 +16,63 @@
   <body>
     <div class="sistema">
       <aside class="menu-lateral">
-        <h1>Tradição<br />Barbearia</h1>
+        <h1>
+          Tradição<br />
+          Barber Shop
+        </h1>
+
         <nav id="menu"></nav>
       </aside>
 
       <main class="conteudo">
         <header class="cabecalho">
           <div>
-            <p class="texto-pequeno">Área do sistema</p>
-            <h2 id="boas-vindas">Boas-vindas!</h2>
+            <p class="texto-pequeno">
+              Área do sistema
+            </p>
+
+            <h2 id="boas-vindas">
+              Boas-vindas!
+            </h2>
           </div>
 
-          <div id="escolher-barbeiro" class="escolher-barbeiro">
-            <label for="select-barbeiro">Visualizar agenda de:</label>
+          <div
+            id="escolher-barbeiro"
+            class="escolher-barbeiro"
+          >
+            <label for="select-barbeiro">
+              Visualizar agenda de:
+            </label>
 
             <select id="select-barbeiro">
-              <option value="">Escolha um barbeiro</option>
+              <option value="">
+                Escolha um barbeiro
+              </option>
             </select>
           </div>
         </header>
 
-        <section id="tela-dashboard" class="agenda-area">
+        <!-- =====================================================
+             DASHBOARD
+        ====================================================== -->
+
+        <section
+          id="tela-dashboard"
+          class="agenda-area"
+        >
           <div class="agenda-titulo">
             <div>
               <h3>Agenda</h3>
-              <p id="texto-agenda">Carregando agenda...</p>
+
+              <p id="texto-agenda">
+                Carregando agenda...
+              </p>
             </div>
 
             <div class="controles-zoom">
-              <span>Zoom da grade</span>
+              <span>
+                Zoom da grade
+              </span>
 
               <button
                 id="diminuir-zoom"
@@ -61,36 +94,61 @@
             </div>
           </div>
 
-          <div id="agenda-scroll" class="agenda-scroll">
-            <div id="agenda" class="agenda"></div>
+          <div
+            id="agenda-scroll"
+            class="agenda-scroll"
+          >
+            <div
+              id="agenda"
+              class="agenda"
+            ></div>
           </div>
-        </section>
 
-        <section class="proximos-agendamentos">
-          <div class="titulo-proximos-agendamentos">
-            <div>
-              <h3>Próximos horários</h3>
-              <p>Agendamentos organizados por data e horário.</p>
+          <section class="proximos-agendamentos">
+            <div class="titulo-proximos-agendamentos">
+              <div>
+                <h3>
+                  Próximos horários
+                </h3>
+
+                <p>
+                  Agendamentos organizados por data e horário.
+                </p>
+              </div>
+
+              <span id="quantidade-proximos-agendamentos">
+                0 horários
+              </span>
             </div>
 
-            <span id="quantidade-proximos-agendamentos">0 horários</span>
-          </div>
-
-          <div
-            id="lista-proximos-agendamentos"
-            class="lista-proximos-agendamentos"
-          >
-            <p class="lista-agendamentos-vazia">
-              Nenhum horário marcado.
-            </p>
-          </div>
+            <div
+              id="lista-proximos-agendamentos"
+              class="lista-proximos-agendamentos"
+            >
+              <p class="lista-agendamentos-vazia">
+                Nenhum horário marcado.
+              </p>
+            </div>
+          </section>
         </section>
 
-        <section id="tela-barbeiros" class="tela-gerenciamento escondida">
+        <!-- =====================================================
+             BARBEIROS
+        ====================================================== -->
+
+        <section
+          id="tela-barbeiros"
+          class="tela-gerenciamento escondida"
+        >
           <div class="topo-gerenciamento">
             <div>
-              <p class="texto-pequeno">Área do administrador</p>
-              <h3>Barbeiros</h3>
+              <p class="texto-pequeno">
+                Gerenciamento da equipe
+              </p>
+
+              <h3>
+                Barbeiros
+              </h3>
             </div>
           </div>
 
@@ -112,7 +170,10 @@
             />
           </div>
 
-          <form id="form-cadastro-barbeiro" class="form-cadastro escondida">
+          <form
+            id="form-cadastro-barbeiro"
+            class="form-cadastro escondida"
+          >
             <label for="nome-novo-barbeiro">
               Nome do barbeiro
             </label>
@@ -159,7 +220,10 @@
             </button>
           </form>
 
-          <p id="mensagem-barbeiro" class="mensagem"></p>
+          <p
+            id="mensagem-barbeiro"
+            class="mensagem"
+          ></p>
 
           <div
             id="lista-gerenciar-barbeiros"
@@ -167,11 +231,23 @@
           ></div>
         </section>
 
-        <section id="tela-clientes" class="tela-gerenciamento escondida">
+        <!-- =====================================================
+             CLIENTES
+        ====================================================== -->
+
+        <section
+          id="tela-clientes"
+          class="tela-gerenciamento escondida"
+        >
           <div class="topo-gerenciamento">
             <div>
-              <p class="texto-pequeno">Área do sistema</p>
-              <h3>Clientes cadastrados</h3>
+              <p class="texto-pequeno">
+                Área do sistema
+              </p>
+
+              <h3>
+                Clientes cadastrados
+              </h3>
             </div>
           </div>
 
@@ -193,8 +269,13 @@
             />
           </div>
 
-          <form id="form-cadastro-cliente" class="form-cadastro escondida">
-            <label for="nome-novo-cliente">Nome do cliente</label>
+          <form
+            id="form-cadastro-cliente"
+            class="form-cadastro escondida"
+          >
+            <label for="nome-novo-cliente">
+              Nome do cliente
+            </label>
 
             <input
               id="nome-novo-cliente"
@@ -204,7 +285,9 @@
               required
             />
 
-            <label for="celular-novo-cliente">Número de celular</label>
+            <label for="celular-novo-cliente">
+              Número de celular
+            </label>
 
             <input
               id="celular-novo-cliente"
@@ -216,12 +299,18 @@
               required
             />
 
-            <button class="botao-principal botao-salvar" type="submit">
+            <button
+              class="botao-principal botao-salvar"
+              type="submit"
+            >
               Salvar cliente
             </button>
           </form>
 
-          <p id="mensagem-cliente" class="mensagem"></p>
+          <p
+            id="mensagem-cliente"
+            class="mensagem"
+          ></p>
 
           <div
             id="lista-gerenciar-clientes"
@@ -229,21 +318,234 @@
           ></div>
         </section>
 
-        <section id="tela-configuracoes" class="tela-gerenciamento escondida">
+        <!-- =====================================================
+             PRODUTOS E SERVIÇOS
+        ====================================================== -->
+
+        <section
+          id="tela-produtos-servicos"
+          class="tela-gerenciamento escondida"
+        >
           <div class="topo-gerenciamento">
             <div>
-              <p class="texto-pequeno">Área do sistema</p>
-              <h3>Configurações</h3>
+              <p class="texto-pequeno">
+                Catálogo da barbearia
+              </p>
+
+              <h3>
+                Produtos e Serviços
+              </h3>
+            </div>
+          </div>
+
+          <div class="area-produtos-servicos">
+
+            <!-- PRODUTOS -->
+
+            <div class="bloco-produtos-servicos">
+              <div class="cabecalho-catalogo">
+                <div>
+                  <h4>
+                    Produtos
+                  </h4>
+
+                  <p>
+                    Cadastre os produtos vendidos pela barbearia.
+                  </p>
+                </div>
+
+                <button
+                  id="botao-mostrar-cadastro-produto"
+                  class="botao-principal"
+                  type="button"
+                >
+                  Cadastrar produto
+                </button>
+              </div>
+
+              <form
+                id="form-cadastro-produto"
+                class="form-cadastro escondida"
+              >
+                <label for="nome-novo-produto">
+                  Nome do produto
+                </label>
+
+                <input
+                  id="nome-novo-produto"
+                  type="text"
+                  placeholder="Ex.: Pomada modeladora"
+                  autocomplete="off"
+                  required
+                />
+
+                <label for="valor-novo-produto">
+                  Valor do produto
+                </label>
+
+                <input
+                  id="valor-novo-produto"
+                  type="text"
+                  inputmode="decimal"
+                  placeholder="R$ 0,00"
+                  autocomplete="off"
+                  required
+                />
+
+                <button
+                  class="botao-principal botao-salvar"
+                  type="submit"
+                >
+                  Salvar produto
+                </button>
+              </form>
+
+              <p
+                id="mensagem-produto"
+                class="mensagem"
+              ></p>
+
+              <input
+                id="pesquisa-produto"
+                class="barra-pesquisa"
+                type="text"
+                placeholder="Pesquisar produto..."
+                autocomplete="off"
+              />
+
+              <div
+                id="lista-produtos"
+                class="lista-gerenciamento lista-catalogo"
+              >
+                <p class="lista-vazia">
+                  Nenhum produto cadastrado.
+                </p>
+              </div>
+            </div>
+
+            <!-- SERVIÇOS -->
+
+            <div class="bloco-produtos-servicos">
+              <div class="cabecalho-catalogo">
+                <div>
+                  <h4>
+                    Serviços
+                  </h4>
+
+                  <p>
+                    Cadastre os serviços prestados pela barbearia.
+                  </p>
+                </div>
+
+                <button
+                  id="botao-mostrar-cadastro-servico"
+                  class="botao-principal"
+                  type="button"
+                >
+                  Cadastrar serviço
+                </button>
+              </div>
+
+              <form
+                id="form-cadastro-servico"
+                class="form-cadastro escondida"
+              >
+                <label for="nome-novo-servico">
+                  Nome do serviço
+                </label>
+
+                <input
+                  id="nome-novo-servico"
+                  type="text"
+                  placeholder="Ex.: Corte degradê"
+                  autocomplete="off"
+                  required
+                />
+
+                <label for="valor-novo-servico">
+                  Valor do serviço
+                </label>
+
+                <input
+                  id="valor-novo-servico"
+                  type="text"
+                  inputmode="decimal"
+                  placeholder="R$ 0,00"
+                  autocomplete="off"
+                  required
+                />
+
+                <button
+                  class="botao-principal botao-salvar"
+                  type="submit"
+                >
+                  Salvar serviço
+                </button>
+              </form>
+
+              <p
+                id="mensagem-servico"
+                class="mensagem"
+              ></p>
+
+              <input
+                id="pesquisa-servico"
+                class="barra-pesquisa"
+                type="text"
+                placeholder="Pesquisar serviço..."
+                autocomplete="off"
+              />
+
+              <div
+                id="lista-servicos"
+                class="lista-gerenciamento lista-catalogo"
+              >
+                <p class="lista-vazia">
+                  Nenhum serviço cadastrado.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             CONFIGURAÇÕES
+        ====================================================== -->
+
+        <section
+          id="tela-configuracoes"
+          class="tela-gerenciamento escondida"
+        >
+          <div class="topo-gerenciamento">
+            <div>
+              <p class="texto-pequeno">
+                Área do sistema
+              </p>
+
+              <h3>
+                Configurações
+              </h3>
             </div>
           </div>
 
           <div class="cartao-configuracao">
-            <h4>Tema do sistema</h4>
-            <p>Escolha como o sistema aparecerá em todos os computadores.</p>
+            <h4>
+              Tema do sistema
+            </h4>
+
+            <p>
+              Escolha como o sistema aparecerá em todos os computadores.
+            </p>
 
             <div class="opcoes-tema">
               <label class="opcao-tema">
-                <input type="radio" name="tema" value="escuro" checked />
+                <input
+                  type="radio"
+                  name="tema"
+                  value="escuro"
+                  checked
+                />
+
                 <span>
                   <strong>Tema escuro</strong>
                   <small>Preto e dourado</small>
@@ -251,7 +553,12 @@
               </label>
 
               <label class="opcao-tema">
-                <input type="radio" name="tema" value="claro" />
+                <input
+                  type="radio"
+                  name="tema"
+                  value="claro"
+                />
+
                 <span>
                   <strong>Tema claro</strong>
                   <small>Branco e dourado</small>
@@ -259,28 +566,46 @@
               </label>
             </div>
 
-            <p id="mensagem-tema" class="mensagem"></p>
+            <p
+              id="mensagem-tema"
+              class="mensagem"
+            ></p>
           </div>
 
-          <div id="configuracao-senha" class="cartao-configuracao escondida">
-            <h4>Senhas dos usuários</h4>
+          <div
+            id="configuracao-senha"
+            class="cartao-configuracao escondida"
+          >
+            <h4>
+              Senhas dos usuários
+            </h4>
 
-            <p>
-              Altere a senha do administrador ou de qualquer barbeiro cadastrado.
+            <p id="descricao-configuracao-senha">
+              Altere a senha de acesso ao sistema.
             </p>
 
-            <form id="form-alterar-senha" class="form-configuracao">
+            <form
+              id="form-alterar-senha"
+              class="form-configuracao"
+            >
               <label for="usuario-alterar-senha">
                 Usuário
               </label>
 
-              <select id="usuario-alterar-senha" required>
+              <select
+                id="usuario-alterar-senha"
+                required
+              >
                 <option value="">
                   Selecione um usuário
                 </option>
 
                 <option value="administrador">
                   Administrador
+                </option>
+
+                <option value="recepcionista">
+                  Recepcionista
                 </option>
               </select>
 
@@ -318,111 +643,639 @@
               </button>
             </form>
 
-            <p id="mensagem-senha" class="mensagem"></p>
+            <p
+              id="mensagem-senha"
+              class="mensagem"
+            ></p>
           </div>
-
         </section>
 
-        <section id="tela-relatorio" class="tela-gerenciamento escondida">
+        <!-- =====================================================
+             RELATÓRIO
+        ====================================================== -->
+
+        <section
+          id="tela-relatorio"
+          class="tela-gerenciamento escondida"
+        >
           <div class="topo-gerenciamento">
             <div>
-              <p class="texto-pequeno">Área do sistema</p>
-              <h3>Relatório</h3>
+              <p class="texto-pequeno">
+                Área do sistema
+              </p>
+
+              <h3>
+                Relatório
+              </h3>
             </div>
           </div>
 
-          <div class="filtros-relatorio">
-            <select id="filtro-relatorio-barbeiro">
-              <option value="todos">Barbearia inteira</option>
-            </select>
+          <div class="abas-relatorio">
+            <button
+              id="aba-relatorio-desempenho"
+              class="botao-aba-relatorio ativo"
+              type="button"
+            >
+              Desempenho
+            </button>
+
+            <button
+              id="aba-relatorio-financeiro"
+              class="botao-aba-relatorio escondida"
+              type="button"
+            >
+              Financeiro
+            </button>
+
+            <button
+              id="aba-relatorio-historico"
+              class="botao-aba-relatorio escondida"
+              type="button"
+            >
+              Histórico
+            </button>
           </div>
 
-          <div class="resumo-relatorio">
-            <div class="cartao-resumo">
-              <span>Total concluído</span>
-              <strong id="total-concluido">0</strong>
+          <!-- DESEMPENHO -->
+
+          <div id="conteudo-relatorio-desempenho">
+            <div class="filtros-relatorio">
+              <select id="filtro-relatorio-barbeiro">
+                <option value="todos">
+                  Barbearia inteira
+                </option>
+              </select>
             </div>
 
-            <div class="cartao-resumo">
-              <span>Horário mais atendido</span>
-              <strong id="horario-mais-atendido">—</strong>
+            <div class="resumo-relatorio">
+              <div class="cartao-resumo">
+                <span>
+                  Total concluído
+                </span>
+
+                <strong id="total-concluido">
+                  0
+                </strong>
+              </div>
+
+              <div class="cartao-resumo">
+                <span>
+                  Horário mais atendido
+                </span>
+
+                <strong id="horario-mais-atendido">
+                  —
+                </strong>
+              </div>
+
+              <div class="cartao-resumo">
+                <span>
+                  Dia da semana com mais atendimentos
+                </span>
+
+                <strong id="dia-mais-atendido">
+                  —
+                </strong>
+              </div>
             </div>
 
-            <div class="cartao-resumo">
-              <span>Dia da semana com mais atendimentos</span>
-              <strong id="dia-mais-atendido">—</strong>
+            <div class="calendario-area">
+              <div class="topo-calendario">
+                <button
+                  id="mes-anterior"
+                  class="botao-mes"
+                  type="button"
+                >
+                  ←
+                </button>
+
+                <h4 id="titulo-calendario">
+                  Mês
+                </h4>
+
+                <button
+                  id="proximo-mes"
+                  class="botao-mes"
+                  type="button"
+                >
+                  →
+                </button>
+              </div>
+
+              <div class="dias-semana-calendario">
+                <span>Seg</span>
+                <span>Ter</span>
+                <span>Qua</span>
+                <span>Qui</span>
+                <span>Sex</span>
+                <span>Sáb</span>
+                <span>Dom</span>
+              </div>
+
+              <div
+                id="calendario-relatorio"
+                class="grade-calendario"
+              ></div>
+            </div>
+
+            <div class="grafico-area">
+              <div class="cabecalho-segundo-grafico">
+                <h4 id="titulo-segundo-grafico">
+                  Horário que mais atende
+                </h4>
+
+                <select id="filtro-segundo-grafico">
+                  <option value="horario">
+                    Horário que mais atende
+                  </option>
+
+                  <option value="dia-semana">
+                    Dia da semana que mais atende
+                  </option>
+                </select>
+              </div>
+
+              <canvas id="grafico-status"></canvas>
             </div>
           </div>
 
-          <div class="calendario-area">
-            <div class="topo-calendario">
+          <!-- FINANCEIRO -->
+
+          <div
+            id="conteudo-relatorio-financeiro"
+            class="escondida"
+            >
+            <div class="cabecalho-financeiro">
+              <div>
+                <p class="texto-pequeno">
+                  Visão financeira
+                </p>
+
+                <h4>
+                  Resultados da barbearia
+                </h4>
+
+                <p>
+                  Acompanhe os valores recebidos nos atendimentos concluídos.
+                </p>
+              </div>
+
+              <div class="acoes-financeiro">
+                <div class="filtros-financeiros">
+                  <select id="periodo-relatorio-financeiro">
+                    <option value="diario">
+                      Diário
+                    </option>
+
+                    <option value="semanal">
+                      Semanal
+                    </option>
+
+                    <option
+                      value="mensal"
+                      selected
+                    >
+                      Mensal
+                    </option>
+                  </select>
+
+                  <select id="filtro-financeiro-barbeiro">
+                    <option value="todos">
+                      Barbearia inteira
+                    </option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="navegacao-periodo-financeiro">
               <button
-                id="mes-anterior"
+                id="periodo-financeiro-anterior"
                 class="botao-mes"
                 type="button"
-                aria-label="Mês anterior"
               >
                 ←
               </button>
 
-              <h4 id="titulo-calendario">Mês</h4>
+              <strong id="titulo-periodo-financeiro">
+                Período atual
+              </strong>
 
               <button
-                id="proximo-mes"
+                id="periodo-financeiro-proximo"
                 class="botao-mes"
                 type="button"
-                aria-label="Próximo mês"
               >
                 →
               </button>
             </div>
 
-            <div class="dias-semana-calendario">
-              <span>Seg</span>
-              <span>Ter</span>
-              <span>Qua</span>
-              <span>Qui</span>
-              <span>Sex</span>
-              <span>Sáb</span>
-              <span>Dom</span>
+            <div class="cards-financeiros">
+              <div class="cartao-financeiro destaque">
+                <span>Faturamento total</span>
+
+                <strong id="financeiro-faturamento-total">
+                  R$ 0,00
+                </strong>
+
+                <small>
+                  Serviços e produtos
+                </small>
+              </div>
+
+              <div class="cartao-financeiro">
+                <span>Total em serviços</span>
+
+                <strong id="financeiro-total-servicos">
+                  R$ 0,00
+                </strong>
+
+                <small id="financeiro-quantidade-servicos">
+                  0 serviços realizados
+                </small>
+              </div>
+
+              <div class="cartao-financeiro">
+                <span>Total em produtos</span>
+
+                <strong id="financeiro-total-produtos">
+                  R$ 0,00
+                </strong>
+
+                <small id="financeiro-quantidade-produtos">
+                  0 produtos vendidos
+                </small>
+              </div>
+
+              <div class="cartao-financeiro">
+                <span>Atendimentos concluídos</span>
+
+                <strong id="financeiro-total-atendimentos-numero">
+                  0
+                </strong>
+
+                <small id="financeiro-total-atendimentos">
+                  0 atendimentos no período
+                </small>
+              </div>
             </div>
 
-            <div id="calendario-relatorio" class="grade-calendario"></div>
+            <div class="grafico-financeiro-area">
+              <div class="cabecalho-grafico-financeiro">
+                <div>
+                  <p class="texto-pequeno">
+                    Evolução do faturamento
+                  </p>
+
+                  <h4 id="titulo-grafico-financeiro">
+                    Faturamento mensal
+                  </h4>
+                </div>
+
+                <strong id="total-grafico-financeiro">
+                  R$ 0,00
+                </strong>
+              </div>
+
+              <div class="container-grafico-financeiro">
+                <canvas id="grafico-financeiro"></canvas>
+              </div>
+            </div>
+
+            <div class="secao-financeira">
+              <div class="titulo-secao-financeira">
+                <div>
+                  <p class="texto-pequeno">
+                    Recebimentos
+                  </p>
+
+                  <h4>
+                    Formas de pagamento
+                  </h4>
+                </div>
+              </div>
+
+              <div class="cards-pagamento">
+                <div class="cartao-pagamento">
+                  <span>Pix</span>
+
+                  <strong id="financeiro-total-pix">
+                    R$ 0,00
+                  </strong>
+
+                  <small id="financeiro-quantidade-pix">
+                    0 pagamentos
+                  </small>
+                </div>
+
+                <div class="cartao-pagamento">
+                  <span>Dinheiro</span>
+
+                  <strong id="financeiro-total-dinheiro">
+                    R$ 0,00
+                  </strong>
+
+                  <small id="financeiro-quantidade-dinheiro">
+                    0 pagamentos
+                  </small>
+                </div>
+
+                <div class="cartao-pagamento">
+                  <span>Cartão</span>
+
+                  <strong id="financeiro-total-cartao">
+                    R$ 0,00
+                  </strong>
+
+                  <small id="financeiro-quantidade-cartao">
+                    0 pagamentos
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="rankings-financeiros">
+              <div class="cartao-ranking-financeiro">
+                <div class="titulo-ranking-financeiro">
+                  <p class="texto-pequeno">
+                    Ranking
+                  </p>
+
+                  <h4>
+                    Faturamento por barbeiro
+                  </h4>
+                </div>
+
+                <div
+                  id="ranking-financeiro-barbeiros"
+                  class="lista-ranking-financeiro"
+                >
+                  <p class="lista-vazia">
+                    Nenhum atendimento concluído no período.
+                  </p>
+                </div>
+              </div>
+
+              <div class="cartao-ranking-financeiro">
+                <div class="titulo-ranking-financeiro">
+                  <p class="texto-pequeno">
+                    Mais realizados
+                  </p>
+
+                  <h4>
+                    Serviços
+                  </h4>
+                </div>
+
+                <div
+                  id="ranking-financeiro-servicos"
+                  class="lista-ranking-financeiro"
+                >
+                  <p class="lista-vazia">
+                    Nenhum serviço registrado no período.
+                  </p>
+                </div>
+              </div>
+
+              <div class="cartao-ranking-financeiro">
+                <div class="titulo-ranking-financeiro">
+                  <p class="texto-pequeno">
+                    Mais vendidos
+                  </p>
+
+                  <h4>
+                    Produtos
+                  </h4>
+                </div>
+
+                <div
+                  id="ranking-financeiro-produtos"
+                  class="lista-ranking-financeiro"
+                >
+                  <p class="lista-vazia">
+                    Nenhum produto vendido no período.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="grafico-area">
-            <div class="cabecalho-segundo-grafico">
-              <h4 id="titulo-segundo-grafico">Horário que mais atende</h4>
+          <!-- HISTÓRICO -->
 
-              <select id="filtro-segundo-grafico">
-                <option value="horario">Horário que mais atende</option>
-                <option value="dia-semana">
-                  Dia da semana que mais atende
+          <div
+            id="conteudo-relatorio-historico"
+            class="escondida"
+           >
+           
+            <div class="cabecalho-historico">
+              <div>
+                <p class="texto-pequeno">
+                  Movimentações financeiras
+                </p>
+
+                <h4>
+                  Histórico
+                </h4>
+
+                <p>
+                  Consulte todas as entradas e saídas da barbearia.
+                </p>
+              </div>
+
+              <div class="acoes-historico">
+                <button
+                  id="gerar-pdf-historico"
+                  class="botao-secundario"
+                  type="button"
+                 >
+                  Gerar PDF
+                </button>
+
+                <button
+                  id="botao-registrar-saida"
+                  class="botao-principal"
+                  type="button"
+                >
+                  Registrar saída
+                </button>
+              </div>
+            </div>
+
+            <div class="filtros-historico">
+              <select id="periodo-historico">
+                <option value="diario">
+                  Diário
+                </option>
+
+                <option value="semanal">
+                  Semanal
+                </option>
+
+                <option
+                  value="mensal"
+                  selected
+                >
+                  Mensal
+                </option>
+              </select>
+
+              <select id="filtro-historico-barbeiro">
+                <option value="todos">
+                  Barbearia inteira
+                </option>
+              </select>
+
+              <select id="filtro-historico-tipo">
+                <option value="todos">
+                  Entradas e saídas
+                </option>
+
+                <option value="entrada">
+                  Somente entradas
+                </option>
+
+                <option value="saida">
+                  Somente saídas
                 </option>
               </select>
             </div>
 
-            <canvas id="grafico-status"></canvas>
+            <div class="navegacao-periodo-historico">
+              <button
+                id="periodo-historico-anterior"
+                class="botao-mes"
+                type="button"
+              >
+                ←
+              </button>
+
+              <strong id="titulo-periodo-historico">
+                Período atual
+              </strong>
+
+              <button
+                id="periodo-historico-proximo"
+                class="botao-mes"
+                type="button"
+              >
+                →
+              </button>
+            </div>
+
+            <div class="cards-historico">
+              <div class="cartao-historico entrada">
+                <span>
+                  Entradas no período
+                </span>
+
+                <strong id="historico-total-entradas">
+                  R$ 0,00
+                </strong>
+
+                <small id="historico-quantidade-entradas">
+                  0 movimentações
+                </small>
+              </div>
+
+              <div class="cartao-historico saida">
+                <span>
+                  Saídas no período
+                </span>
+
+                <strong id="historico-total-saidas">
+                  R$ 0,00
+                </strong>
+
+                <small id="historico-quantidade-saidas">
+                  0 movimentações
+                </small>
+              </div>
+
+              <div class="cartao-historico saldo">
+                <span>
+                  Saldo do período
+                </span>
+
+                <strong id="historico-saldo">
+                  R$ 0,00
+                </strong>
+
+                <small>
+                  Entradas menos saídas
+                </small>
+              </div>
+            </div>
+
+            <div class="area-historico-financeiro">
+              <div class="cabecalho-lista-historico">
+                <div>
+                  <p class="texto-pequeno">
+                    Movimentações
+                  </p>
+
+                  <h4>
+                    Histórico financeiro
+                  </h4>
+                </div>
+
+                <span id="quantidade-movimentacoes-historico">
+                  0 movimentações
+                </span>
+              </div>
+
+              <div
+                id="lista-historico-financeiro"
+                class="lista-historico-financeiro"
+              >
+                <p class="lista-vazia">
+                  Nenhuma movimentação encontrada neste período.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
       </main>
     </div>
 
-    <div id="modal-novo" class="modal escondido">
+    <!-- =====================================================
+         MODAL NOVO AGENDAMENTO
+    ====================================================== -->
+
+    <div
+      id="modal-novo"
+      class="modal escondido"
+    >
       <div class="janela">
-        <button class="fechar-modal" type="button" data-fechar="modal-novo">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-novo"
+        >
           ×
         </button>
 
-        <h2>Novo agendamento</h2>
+        <h2>
+          Novo agendamento
+        </h2>
+
         <p id="informacao-horario"></p>
 
         <form id="form-agendamento">
-          <input id="data-agendamento" type="hidden" />
-          <input id="hora-agendamento" type="hidden" />
+          <input
+            id="data-agendamento"
+            type="hidden"
+          />
+
+          <input
+            id="hora-agendamento"
+            type="hidden"
+          />
 
           <div class="tipo-agendamento">
-            <p>Tipo de atendimento</p>
+            <p>
+              Tipo de atendimento
+            </p>
 
             <label>
               <input
@@ -431,6 +1284,7 @@
                 value="Horário marcado"
                 checked
               />
+
               Horário marcado
             </label>
 
@@ -440,11 +1294,14 @@
                 name="tipo-agendamento"
                 value="Atendimento agora"
               />
+
               Atendimento agora
             </label>
           </div>
 
-          <label for="pesquisa-cliente-agendamento">Cliente</label>
+          <label for="pesquisa-cliente-agendamento">
+            Cliente
+          </label>
 
           <input
             id="pesquisa-cliente-agendamento"
@@ -467,7 +1324,10 @@
               Cancelar
             </button>
 
-            <button class="botao-principal" type="submit">
+            <button
+              class="botao-principal"
+              type="submit"
+            >
               Salvar agendamento
             </button>
           </div>
@@ -475,7 +1335,14 @@
       </div>
     </div>
 
-    <div id="modal-detalhes" class="modal escondido">
+    <!-- =====================================================
+         MODAL DETALHES
+    ====================================================== -->
+
+    <div
+      id="modal-detalhes"
+      class="modal escondido"
+    >
       <div class="janela">
         <button
           class="fechar-modal"
@@ -485,11 +1352,24 @@
           ×
         </button>
 
-        <h2>Agendamento</h2>
+        <h2>
+          Agendamento
+        </h2>
 
-        <p><strong>Cliente:</strong> <span id="detalhe-cliente"></span></p>
-        <p><strong>Data:</strong> <span id="detalhe-data"></span></p>
-        <p><strong>Horário:</strong> <span id="detalhe-hora"></span></p>
+        <p>
+          <strong>Cliente:</strong>
+          <span id="detalhe-cliente"></span>
+        </p>
+
+        <p>
+          <strong>Data:</strong>
+          <span id="detalhe-data"></span>
+        </p>
+
+        <p>
+          <strong>Horário:</strong>
+          <span id="detalhe-hora"></span>
+        </p>
 
         <div class="botoes-modal">
           <button
@@ -519,7 +1399,508 @@
       </div>
     </div>
 
+    <!-- =====================================================
+         MODAL CONCLUIR ATENDIMENTO
+    ====================================================== -->
+
+    <div
+      id="modal-concluir-atendimento"
+      class="modal escondido"
+    >
+      <div class="janela">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-concluir-atendimento"
+        >
+          ×
+        </button>
+
+        <h2>
+          Concluir atendimento
+        </h2>
+
+        <p>
+          Informe o serviço realizado, o produto vendido e a forma de pagamento.
+        </p>
+
+        <form id="form-concluir-atendimento">
+
+          <div class="resumo-cliente-atendimento">
+            <p>
+              <strong>Cliente:</strong>
+              <span id="conclusao-cliente"></span>
+            </p>
+
+            <p>
+              <strong>Barbeiro:</strong>
+              <span id="conclusao-barbeiro"></span>
+            </p>
+
+            <p>
+              <strong>Data e horário:</strong>
+              <span id="conclusao-data-hora"></span>
+            </p>
+          </div>
+
+          <div class="bloco-itens-atendimento">
+
+            <label>
+              Serviço realizado
+            </label>
+
+            <div id="container-servicos-atendimento">
+
+              <div class="linha-selecao-atendimento linha-servico-atendimento">
+
+                <select
+                  id="servico-atendimento"
+                  class="select-servico-atendimento"
+                  required
+                >
+                  <option value="">
+                    Selecione o serviço
+                  </option>
+                </select>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              id="adicionar-servico-atendimento"
+              class="botao-adicionar-item-atendimento"
+            >
+              + Adicionar outro serviço
+            </button>
+
+            <p class="valor-item-atendimento">
+              Valor dos serviços:
+
+              <strong id="valor-servico-atendimento">
+                R$ 0,00
+              </strong>
+            </p>
+
+          </div>
+
+       <!-- =================================================
+     PRODUTOS
+================================================== -->
+          <div class="bloco-itens-atendimento">
+
+            <label>
+              Produto vendido
+            </label>
+
+            <div id="container-produtos-atendimento">
+
+              <div class="linha-selecao-atendimento linha-produto-atendimento">
+
+                <select
+                  id="produto-atendimento"
+                  class="select-produto-atendimento"
+                >
+                  <option value="">
+                    Nenhum produto vendido
+                  </option>
+                </select>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              id="adicionar-produto-atendimento"
+              class="botao-adicionar-item-atendimento"
+            >
+              + Adicionar outro produto
+            </button>
+
+            <p class="valor-item-atendimento">
+              Valor dos produtos:
+
+              <strong id="valor-produto-atendimento">
+                R$ 0,00
+              </strong>
+            </p>
+
+          </div>
+
+
+          <!-- =================================================
+              DESCONTO
+          ================================================== -->
+
+          <div class="bloco-desconto">
+
+            <div
+              id="campo-desconto"
+              class="campo-desconto escondida"
+            >
+
+              <label for="valor-desconto">
+                Valor do desconto
+              </label>
+
+              <input
+                id="valor-desconto"
+                type="text"
+                inputmode="decimal"
+                placeholder="R$ 0,00"
+                autocomplete="off"
+              />
+
+              <small>
+                Este valor será registrado como uma saída no histórico financeiro.
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+              FORMA DE PAGAMENTO
+          ================================================== -->
+
+          <label for="forma-pagamento-atendimento">
+            Forma de pagamento
+          </label>
+
+          <select
+            id="forma-pagamento-atendimento"
+            required
+          >
+            <option value="">
+              Selecione a forma de pagamento
+            </option>
+
+            <option value="Dinheiro">
+              Dinheiro
+            </option>
+
+            <option value="Pix">
+              Pix
+            </option>
+
+            <option value="Cartão">
+              Cartão
+            </option>
+          </select>
+
+
+          <!-- =================================================
+              TOTAL
+          ================================================== -->
+
+          <div class="total-atendimento">
+
+            <span>
+              Total do atendimento
+            </span>
+
+            <strong id="valor-total-atendimento">
+              R$ 0,00
+            </strong>
+
+          </div>
+
+
+          <p
+            id="mensagem-conclusao-atendimento"
+            class="mensagem"
+          ></p>
+
+
+          <!-- =================================================
+              BOTÕES
+          ================================================== -->
+
+          <div class="botoes-modal">
+
+            <button
+              class="botao-secundario"
+              type="button"
+              data-fechar="modal-concluir-atendimento"
+            >
+              Voltar
+            </button>
+
+            <button
+              class="botao-principal"
+              type="submit"
+            >
+              Confirmar atendimento
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL REGISTRAR SAÍDA
+    ====================================================== -->
+
+    <div
+      id="modal-registrar-saida"
+      class="modal escondido"
+    >
+      <div class="janela">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-registrar-saida"
+        >
+          ×
+        </button>
+
+        <h2>
+          Registrar saída
+        </h2>
+
+        <p>
+          Informe os dados da despesa da barbearia.
+        </p>
+
+        <form id="form-registrar-saida">
+          <label for="descricao-saida">
+            Descrição
+          </label>
+
+          <input
+            id="descricao-saida"
+            type="text"
+            placeholder="Ex.: Compra de produtos de limpeza"
+            autocomplete="off"
+            required
+          />
+
+          <label for="valor-saida">
+            Valor
+          </label>
+
+          <input
+            id="valor-saida"
+            type="text"
+            inputmode="decimal"
+            placeholder="R$ 0,00"
+            autocomplete="off"
+            required
+          />
+
+          <label for="forma-pagamento-saida">
+            Forma de pagamento
+          </label>
+
+          <select
+            id="forma-pagamento-saida"
+            required
+          >
+            <option value="">
+              Selecione a forma de pagamento
+            </option>
+
+            <option value="Dinheiro">
+              Dinheiro
+            </option>
+
+            <option value="Pix">
+              Pix
+            </option>
+
+            <option value="Cartão">
+              Cartão
+            </option>
+          </select>
+
+          <label for="data-saida">
+            Data
+          </label>
+
+          <input
+            id="data-saida"
+            type="date"
+            required
+          />
+
+          <label for="hora-saida">
+            Horário
+          </label>
+
+          <input
+            id="hora-saida"
+            type="time"
+            required
+          />
+
+          <p
+            id="mensagem-saida"
+            class="mensagem"
+          ></p>
+
+          <div class="botoes-modal">
+            <button
+              class="botao-secundario"
+              type="button"
+              data-fechar="modal-registrar-saida"
+            >
+              Cancelar
+            </button>
+
+            <button
+              class="botao-principal"
+              type="submit"
+            >
+              Registrar saída
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL EDITAR CATÁLOGO
+    ====================================================== -->
+
+    <div
+      id="modal-editar-catalogo"
+      class="modal escondido"
+    >
+      <div class="janela">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-editar-catalogo"
+        >
+          ×
+        </button>
+
+        <h2 id="titulo-editar-catalogo">
+          Editar item
+        </h2>
+
+        <form id="form-editar-catalogo">
+          <input
+            id="id-editar-catalogo"
+            type="hidden"
+          />
+
+          <input
+            id="tipo-editar-catalogo"
+            type="hidden"
+          />
+
+          <label for="nome-editar-catalogo">
+            Nome
+          </label>
+
+          <input
+            id="nome-editar-catalogo"
+            type="text"
+            placeholder="Digite o nome"
+            autocomplete="off"
+            required
+          />
+
+          <label for="valor-editar-catalogo">
+            Valor
+          </label>
+
+          <input
+            id="valor-editar-catalogo"
+            type="text"
+            inputmode="decimal"
+            placeholder="R$ 0,00"
+            autocomplete="off"
+            required
+          />
+
+          <p
+            id="mensagem-editar-catalogo"
+            class="mensagem"
+          ></p>
+
+          <div class="botoes-modal">
+            <button
+              class="botao-secundario"
+              type="button"
+              data-fechar="modal-editar-catalogo"
+            >
+              Cancelar
+            </button>
+
+            <button
+              class="botao-principal"
+              type="submit"
+            >
+              Salvar alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL SAIR
+    ====================================================== -->
+
+    <div
+      id="modal-sair"
+      class="modal escondido"
+    >
+      <div class="janela">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-sair"
+        >
+          ×
+        </button>
+
+        <h2>
+          Sair do sistema
+        </h2>
+
+        <p>
+          Tem certeza de que deseja sair?
+        </p>
+
+        <div class="botoes-modal">
+          <button
+            class="botao-secundario"
+            type="button"
+            data-fechar="modal-sair"
+          >
+            Continuar no sistema
+          </button>
+
+          <button
+            id="confirmar-sair"
+            class="botao-perigo"
+            type="button"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="module" src="dashboard.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+    <script
+      type="module"
+      src="dashboard.js"
+    ></script>
+
   </body>
 </html>

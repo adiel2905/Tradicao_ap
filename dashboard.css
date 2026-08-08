@@ -763,6 +763,10 @@ select {
   background-color: #202020;
 }
 
+.escondida {
+  display: none !important;
+}
+
 .cartao-configuracao.escondida {
   display: none;
 }
@@ -1386,3 +1390,1935 @@ body.tema-claro {
   }
 }
 
+/* =========================================================
+   PRODUTOS E SERVIÇOS
+========================================================= */
+
+.area-produtos-servicos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.bloco-produtos-servicos {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background-color: #202020;
+}
+
+.cabecalho-catalogo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.cabecalho-catalogo h4 {
+  margin: 0 0 6px;
+  color: #e1b763;
+  font-size: 20px;
+}
+
+.cabecalho-catalogo p {
+  margin: 0;
+  color: #bdbdbd;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.bloco-produtos-servicos .form-cadastro {
+  max-width: none;
+  margin-top: 15px;
+}
+
+.bloco-produtos-servicos .barra-pesquisa {
+  max-width: none;
+  margin-bottom: 14px;
+}
+
+.lista-catalogo {
+  min-height: 220px;
+  max-height: 430px;
+  overflow-y: auto;
+}
+
+.acoes-item-catalogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.acoes-item-catalogo .botao-secundario,
+.acoes-item-catalogo .botao-excluir {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.acoes-item-catalogo .botao-secundario {
+  border-color: #8a7348;
+  color: #f0d191;
+  background-color: #29241b;
+}
+
+.acoes-item-catalogo .botao-secundario:hover {
+  border-color: #c99b42;
+  background-color: #3a301f;
+}
+
+.lista-catalogo::-webkit-scrollbar {
+  width: 7px;
+}
+
+.lista-catalogo::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #8a682f;
+}
+
+.lista-catalogo::-webkit-scrollbar-track {
+  background-color: #e8e8e8;
+}
+
+/* =========================================================
+   CAMPOS DOS MODAIS
+========================================================= */
+
+.janela select,
+.janela input {
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.janela select:focus,
+.janela input:focus {
+  border-color: #c99b42;
+  box-shadow: 0 0 0 3px rgba(201, 155, 66, 0.15);
+}
+
+#modal-concluir-atendimento .janela {
+  max-width: 680px;
+}
+
+#modal-editar-catalogo .janela {
+  max-width: 520px;
+}
+
+/* =========================================================
+   CONCLUSÃO DO ATENDIMENTO
+========================================================= */
+
+.resumo-cliente-atendimento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0 22px;
+}
+
+.resumo-cliente-atendimento p {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #505050;
+  border-radius: 6px;
+  color: #d5d5d5;
+  background-color: #222;
+  font-size: 13px;
+}
+
+.resumo-cliente-atendimento strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #e1b763;
+}
+
+.valor-item-atendimento {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 8px 0 18px !important;
+  padding: 10px 12px;
+  border: 1px solid #454545;
+  border-radius: 5px;
+  color: #bdbdbd;
+  background-color: #202020;
+  font-size: 13px;
+}
+
+.valor-item-atendimento strong {
+  color: #f0d191;
+  font-size: 15px;
+}
+
+.total-atendimento {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+  padding: 18px;
+  border: 1px solid #c99b42;
+  border-radius: 7px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(201, 155, 66, 0.18),
+      rgba(25, 25, 25, 0.95)
+    );
+}
+
+.total-atendimento span {
+  color: #d8d8d8;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.total-atendimento strong {
+  color: #f0d191;
+  font-size: 24px;
+}
+
+#mensagem-conclusao-atendimento {
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   MELHORIAS DOS BOTÕES
+========================================================= */
+
+.botao-principal,
+.botao-secundario,
+.botao-excluir,
+.botao-concluir,
+.botao-nao-realizado,
+.botao-perigo {
+  transition:
+    transform 0.2s,
+    filter 0.2s,
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+.botao-principal:hover,
+.botao-secundario:hover,
+.botao-excluir:hover,
+.botao-concluir:hover,
+.botao-nao-realizado:hover,
+.botao-perigo:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.botao-principal:active,
+.botao-secundario:active,
+.botao-excluir:active,
+.botao-concluir:active,
+.botao-nao-realizado:active,
+.botao-perigo:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   TEMA CLARO — PRODUTOS E SERVIÇOS
+========================================================= */
+
+.tema-claro .bloco-produtos-servicos {
+  border-color: #cbbd9d;
+  background-color: #ffffff;
+}
+
+.tema-claro .cabecalho-catalogo h4 {
+  color: #a8781f;
+}
+
+.tema-claro .cabecalho-catalogo p {
+  color: #555;
+}
+
+.tema-claro .bloco-produtos-servicos .form-cadastro {
+  border-color: #cbbd9d;
+  background-color: #f6f1e6;
+}
+
+.tema-claro .lista-catalogo {
+  border: 1px solid #d0c4aa;
+  background-color: #ffffff;
+}
+
+.tema-claro .acoes-item-catalogo .botao-secundario {
+  border-color: #a8781f;
+  color: #704b12;
+  background-color: #f4ead6;
+}
+
+.tema-claro .acoes-item-catalogo .botao-secundario:hover {
+  background-color: #eadebf;
+}
+
+.tema-claro .resumo-cliente-atendimento p {
+  border-color: #cbbd9d;
+  color: #333;
+  background-color: #f7f2e8;
+}
+
+.tema-claro .resumo-cliente-atendimento strong {
+  color: #a8781f;
+}
+
+.tema-claro .valor-item-atendimento {
+  border-color: #cbbd9d;
+  color: #555;
+  background-color: #f7f2e8;
+}
+
+.tema-claro .valor-item-atendimento strong {
+  color: #8d6117;
+}
+
+.tema-claro .total-atendimento {
+  border-color: #b9872f;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(201, 155, 66, 0.22),
+      rgba(255, 255, 255, 0.98)
+    );
+}
+
+.tema-claro .total-atendimento span {
+  color: #3b321f;
+}
+
+.tema-claro .total-atendimento strong {
+  color: #805817;
+}
+
+.tema-claro .lista-catalogo::-webkit-scrollbar-track {
+  background-color: #eee7d8;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1050px) {
+  .area-produtos-servicos {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .bloco-produtos-servicos {
+    padding: 15px;
+  }
+
+  .cabecalho-catalogo {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .cabecalho-catalogo .botao-principal {
+    width: 100%;
+  }
+
+  .lista-catalogo {
+    max-height: none;
+  }
+
+  .acoes-item-catalogo {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .acoes-item-catalogo button {
+    width: 100%;
+  }
+
+  .resumo-cliente-atendimento {
+    grid-template-columns: 1fr;
+  }
+
+  .valor-item-atendimento {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .total-atendimento {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .total-atendimento strong {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .bloco-produtos-servicos {
+    padding: 12px;
+  }
+
+  .cabecalho-catalogo h4 {
+    font-size: 18px;
+  }
+
+  #modal-concluir-atendimento .janela,
+  #modal-editar-catalogo .janela {
+    padding: 24px 16px;
+  }
+}
+
+/* =========================================================
+   ABAS INTERNAS DO RELATÓRIO
+========================================================= */
+
+.abas-relatorio {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 5px;
+  border: 1px solid #3d3d3d;
+  border-radius: 10px;
+  background-color: #181818;
+}
+
+.botao-aba-relatorio {
+  min-width: 145px;
+  padding: 11px 20px;
+  border: 0;
+  border-radius: 7px;
+  color: #bdbdbd;
+  background-color: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botao-aba-relatorio:hover {
+  color: #f0d191;
+  background-color: #28231a;
+}
+
+.botao-aba-relatorio.ativo {
+  color: #151515;
+  background-color: #d8ad5b;
+}
+
+/* =========================================================
+   CABEÇALHO FINANCEIRO
+========================================================= */
+
+.cabecalho-financeiro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 20px;
+}
+
+.cabecalho-financeiro h4 {
+  margin: 4px 0 7px;
+  color: #f1c873;
+  font-size: 23px;
+}
+
+.cabecalho-financeiro p {
+  margin: 0;
+  color: #aaa;
+}
+
+.filtros-financeiros {
+  display: flex;
+  gap: 10px;
+}
+
+.filtros-financeiros select {
+  min-width: 165px;
+  padding: 10px 12px;
+  border: 1px solid #765d2d;
+  border-radius: 7px;
+  color: #fff;
+  background-color: #1d1d1d;
+}
+
+/* =========================================================
+   NAVEGAÇÃO DO PERÍODO
+========================================================= */
+
+.navegacao-periodo-financeiro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 22px;
+  padding: 12px;
+  border: 1px solid #3c3c3c;
+  border-radius: 9px;
+  background-color: #191919;
+}
+
+.navegacao-periodo-financeiro strong {
+  min-width: 200px;
+  color: #f1c873;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+/* =========================================================
+   CARDS FINANCEIROS
+========================================================= */
+
+.cards-financeiros {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.cartao-financeiro {
+  min-height: 130px;
+  padding: 18px;
+  border: 1px solid #3d3d3d;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      145deg,
+      #242424,
+      #191919
+    );
+}
+
+.cartao-financeiro.destaque {
+  border-color: #b88936;
+  background:
+    linear-gradient(
+      145deg,
+      #7d5d20,
+      #2a2113
+    );
+}
+
+.cartao-financeiro span {
+  display: block;
+  margin-bottom: 15px;
+  color: #bcbcbc;
+  font-size: 13px;
+}
+
+.cartao-financeiro strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #f1c873;
+  font-size: 25px;
+}
+
+.cartao-financeiro.destaque strong {
+  color: #fff;
+}
+
+.cartao-financeiro small {
+  color: #888;
+}
+
+/* =========================================================
+   GRÁFICO FINANCEIRO
+========================================================= */
+
+.grafico-financeiro-area {
+  margin-bottom: 22px;
+  padding: 20px;
+  border: 1px solid #3d3d3d;
+  border-radius: 11px;
+  background-color: #191919;
+}
+
+.cabecalho-grafico-financeiro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.cabecalho-grafico-financeiro h4 {
+  margin: 4px 0 0;
+  color: #f1c873;
+  font-size: 20px;
+}
+
+.cabecalho-grafico-financeiro > strong {
+  color: #f1c873;
+  font-size: 22px;
+}
+
+.container-grafico-financeiro {
+  position: relative;
+  height: 330px;
+}
+
+/* =========================================================
+   FORMAS DE PAGAMENTO
+========================================================= */
+
+.secao-financeira {
+  margin-bottom: 22px;
+  padding: 20px;
+  border: 1px solid #3d3d3d;
+  border-radius: 11px;
+  background-color: #191919;
+}
+
+.titulo-secao-financeira {
+  margin-bottom: 15px;
+}
+
+.titulo-secao-financeira h4 {
+  margin: 4px 0 0;
+  color: #f1c873;
+  font-size: 19px;
+}
+
+.cards-pagamento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.cartao-pagamento {
+  padding: 17px;
+  border: 1px solid #444;
+  border-radius: 9px;
+  background-color: #222;
+}
+
+.cartao-pagamento span {
+  display: block;
+  margin-bottom: 10px;
+  color: #aaa;
+}
+
+.cartao-pagamento strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #f1c873;
+  font-size: 21px;
+}
+
+.cartao-pagamento small {
+  color: #888;
+}
+
+/* =========================================================
+   RANKINGS
+========================================================= */
+
+.rankings-financeiros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.cartao-ranking-financeiro {
+  min-height: 270px;
+  padding: 19px;
+  border: 1px solid #3d3d3d;
+  border-radius: 11px;
+  background-color: #191919;
+}
+
+.titulo-ranking-financeiro {
+  margin-bottom: 15px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #373737;
+}
+
+.titulo-ranking-financeiro h4 {
+  margin: 4px 0 0;
+  color: #f1c873;
+}
+
+.lista-ranking-financeiro {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.item-ranking-financeiro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px;
+  border: 1px solid #393939;
+  border-radius: 7px;
+  background-color: #222;
+}
+
+.item-ranking-financeiro strong {
+  color: #eee;
+}
+
+.item-ranking-financeiro span {
+  color: #f1c873;
+}
+
+/* =========================================================
+   TEMA CLARO
+========================================================= */
+
+.tema-claro .abas-relatorio,
+.tema-claro .navegacao-periodo-financeiro,
+.tema-claro .grafico-financeiro-area,
+.tema-claro .secao-financeira,
+.tema-claro .cartao-ranking-financeiro {
+  border-color: #d1c3a4;
+  background-color: #fff;
+}
+
+.tema-claro .cartao-financeiro,
+.tema-claro .cartao-pagamento,
+.tema-claro .item-ranking-financeiro {
+  border-color: #d1c3a4;
+  background: #f7f2e8;
+}
+
+.tema-claro .cartao-financeiro strong,
+.tema-claro .cartao-pagamento strong,
+.tema-claro .cabecalho-financeiro h4,
+.tema-claro .cabecalho-grafico-financeiro h4,
+.tema-claro .titulo-secao-financeira h4,
+.tema-claro .titulo-ranking-financeiro h4 {
+  color: #94661b;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .cards-financeiros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rankings-financeiros {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 750px) {
+  .cabecalho-financeiro {
+    flex-direction: column;
+  }
+
+  .filtros-financeiros {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .filtros-financeiros select {
+    width: 100%;
+  }
+
+  .cards-financeiros,
+  .cards-pagamento {
+    grid-template-columns: 1fr;
+  }
+
+  .abas-relatorio {
+    flex-direction: column;
+  }
+
+  .botao-aba-relatorio {
+    width: 100%;
+  }
+
+  .container-grafico-financeiro {
+    height: 260px;
+  }
+}
+
+/* =====================================================
+   HISTÓRICO FINANCEIRO
+===================================================== */
+
+.cabecalho-historico{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.filtros-historico{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+.filtros-historico select{
+    background:#181818;
+    color:#fff;
+    border:1px solid #d4af37;
+    border-radius:10px;
+    padding:12px 16px;
+    min-width:190px;
+}
+
+.navegacao-periodo-historico{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    margin-bottom:30px;
+}
+
+#titulo-periodo-historico{
+    font-size:18px;
+    color:#d4af37;
+}
+
+.cards-historico{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+    margin-bottom:35px;
+}
+
+.cartao-historico{
+    background:#171717;
+    border:1px solid #2f2f2f;
+    border-radius:18px;
+    padding:25px;
+    transition:.25s;
+}
+
+.cartao-historico:hover{
+    transform:translateY(-4px);
+    border-color:#d4af37;
+}
+
+.cartao-historico span{
+    color:#9f9f9f;
+    font-size:14px;
+}
+
+.cartao-historico strong{
+    display:block;
+    margin:12px 0;
+    font-size:30px;
+    color:#fff;
+}
+
+.cartao-historico small{
+    color:#888;
+}
+
+.cartao-historico.entrada strong{
+    color:#27d36b;
+}
+
+.cartao-historico.saida strong{
+    color:#ff5d5d;
+}
+
+.cartao-historico.saldo strong{
+    color:#d4af37;
+}
+
+.area-historico-financeiro{
+    background:#171717;
+    border-radius:20px;
+    border:1px solid #2d2d2d;
+    overflow:hidden;
+}
+
+.cabecalho-lista-historico{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:25px;
+    border-bottom:1px solid #2b2b2b;
+}
+
+.lista-historico-financeiro{
+    display:flex;
+    flex-direction:column;
+}
+
+.item-historico{
+    display:grid;
+    grid-template-columns:170px 120px 1fr 170px 160px;
+    align-items:center;
+    gap:20px;
+    padding:18px 25px;
+    border-bottom:1px solid #252525;
+    transition:.25s;
+}
+
+.item-historico:hover{
+    background:#1d1d1d;
+}
+
+.item-historico:last-child{
+    border-bottom:none;
+}
+
+.item-historico .data{
+    color:#bfbfbf;
+    font-size:14px;
+}
+
+.item-historico .descricao strong{
+    display:block;
+    color:#fff;
+}
+
+.item-historico .descricao small{
+    color:#888;
+}
+
+.item-historico .tipo{
+    font-weight:600;
+}
+
+.item-historico .tipo.entrada{
+    color:#27d36b;
+}
+
+.item-historico .tipo.saida{
+    color:#ff5d5d;
+}
+
+.item-historico .valor{
+    text-align:right;
+    font-size:18px;
+    font-weight:700;
+}
+
+.item-historico .valor.entrada{
+    color:#27d36b;
+}
+
+.item-historico .valor.saida{
+    color:#ff5d5d;
+}
+
+@media (max-width:1000px){
+
+    .cabecalho-historico,
+    .cabecalho-lista-historico{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .item-historico{
+        grid-template-columns:1fr;
+        gap:8px;
+    }
+
+    .item-historico .valor{
+        text-align:left;
+    }
+
+    .filtros-historico{
+        flex-direction:column;
+    }
+
+    .filtros-historico select{
+        width:100%;
+    }
+}
+
+/* =====================================================
+   HISTÓRICO FINANCEIRO - MODELO ALMOXERIFADO
+===================================================== */
+
+.area-historico-financeiro {
+  margin-top: 24px;
+
+  background: #171717;
+
+  border: 1px solid #333;
+  border-radius: 14px;
+
+  overflow: hidden;
+}
+
+
+/* CABEÇALHO */
+
+.cabecalho-lista-historico {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 22px 26px;
+
+  border-bottom: 1px solid #353535;
+}
+
+.cabecalho-lista-historico h4 {
+  margin: 4px 0 0;
+
+  font-size: 20px;
+}
+
+
+/* CABEÇALHO DAS COLUNAS */
+
+.lista-historico-financeiro::before {
+  content: "";
+
+  display: block;
+
+  height: 0;
+}
+
+
+/* LISTA */
+
+.lista-historico-financeiro {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 0;
+}
+
+
+/* CADA MOVIMENTAÇÃO */
+
+.item-historico {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    135px
+    140px
+    150px
+    minmax(190px, 1fr)
+    130px
+    145px
+    120px;
+
+  align-items: center;
+
+  gap: 18px;
+
+  min-height: 92px;
+
+  padding: 18px 22px;
+
+  box-sizing: border-box;
+
+  background: #191919;
+
+  border-bottom: 1px solid #333333;
+
+  transition:
+    background 0.2s ease;
+}
+
+.item-historico:last-child {
+  border-bottom: none;
+}
+
+.item-historico:hover {
+  background: #202020;
+}
+
+
+/* COLUNAS */
+
+.coluna-historico {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.coluna-historico strong {
+  color: #f1f1f1;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.coluna-historico span {
+  color: #a9a9a9;
+
+  font-size: 13px;
+}
+
+
+/* DATA */
+
+.data-historico strong {
+  font-size: 15px;
+}
+
+.data-historico span {
+  font-size: 14px;
+
+  color: #d4af37;
+}
+
+
+/* DETALHES */
+
+.detalhes-historico strong {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detalhes-historico span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* VALOR */
+
+.valor-historico {
+  font-size: 17px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.valor-entrada {
+  color: #41d77a;
+}
+
+.valor-saida {
+  color: #ff6565;
+}
+
+
+/* MOVIMENTO */
+
+.movimento-historico {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.movimento-historico strong {
+  font-size: 14px;
+}
+
+
+/* BOLINHA */
+
+.indicador-movimento {
+  width: 11px;
+  height: 11px;
+
+  min-width: 11px;
+
+  border-radius: 50%;
+}
+
+
+/* ENTRADA */
+
+.indicador-entrada {
+  background: #36d46f;
+
+  box-shadow:
+    0 0 8px rgba(54, 212, 111, 0.45);
+}
+
+.item-historico.entrada
+.movimento-historico strong {
+  color: #41d77a;
+}
+
+
+/* SAÍDA */
+
+.indicador-saida {
+  background: #ff5555;
+
+  box-shadow:
+    0 0 8px rgba(255, 85, 85, 0.45);
+}
+
+.item-historico.saida
+.movimento-historico strong {
+  color: #ff6565;
+}
+
+
+/* SCROLL HORIZONTAL EM TELAS MENORES */
+
+.lista-historico-financeiro {
+  overflow-x: auto;
+}
+
+.item-historico {
+  min-width: 1050px;
+}
+
+
+/* TEMA CLARO */
+
+body.tema-claro
+.area-historico-financeiro {
+  background: #ffffff;
+
+  border-color: #dedede;
+}
+
+body.tema-claro
+.item-historico {
+  background: #ffffff;
+
+  border-bottom-color: #e5e5e5;
+}
+
+body.tema-claro
+.item-historico:hover {
+  background: #f7f7f7;
+}
+
+body.tema-claro
+.coluna-historico strong {
+  color: #222;
+}
+
+body.tema-claro
+.coluna-historico span {
+  color: #666;
+}
+
+body.tema-claro
+.data-historico span {
+  color: #9b7715;
+}
+
+/* =========================================================
+   HISTÓRICO FINANCEIRO - TABELA
+========================================================= */
+
+.area-historico-financeiro {
+  width: 100%;
+  margin-top: 24px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #171717;
+}
+
+.cabecalho-lista-historico {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  padding: 22px 24px;
+
+  border-bottom: 1px solid #333;
+}
+
+.cabecalho-lista-historico h4 {
+  margin: 4px 0 0;
+  font-size: 20px;
+}
+
+#quantidade-movimentacoes-historico {
+  color: #aaa;
+  font-size: 13px;
+}
+
+
+/* LISTA */
+
+.lista-historico-financeiro {
+  width: 100%;
+  overflow-x: auto;
+}
+
+
+/* CABEÇALHO DAS COLUNAS */
+
+.cabecalho-tabela-historico {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1.1fr)
+    minmax(220px, 2fr)
+    minmax(140px, 1fr)
+    minmax(130px, 1fr)
+    minmax(150px, 1fr)
+    minmax(120px, 0.8fr);
+
+  min-width: 950px;
+
+  padding: 16px 22px;
+
+  background: #222;
+
+  border-bottom: 1px solid #3a3a3a;
+
+  color: #bdbdbd;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* CADA MOVIMENTAÇÃO */
+
+.linha-historico {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1.1fr)
+    minmax(220px, 2fr)
+    minmax(140px, 1fr)
+    minmax(130px, 1fr)
+    minmax(150px, 1fr)
+    minmax(120px, 0.8fr);
+
+  min-width: 950px;
+
+  align-items: center;
+
+  padding: 19px 22px;
+
+  border-bottom: 1px solid #303030;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* LINHA COLORIDA NA ESQUERDA */
+
+.linha-historico::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+
+  width: 4px;
+
+  border-radius: 0 5px 5px 0;
+}
+
+.linha-historico.entrada::before {
+  background: #35c76f;
+}
+
+.linha-historico.saida::before {
+  background: #e45353;
+}
+
+
+/* HOVER */
+
+.linha-historico:hover {
+  background: #1e1e1e;
+}
+
+
+/* ÚLTIMA LINHA */
+
+.linha-historico:last-child {
+  border-bottom: none;
+}
+
+
+/* COLUNAS */
+
+.coluna-historico {
+  min-width: 0;
+
+  padding-right: 16px;
+
+  color: #d7d7d7;
+
+  font-size: 14px;
+}
+
+.coluna-historico strong {
+  display: block;
+
+  color: #f4f4f4;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* DATA E HORA */
+
+.coluna-data-historico {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coluna-data-historico strong {
+  font-size: 14px;
+}
+
+.coluna-data-historico span {
+  color: #949494;
+
+  font-size: 13px;
+}
+
+
+/* MOVIMENTAÇÃO */
+
+.coluna-movimentacao-historico strong {
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #f3f3f3;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* VALOR */
+
+.coluna-valor-historico strong {
+  font-size: 15px;
+}
+
+.linha-historico.entrada
+.coluna-valor-historico strong {
+  color: #45d47b;
+}
+
+.linha-historico.saida
+.coluna-valor-historico strong {
+  color: #ff6767;
+}
+
+
+/* INDICADOR ENTRADA / SAÍDA */
+
+.indicador-movimento {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.indicador-movimento i {
+  display: block;
+
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+}
+
+.indicador-movimento.entrada {
+  color: #45d47b;
+}
+
+.indicador-movimento.entrada i {
+  background: #45d47b;
+
+  box-shadow:
+    0 0 8px rgba(69, 212, 123, 0.5);
+}
+
+.indicador-movimento.saida {
+  color: #ff6767;
+}
+
+.indicador-movimento.saida i {
+  background: #ff6767;
+
+  box-shadow:
+    0 0 8px rgba(255, 103, 103, 0.5);
+}
+
+
+/* VAZIO */
+
+.historico-vazio {
+  padding: 40px 20px;
+
+  text-align: center;
+
+  color: #888;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   TEMA CLARO
+========================================================= */
+
+body.tema-claro
+.area-historico-financeiro {
+  background: #fff;
+
+  border-color: #ddd;
+}
+
+body.tema-claro
+.cabecalho-lista-historico {
+  border-color: #e5e5e5;
+}
+
+body.tema-claro
+.cabecalho-tabela-historico {
+  background: #f1f1f1;
+
+  border-color: #ddd;
+
+  color: #555;
+}
+
+body.tema-claro
+.linha-historico {
+  border-color: #e4e4e4;
+}
+
+body.tema-claro
+.linha-historico:hover {
+  background: #fafafa;
+}
+
+body.tema-claro
+.coluna-historico {
+  color: #4a4a4a;
+}
+
+body.tema-claro
+.coluna-historico strong {
+  color: #222;
+}
+
+body.tema-claro
+.coluna-data-historico span {
+  color: #777;
+}
+
+body.tema-claro
+.coluna-movimentacao-historico strong {
+  color: #222;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .lista-historico-financeiro {
+    overflow-x: auto;
+  }
+
+  .cabecalho-tabela-historico,
+  .linha-historico {
+    min-width: 950px;
+  }
+
+}
+
+.acoes-historico {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* =========================================
+   TAMANHO DA AGENDA
+========================================= */
+
+.agenda-scroll {
+    height: 48vh;
+    max-height: 48vh;
+    overflow: auto;
+}
+
+
+/* =========================================
+   PRÓXIMOS HORÁRIOS
+========================================= */
+
+.proximos-agendamentos {
+    max-height: 25vh;
+}
+
+.lista-proximos-agendamentos {
+    max-height: 20vh;
+    overflow-y: auto;
+}
+
+/* =========================================================
+   SERVIÇOS E PRODUTOS - CONCLUSÃO DO ATENDIMENTO
+========================================================= */
+
+.bloco-itens-atendimento {
+    width: 100%;
+    margin-top: 18px;
+    margin-bottom: 22px;
+}
+
+.bloco-itens-atendimento > label {
+    display: block;
+    margin-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CONTAINERS
+========================================================= */
+
+#container-servicos-atendimento,
+#container-produtos-atendimento {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   LINHA DE SERVIÇO / PRODUTO
+========================================================= */
+
+.linha-selecao-atendimento {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   SELECTS
+========================================================= */
+
+.select-servico-atendimento,
+.select-produto-atendimento {
+    flex: 1;
+
+    width: 100%;
+    height: 46px;
+
+    padding: 0 14px;
+
+    border: 1px solid #3b3b3b;
+    border-radius: 9px;
+
+    background: #181818;
+    color: #f1f1f1;
+
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.select-servico-atendimento:hover,
+.select-produto-atendimento:hover {
+    border-color: #6a6a6a;
+}
+
+
+.select-servico-atendimento:focus,
+.select-produto-atendimento:focus {
+    border-color: #d4af37;
+
+    box-shadow:
+        0 0 0 2px rgba(212, 175, 55, 0.12);
+}
+
+
+/* =========================================================
+   BOTÃO + ADICIONAR
+========================================================= */
+
+.botao-adicionar-item-atendimento {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 48px;
+
+    margin-top: 10px;
+
+    border: 1px dashed #d4af37;
+    border-radius: 10px;
+
+    background:
+        rgba(212, 175, 55, 0.06);
+
+    color: #d4af37;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.botao-adicionar-item-atendimento:hover {
+    background:
+        rgba(212, 175, 55, 0.13);
+
+    border-style: solid;
+
+    transform: translateY(-1px);
+}
+
+
+.botao-adicionar-item-atendimento:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   BOTÃO X - REMOVER
+========================================================= */
+
+.botao-remover-item-atendimento {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 46px;
+    height: 46px;
+
+    padding: 0;
+
+    border: 1px solid #444;
+    border-radius: 9px;
+
+    background: #181818;
+    color: #999;
+
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.botao-remover-item-atendimento:hover {
+    color: #ff6b6b;
+
+    border-color: #ff6b6b;
+
+    background:
+        rgba(255, 107, 107, 0.06);
+}
+
+
+/* =========================================================
+   VALORES
+========================================================= */
+
+.valor-item-atendimento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 10px;
+    margin-bottom: 0;
+
+    color: #aaa;
+
+    font-size: 13px;
+}
+
+
+.valor-item-atendimento strong {
+    color: #d4af37;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ESPAÇO ENTRE SERVIÇOS E PRODUTOS
+========================================================= */
+
+#container-servicos-atendimento
++ .botao-adicionar-item-atendimento {
+
+    margin-bottom: 8px;
+}
+
+
+#container-produtos-atendimento
++ .botao-adicionar-item-atendimento {
+
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   TEMA CLARO
+========================================================= */
+
+body.tema-claro
+.select-servico-atendimento,
+
+body.tema-claro
+.select-produto-atendimento {
+
+    background: #ffffff;
+
+    color: #2c2c2c;
+
+    border-color: #d5d5d5;
+}
+
+
+body.tema-claro
+.botao-remover-item-atendimento {
+
+    background: #ffffff;
+
+    border-color: #d5d5d5;
+
+    color: #777;
+}
+
+
+body.tema-claro
+.botao-adicionar-item-atendimento {
+
+    background:
+        rgba(212, 175, 55, 0.05);
+}
+
+/* =========================================================
+   MODAL CONCLUIR ATENDIMENTO - SCROLL VERTICAL
+========================================================= */
+
+#modal-concluir-atendimento {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    overflow: hidden;
+}
+
+
+/* quando estiver escondido */
+#modal-concluir-atendimento.escondido {
+    display: none;
+}
+
+
+#modal-concluir-atendimento .janela {
+    position: relative;
+
+    width: min(620px, 95vw);
+
+    /* ESSA PARTE É A MAIS IMPORTANTE */
+    height: auto;
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SCROLL BONITO
+========================================================= */
+
+#modal-concluir-atendimento .janela::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+#modal-concluir-atendimento .janela::-webkit-scrollbar-track {
+    background: #151515;
+
+    border-radius: 10px;
+}
+
+
+#modal-concluir-atendimento .janela::-webkit-scrollbar-thumb {
+    background: #d4af37;
+
+    border-radius: 10px;
+}
+
+
+#modal-concluir-atendimento .janela::-webkit-scrollbar-thumb:hover {
+    background: #e5c04b;
+}

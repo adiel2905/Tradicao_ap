@@ -11,137 +11,1601 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
+/* =========================================================
+   DADOS DA SESSÃO
+========================================================= */
+
 const nomeUsuario = sessionStorage.getItem("nomeUsuario");
 const tipoUsuario = sessionStorage.getItem("tipoUsuario");
+const usuarioId = sessionStorage.getItem("usuarioId");
+
+if (!nomeUsuario || !tipoUsuario || !usuarioId) {
+  window.location.href = "index.html";
+}
+
+/* =========================================================
+   FUNÇÃO AUXILIAR PARA ELEMENTOS
+========================================================= */
+
+function selecionarPrimeiro(...seletores) {
+  for (const seletor of seletores) {
+    const elemento = document.querySelector(seletor);
+
+    if (elemento) {
+      return elemento;
+    }
+  }
+
+  return null;
+}
+
+/* =========================================================
+   ELEMENTOS PRINCIPAIS
+========================================================= */
 
 const menu = document.querySelector("#menu");
 const boasVindas = document.querySelector("#boas-vindas");
-const escolherBarbeiro = document.querySelector("#escolher-barbeiro");
-const selectBarbeiro = document.querySelector("#select-barbeiro");
 
-const telaDashboard = document.querySelector("#tela-dashboard");
-const telaBarbeiros = document.querySelector("#tela-barbeiros");
-const telaClientes = document.querySelector("#tela-clientes");
-const telaConfiguracoes = document.querySelector("#tela-configuracoes");
-
-const textoAgenda = document.querySelector("#texto-agenda");
-const agenda = document.querySelector("#agenda");
-const agendaScroll = document.querySelector("#agenda-scroll");
-const listaProximosAgendamentos = document.querySelector(
-  "#lista-proximos-agendamentos"
+const escolherBarbeiro = document.querySelector(
+  "#escolher-barbeiro"
 );
 
-const quantidadeProximosAgendamentos = document.querySelector(
-  "#quantidade-proximos-agendamentos"
+const selectBarbeiro = document.querySelector(
+  "#select-barbeiro"
 );
 
-const botaoDiminuirZoom = document.querySelector("#diminuir-zoom");
-const botaoAumentarZoom = document.querySelector("#aumentar-zoom");
-
-const modalNovo = document.querySelector("#modal-novo");
-const modalDetalhes = document.querySelector("#modal-detalhes");
-
-const formAgendamento = document.querySelector("#form-agendamento");
-const dataAgendamento = document.querySelector("#data-agendamento");
-const horaAgendamento = document.querySelector("#hora-agendamento");
-const pesquisaClienteAgendamento = document.querySelector(
-  "#pesquisa-cliente-agendamento"
+const telaDashboard = document.querySelector(
+  "#tela-dashboard"
 );
 
-const botaoConcluirAgendamento = document.querySelector(
-  "#concluir-agendamento"
+const telaBarbeiros = document.querySelector(
+  "#tela-barbeiros"
 );
 
-const listaClientesAgendamento = document.querySelector(
-  "#lista-clientes-agendamento"
-);
-const informacaoHorario = document.querySelector("#informacao-horario");
-
-const detalheCliente = document.querySelector("#detalhe-cliente");
-const detalheData = document.querySelector("#detalhe-data");
-const detalheHora = document.querySelector("#detalhe-hora");
-const botaoCancelarAgendamento = document.querySelector(
-  "#cancelar-agendamento"
+const telaClientes = document.querySelector(
+  "#tela-clientes"
 );
 
-const botaoMostrarCadastroBarbeiro = document.querySelector(
-  "#botao-mostrar-cadastro-barbeiro"
-);
-const formCadastroBarbeiro = document.querySelector(
-  "#form-cadastro-barbeiro"
-);
-const nomeNovoBarbeiro = document.querySelector("#nome-novo-barbeiro");
-
-const senhaNovoBarbeiro = document.querySelector(
-  "#senha-novo-barbeiro"
+const telaProdutosServicos = document.querySelector(
+  "#tela-produtos-servicos"
 );
 
-const confirmarSenhaNovoBarbeiro = document.querySelector(
-  "#confirmar-senha-novo-barbeiro"
-);
-const pesquisaBarbeiro = document.querySelector("#pesquisa-barbeiro");
-const mensagemBarbeiro = document.querySelector("#mensagem-barbeiro");
-const listaGerenciarBarbeiros = document.querySelector(
-  "#lista-gerenciar-barbeiros"
+const telaConfiguracoes = document.querySelector(
+  "#tela-configuracoes"
 );
 
-const botaoMostrarCadastroCliente = document.querySelector(
-  "#botao-mostrar-cadastro-cliente"
+const telaRelatorio = document.querySelector(
+  "#tela-relatorio"
 );
 
-const botaoNaoRealizadoAgendamento = document.querySelector(
-  "#nao-realizado-agendamento"
+/* =========================================================
+   AGENDA
+========================================================= */
+
+const textoAgenda = document.querySelector(
+  "#texto-agenda"
 );
 
-const formCadastroCliente = document.querySelector("#form-cadastro-cliente");
-const nomeNovoCliente = document.querySelector("#nome-novo-cliente");
-const celularNovoCliente = document.querySelector("#celular-novo-cliente");
-const pesquisaCliente = document.querySelector("#pesquisa-cliente");
-const mensagemCliente = document.querySelector("#mensagem-cliente");
-const listaGerenciarClientes = document.querySelector(
-  "#lista-gerenciar-clientes"
+const agenda = document.querySelector(
+  "#agenda"
 );
 
-const telaRelatorio = document.querySelector("#tela-relatorio");
-const filtroRelatorioBarbeiro = document.querySelector(
-  "#filtro-relatorio-barbeiro"
-);
-const botaoMesAnterior = document.querySelector("#mes-anterior");
-const botaoProximoMes = document.querySelector("#proximo-mes");
-const tituloCalendario = document.querySelector("#titulo-calendario");
-const calendarioRelatorio = document.querySelector("#calendario-relatorio");
-
-const filtroSegundoGrafico = document.querySelector(
-  "#filtro-segundo-grafico"
+const agendaScroll = document.querySelector(
+  "#agenda-scroll"
 );
 
-const tituloSegundoGrafico = document.querySelector(
-  "#titulo-segundo-grafico"
+const listaProximosAgendamentos =
+  document.querySelector(
+    "#lista-proximos-agendamentos"
+  );
+
+const quantidadeProximosAgendamentos =
+  document.querySelector(
+    "#quantidade-proximos-agendamentos"
+  );
+
+const botaoDiminuirZoom = document.querySelector(
+  "#diminuir-zoom"
 );
 
-const configuracaoSenha = document.querySelector("#configuracao-senha");
-const formAlterarSenha = document.querySelector("#form-alterar-senha");
-const usuarioAlterarSenha = document.querySelector(
-  "#usuario-alterar-senha"
+const botaoAumentarZoom = document.querySelector(
+  "#aumentar-zoom"
 );
-const novaSenha = document.querySelector("#nova-senha");
-const confirmarNovaSenha = document.querySelector("#confirmar-nova-senha");
-const mensagemSenha = document.querySelector("#mensagem-senha");
-const mensagemTema = document.querySelector("#mensagem-tema");
-const opcoesTema = document.querySelectorAll('input[name="tema"]');
-const configuracaoGeral = doc(db, "configuracoes", "geral");
 
-const modalSair = document.querySelector("#modal-sair");
-const botaoConfirmarSair = document.querySelector("#confirmar-sair");
+/* =========================================================
+   NOVO AGENDAMENTO
+========================================================= */
+
+const modalNovo = document.querySelector(
+  "#modal-novo"
+);
+
+const formAgendamento = document.querySelector(
+  "#form-agendamento"
+);
+
+const dataAgendamento = document.querySelector(
+  "#data-agendamento"
+);
+
+const horaAgendamento = document.querySelector(
+  "#hora-agendamento"
+);
+
+const pesquisaClienteAgendamento =
+  document.querySelector(
+    "#pesquisa-cliente-agendamento"
+  );
+
+const listaClientesAgendamento =
+  document.querySelector(
+    "#lista-clientes-agendamento"
+  );
+
+const informacaoHorario = document.querySelector(
+  "#informacao-horario"
+);
+
+/* =========================================================
+   DETALHES DO AGENDAMENTO
+========================================================= */
+
+const modalDetalhes = document.querySelector(
+  "#modal-detalhes"
+);
+
+const detalheCliente = document.querySelector(
+  "#detalhe-cliente"
+);
+
+const detalheData = document.querySelector(
+  "#detalhe-data"
+);
+
+const detalheHora = document.querySelector(
+  "#detalhe-hora"
+);
+
+const botaoConcluirAgendamento =
+  document.querySelector(
+    "#concluir-agendamento"
+  );
+
+const botaoNaoRealizadoAgendamento =
+  document.querySelector(
+    "#nao-realizado-agendamento"
+  );
+
+const botaoCancelarAgendamento =
+  document.querySelector(
+    "#cancelar-agendamento"
+  );
+
+/* =========================================================
+   CONCLUSÃO DO ATENDIMENTO
+========================================================= */
+
+const modalConcluirAtendimento =
+  document.querySelector(
+    "#modal-concluir-atendimento"
+  );
+
+const formConcluirAtendimento =
+  document.querySelector(
+    "#form-concluir-atendimento"
+  );
+
+const conclusaoCliente = document.querySelector(
+  "#conclusao-cliente"
+);
+
+const conclusaoBarbeiro = document.querySelector(
+  "#conclusao-barbeiro"
+);
+
+const conclusaoDataHora = document.querySelector(
+  "#conclusao-data-hora"
+);
+
+const servicoAtendimento = document.querySelector(
+  "#servico-atendimento"
+);
+
+const produtoAtendimento = document.querySelector(
+  "#produto-atendimento"
+);
+
+const valorServicoAtendimento =
+  document.querySelector(
+    "#valor-servico-atendimento"
+  );
+
+const valorProdutoAtendimento =
+  document.querySelector(
+    "#valor-produto-atendimento"
+  );
+
+const valorTotalAtendimento =
+  document.querySelector(
+    "#valor-total-atendimento"
+  );
+
+const formaPagamentoAtendimento =
+  document.querySelector(
+    "#forma-pagamento-atendimento"
+  );
+
+const mensagemConclusaoAtendimento =
+  document.querySelector(
+    "#mensagem-conclusao-atendimento"
+  );
+
+/* =========================================================
+   DESCONTO DO ATENDIMENTO
+========================================================= */
+
+function garantirCamposDesconto() {
+  let teveDesconto = document.querySelector(
+    "#teve-desconto-atendimento"
+  );
+
+  let areaDesconto = document.querySelector(
+    "#area-desconto-atendimento"
+  );
+
+  let valorDesconto = document.querySelector(
+    "#valor-desconto-atendimento"
+  );
+
+  let valorFinal = document.querySelector(
+    "#valor-final-atendimento"
+  );
+
+  /*
+    Caso os campos ainda não existam no HTML,
+    o próprio JavaScript cria.
+  */
+  if (!teveDesconto && formaPagamentoAtendimento) {
+    const bloco = document.createElement("div");
+
+    bloco.className = "bloco-desconto-atendimento";
+
+    bloco.innerHTML = `
+      <label for="teve-desconto-atendimento">
+        Houve desconto?
+      </label>
+
+      <select id="teve-desconto-atendimento">
+        <option value="nao" selected>
+          Não
+        </option>
+
+        <option value="sim">
+          Sim
+        </option>
+      </select>
+
+      <div
+        id="area-desconto-atendimento"
+        class="escondida"
+      >
+        <label for="valor-desconto-atendimento">
+          Valor do desconto
+        </label>
+
+        <input
+          id="valor-desconto-atendimento"
+          type="text"
+          inputmode="decimal"
+          placeholder="R$ 0,00"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="total-final-atendimento">
+        <span>
+          Valor final a receber
+        </span>
+
+        <strong id="valor-final-atendimento">
+          R$ 0,00
+        </strong>
+      </div>
+    `;
+
+    const totalAtendimento =
+      document.querySelector(
+        ".total-atendimento"
+      );
+
+    if (totalAtendimento) {
+      totalAtendimento.insertAdjacentElement(
+        "afterend",
+        bloco
+      );
+    }
+
+    teveDesconto = document.querySelector(
+      "#teve-desconto-atendimento"
+    );
+
+    areaDesconto = document.querySelector(
+      "#area-desconto-atendimento"
+    );
+
+    valorDesconto = document.querySelector(
+      "#valor-desconto-atendimento"
+    );
+
+    valorFinal = document.querySelector(
+      "#valor-final-atendimento"
+    );
+  }
+
+  return {
+    teveDesconto,
+    areaDesconto,
+    valorDesconto,
+    valorFinal
+  };
+}
+
+const camposDesconto =
+  garantirCamposDesconto();
+
+const teveDescontoAtendimento =
+  camposDesconto.teveDesconto;
+
+const areaDescontoAtendimento =
+  camposDesconto.areaDesconto;
+
+const valorDescontoAtendimento =
+  camposDesconto.valorDesconto;
+
+const valorFinalAtendimento =
+  camposDesconto.valorFinal;
+
+/* =========================================================
+   BARBEIROS
+========================================================= */
+
+const botaoMostrarCadastroBarbeiro =
+  document.querySelector(
+    "#botao-mostrar-cadastro-barbeiro"
+  );
+
+const formCadastroBarbeiro =
+  document.querySelector(
+    "#form-cadastro-barbeiro"
+  );
+
+const nomeNovoBarbeiro =
+  document.querySelector(
+    "#nome-novo-barbeiro"
+  );
+
+const senhaNovoBarbeiro =
+  document.querySelector(
+    "#senha-novo-barbeiro"
+  );
+
+const confirmarSenhaNovoBarbeiro =
+  document.querySelector(
+    "#confirmar-senha-novo-barbeiro"
+  );
+
+const pesquisaBarbeiro =
+  document.querySelector(
+    "#pesquisa-barbeiro"
+  );
+
+const mensagemBarbeiro =
+  document.querySelector(
+    "#mensagem-barbeiro"
+  );
+
+const listaGerenciarBarbeiros =
+  document.querySelector(
+    "#lista-gerenciar-barbeiros"
+  );
+
+/* =========================================================
+   CLIENTES
+========================================================= */
+
+const botaoMostrarCadastroCliente =
+  document.querySelector(
+    "#botao-mostrar-cadastro-cliente"
+  );
+
+const formCadastroCliente =
+  document.querySelector(
+    "#form-cadastro-cliente"
+  );
+
+const nomeNovoCliente =
+  document.querySelector(
+    "#nome-novo-cliente"
+  );
+
+const celularNovoCliente =
+  document.querySelector(
+    "#celular-novo-cliente"
+  );
+
+const pesquisaCliente =
+  document.querySelector(
+    "#pesquisa-cliente"
+  );
+
+const mensagemCliente =
+  document.querySelector(
+    "#mensagem-cliente"
+  );
+
+const listaGerenciarClientes =
+  document.querySelector(
+    "#lista-gerenciar-clientes"
+  );
+
+/* =========================================================
+   PRODUTOS
+========================================================= */
+
+const botaoMostrarCadastroProduto =
+  document.querySelector(
+    "#botao-mostrar-cadastro-produto"
+  );
+
+const formCadastroProduto =
+  document.querySelector(
+    "#form-cadastro-produto"
+  );
+
+const nomeNovoProduto =
+  document.querySelector(
+    "#nome-novo-produto"
+  );
+
+const valorNovoProduto =
+  document.querySelector(
+    "#valor-novo-produto"
+  );
+
+const pesquisaProduto =
+  document.querySelector(
+    "#pesquisa-produto"
+  );
+
+const mensagemProduto =
+  document.querySelector(
+    "#mensagem-produto"
+  );
+
+const listaProdutos =
+  document.querySelector(
+    "#lista-produtos"
+  );
+
+/* =========================================================
+   SERVIÇOS
+========================================================= */
+
+const botaoMostrarCadastroServico =
+  document.querySelector(
+    "#botao-mostrar-cadastro-servico"
+  );
+
+const formCadastroServico =
+  document.querySelector(
+    "#form-cadastro-servico"
+  );
+
+const nomeNovoServico =
+  document.querySelector(
+    "#nome-novo-servico"
+  );
+
+const valorNovoServico =
+  document.querySelector(
+    "#valor-novo-servico"
+  );
+
+const pesquisaServico =
+  document.querySelector(
+    "#pesquisa-servico"
+  );
+
+const mensagemServico =
+  document.querySelector(
+    "#mensagem-servico"
+  );
+
+const listaServicos =
+  document.querySelector(
+    "#lista-servicos"
+  );
+
+/* =========================================================
+   EDITAR CATÁLOGO
+========================================================= */
+
+const modalEditarCatalogo =
+  document.querySelector(
+    "#modal-editar-catalogo"
+  );
+
+const tituloEditarCatalogo =
+  document.querySelector(
+    "#titulo-editar-catalogo"
+  );
+
+const formEditarCatalogo =
+  document.querySelector(
+    "#form-editar-catalogo"
+  );
+
+const idEditarCatalogo =
+  document.querySelector(
+    "#id-editar-catalogo"
+  );
+
+const tipoEditarCatalogo =
+  document.querySelector(
+    "#tipo-editar-catalogo"
+  );
+
+const nomeEditarCatalogo =
+  document.querySelector(
+    "#nome-editar-catalogo"
+  );
+
+const valorEditarCatalogo =
+  document.querySelector(
+    "#valor-editar-catalogo"
+  );
+
+const mensagemEditarCatalogo =
+  document.querySelector(
+    "#mensagem-editar-catalogo"
+  );
+
+/* =========================================================
+   RELATÓRIO DE DESEMPENHO
+========================================================= */
+
+const filtroRelatorioBarbeiro =
+  document.querySelector(
+    "#filtro-relatorio-barbeiro"
+  );
+
+const botaoMesAnterior =
+  document.querySelector(
+    "#mes-anterior"
+  );
+
+const botaoProximoMes =
+  document.querySelector(
+    "#proximo-mes"
+  );
+
+const tituloCalendario =
+  document.querySelector(
+    "#titulo-calendario"
+  );
+
+const calendarioRelatorio =
+  document.querySelector(
+    "#calendario-relatorio"
+  );
+
+const filtroSegundoGrafico =
+  document.querySelector(
+    "#filtro-segundo-grafico"
+  );
+
+const tituloSegundoGrafico =
+  document.querySelector(
+    "#titulo-segundo-grafico"
+  );
+
+/* =========================================================
+   ABAS DOS RELATÓRIOS
+========================================================= */
+
+const abaRelatorioDesempenho =
+  document.querySelector(
+    "#aba-relatorio-desempenho"
+  );
+
+const abaRelatorioFinanceiro =
+  document.querySelector(
+    "#aba-relatorio-financeiro"
+  );
+
+const abaRelatorioHistorico =
+  selecionarPrimeiro(
+    "#aba-relatorio-historico",
+    "#aba-historico"
+  );
+
+const conteudoRelatorioDesempenho =
+  document.querySelector(
+    "#conteudo-relatorio-desempenho"
+  );
+
+const conteudoRelatorioFinanceiro =
+  document.querySelector(
+    "#conteudo-relatorio-financeiro"
+  );
+
+const conteudoRelatorioHistorico =
+  selecionarPrimeiro(
+    "#conteudo-relatorio-historico",
+    "#conteudo-historico"
+  );
+
+/* =========================================================
+   FINANCEIRO
+========================================================= */
+
+const periodoRelatorioFinanceiro =
+  document.querySelector(
+    "#periodo-relatorio-financeiro"
+  );
+
+const filtroFinanceiroBarbeiro =
+  document.querySelector(
+    "#filtro-financeiro-barbeiro"
+  );
+
+const tituloPeriodoFinanceiro =
+  document.querySelector(
+    "#titulo-periodo-financeiro"
+  );
+
+const botaoPeriodoFinanceiroAnterior =
+  document.querySelector(
+    "#periodo-financeiro-anterior"
+  );
+
+const botaoPeriodoFinanceiroProximo =
+  document.querySelector(
+    "#periodo-financeiro-proximo"
+  );
+
+const tituloGraficoFinanceiro =
+  document.querySelector(
+    "#titulo-grafico-financeiro"
+  );
+
+const totalGraficoFinanceiro =
+  document.querySelector(
+    "#total-grafico-financeiro"
+  );
+
+const rankingFinanceiroBarbeiros =
+  document.querySelector(
+    "#ranking-financeiro-barbeiros"
+  );
+
+const rankingFinanceiroServicos =
+  document.querySelector(
+    "#ranking-financeiro-servicos"
+  );
+
+const rankingFinanceiroProdutos =
+  document.querySelector(
+    "#ranking-financeiro-produtos"
+  );
+
+/* =========================================================
+   GERAR PDF DO HISTÓRICO FINANCEIRO
+========================================================= */
+
+const botaoGerarPdfHistorico =
+  document.querySelector(
+    "#gerar-pdf-historico"
+  );
+
+async function gerarPdfHistorico() {
+  if (!usuarioPodeVisualizarFinanceiro()) {
+    return;
+  }
+
+  if (
+    !window.jspdf ||
+    !window.jspdf.jsPDF
+  ) {
+    alert(
+      "Não foi possível carregar o gerador de PDF."
+    );
+
+    return;
+  }
+
+  const botao = botaoGerarPdfHistorico;
+
+  if (botao) {
+    botao.disabled = true;
+    botao.textContent =
+      "Gerando PDF...";
+  }
+
+  try {
+    const periodo =
+      obterPeriodoHistorico();
+
+    const barbeiroSelecionado =
+      filtroHistoricoBarbeiro?.value ||
+      "todos";
+
+    const tipoSelecionado =
+      filtroHistoricoTipo?.value ||
+      "todos";
+
+    /* =========================================
+       BUSCAR DADOS
+    ========================================= */
+
+    const [
+      respostaAgendamentos,
+      respostaMovimentacoes
+    ] = await Promise.all([
+      getDocs(
+        collection(
+          db,
+          "agendamentos"
+        )
+      ),
+
+      getDocs(
+        collection(
+          db,
+          "movimentacoesFinanceiras"
+        )
+      )
+    ]);
+
+    /* =========================================
+       ENTRADAS
+    ========================================= */
+
+    const entradas =
+      respostaAgendamentos.docs
+        .map(
+          (documento) => ({
+            id: documento.id,
+            ...documento.data()
+          })
+        )
+        .filter(
+          (agendamento) =>
+            agendamento.status ===
+            "concluido"
+        )
+        .map(
+          transformarAtendimentoEmEntrada
+        );
+
+    /* =========================================
+       SAÍDAS
+    ========================================= */
+
+    const saidas =
+      respostaMovimentacoes.docs
+        .map(
+          (documento) => ({
+            id: documento.id,
+            origem:
+              "manual",
+            ...documento.data()
+          })
+        )
+        .filter(
+          (movimentacao) =>
+            movimentacao.tipo ===
+            "saida"
+        );
+
+    const todasMovimentacoes = [
+      ...entradas,
+      ...saidas
+    ];
+
+    /* =========================================
+       FILTRAR PELO PERÍODO E BARBEIRO
+    ========================================= */
+
+    const movimentacoesPeriodo =
+      todasMovimentacoes.filter(
+        (movimentacao) => {
+          const dentroPeriodo =
+            movimentacao.data >=
+              periodo.inicioTexto &&
+            movimentacao.data <=
+              periodo.fimTexto;
+
+          const barbeiroCorreto =
+            barbeiroSelecionado ===
+              "todos" ||
+            movimentacao.barbeiro ===
+              barbeiroSelecionado;
+
+          return (
+            dentroPeriodo &&
+            barbeiroCorreto
+          );
+        }
+      );
+
+    /* =========================================
+       FILTRO ENTRADA / SAÍDA
+    ========================================= */
+
+    const movimentacoes =
+      movimentacoesPeriodo
+        .filter(
+          (movimentacao) => {
+            return (
+              tipoSelecionado ===
+                "todos" ||
+              tipoSelecionado ===
+                "todas" ||
+              movimentacao.tipo ===
+                tipoSelecionado
+            );
+          }
+        )
+        .sort(
+          (a, b) => {
+            const diferencaData =
+              criarDataHora(
+                b.data,
+                b.hora ||
+                  "00:00"
+              ) -
+              criarDataHora(
+                a.data,
+                a.hora ||
+                  "00:00"
+              );
+
+            if (
+              diferencaData !== 0
+            ) {
+              return diferencaData;
+            }
+
+            return (
+              (
+                Number(
+                  b.prioridadeHistorico
+                ) || 0
+              ) -
+              (
+                Number(
+                  a.prioridadeHistorico
+                ) || 0
+              )
+            );
+          }
+        );
+
+    /* =========================================
+       TOTAIS DO PERÍODO
+    ========================================= */
+
+    const totalEntradas =
+      movimentacoesPeriodo
+        .filter(
+          (movimentacao) =>
+            movimentacao.tipo ===
+            "entrada"
+        )
+        .reduce(
+          (
+            total,
+            movimentacao
+          ) =>
+            total +
+            (
+              Number(
+                movimentacao.valor
+              ) || 0
+            ),
+          0
+        );
+
+    const totalSaidas =
+      movimentacoesPeriodo
+        .filter(
+          (movimentacao) =>
+            movimentacao.tipo ===
+            "saida"
+        )
+        .reduce(
+          (
+            total,
+            movimentacao
+          ) =>
+            total +
+            (
+              Number(
+                movimentacao.valor
+              ) || 0
+            ),
+          0
+        );
+
+    const saldo =
+      totalEntradas -
+      totalSaidas;
+
+    /* =========================================
+       CRIAR PDF
+    ========================================= */
+
+    const { jsPDF } =
+      window.jspdf;
+
+    const pdf =
+      new jsPDF({
+        orientation:
+          "landscape",
+
+        unit:
+          "mm",
+
+        format:
+          "a4"
+      });
+
+    const larguraPagina =
+      pdf.internal.pageSize.getWidth();
+
+    /* =========================================
+       CABEÇALHO
+    ========================================= */
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.setFontSize(
+      20
+    );
+
+    pdf.text(
+      "TRADIÇÃO BARBEARIA",
+      14,
+      17
+    );
+
+    pdf.setFontSize(
+      13
+    );
+
+    pdf.text(
+      "Relatório de Movimentações Financeiras",
+      14,
+      25
+    );
+
+    pdf.setDrawColor(
+      190,
+      150,
+      50
+    );
+
+    pdf.setLineWidth(
+      0.8
+    );
+
+    pdf.line(
+      14,
+      30,
+      larguraPagina - 14,
+      30
+    );
+
+    /* =========================================
+       INFORMAÇÕES DO FILTRO
+    ========================================= */
+
+    pdf.setFont(
+      "helvetica",
+      "normal"
+    );
+
+    pdf.setFontSize(
+      10
+    );
+
+    const barbeiroTexto =
+      barbeiroSelecionado ===
+      "todos"
+        ? "Barbearia inteira"
+        : barbeiroSelecionado;
+
+    let tipoTexto =
+      "Entradas e saídas";
+
+    if (
+      tipoSelecionado ===
+      "entrada"
+    ) {
+      tipoTexto =
+        "Somente entradas";
+    }
+
+    if (
+      tipoSelecionado ===
+      "saida"
+    ) {
+      tipoTexto =
+        "Somente saídas";
+    }
+
+    pdf.text(
+      `Período: ${periodo.titulo}`,
+      14,
+      38
+    );
+
+    pdf.text(
+      `Barbeiro: ${barbeiroTexto}`,
+      14,
+      44
+    );
+
+    pdf.text(
+      `Filtro: ${tipoTexto}`,
+      14,
+      50
+    );
+
+    /* =========================================
+       RESUMO FINANCEIRO
+    ========================================= */
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.setFontSize(
+      11
+    );
+
+    pdf.text(
+      "RESUMO FINANCEIRO",
+      14,
+      60
+    );
+
+    pdf.setFontSize(
+      10
+    );
+
+    pdf.text(
+      `Entradas: ${formatarValorEmReal(totalEntradas)}`,
+      14,
+      68
+    );
+
+    pdf.text(
+      `Saídas: ${formatarValorEmReal(totalSaidas)}`,
+      80,
+      68
+    );
+
+    pdf.text(
+      `Saldo: ${formatarValorEmReal(saldo)}`,
+      145,
+      68
+    );
+
+    /* =========================================
+       MONTAR LINHAS
+    ========================================= */
+
+    const linhas =
+      movimentacoes.map(
+        (movimentacao) => {
+          const dataFormatada =
+            dataPorTexto(
+              movimentacao.data
+            ).toLocaleDateString(
+              "pt-BR"
+            );
+
+          const hora =
+            movimentacao.hora ||
+            "00:00";
+
+          const descricao =
+            movimentacao.descricao ||
+            (
+              movimentacao.tipo ===
+              "entrada"
+                ? "Atendimento"
+                : "Saída"
+            );
+
+          const barbeiro =
+            movimentacao.barbeiro ||
+            "Barbearia";
+
+          const pagamento =
+            movimentacao.formaPagamento ||
+            "—";
+
+          const valor =
+            Number(
+              movimentacao.valor
+            ) || 0;
+
+          const tipo =
+            movimentacao.tipo ===
+            "saida"
+              ? "Saída"
+              : "Entrada";
+
+          const valorFormatado =
+            movimentacao.tipo ===
+            "saida"
+              ? `- ${formatarValorEmReal(valor)}`
+              : `+ ${formatarValorEmReal(valor)}`;
+
+          return [
+            dataFormatada,
+            hora,
+            descricao,
+            barbeiro,
+            pagamento,
+            valorFormatado,
+            tipo
+          ];
+        }
+      );
+
+    /* =========================================
+       TABELA
+    ========================================= */
+
+    if (
+      typeof pdf.autoTable !==
+      "function"
+    ) {
+      throw new Error(
+        "Plugin AutoTable não carregado."
+      );
+    }
+
+    pdf.autoTable({
+      startY:
+        76,
+
+      head: [[
+        "Data",
+        "Hora",
+        "Movimentação",
+        "Barbeiro",
+        "Pagamento",
+        "Valor",
+        "Tipo"
+      ]],
+
+      body:
+        linhas,
+
+      theme:
+        "grid",
+
+      styles: {
+        font:
+          "helvetica",
+
+        fontSize:
+          8,
+
+        cellPadding:
+          2.5,
+
+        valign:
+          "middle"
+      },
+
+      headStyles: {
+        fillColor: [
+          32,
+          32,
+          32
+        ],
+
+        textColor: [
+          255,
+          255,
+          255
+        ],
+
+        fontStyle:
+          "bold"
+      },
+
+      columnStyles: {
+        0: {
+          cellWidth: 25
+        },
+
+        1: {
+          cellWidth: 18
+        },
+
+        2: {
+          cellWidth: 70
+        },
+
+        3: {
+          cellWidth: 35
+        },
+
+        4: {
+          cellWidth: 28
+        },
+
+        5: {
+          cellWidth: 32
+        },
+
+        6: {
+          cellWidth: 25
+        }
+      },
+
+      didParseCell(
+        dados
+      ) {
+        if (
+          dados.section !==
+          "body"
+        ) {
+          return;
+        }
+
+        const tipo =
+          dados.row.raw[6];
+
+        if (
+          dados.column.index ===
+          5 ||
+          dados.column.index ===
+          6
+        ) {
+          if (
+            tipo ===
+            "Entrada"
+          ) {
+            dados.cell.styles.textColor = [
+              20,
+              130,
+              70
+            ];
+          } else {
+            dados.cell.styles.textColor = [
+              190,
+              50,
+              50
+            ];
+          }
+
+          dados.cell.styles.fontStyle =
+            "bold";
+        }
+      },
+
+      didDrawPage(
+        dados
+      ) {
+        const numeroPagina =
+          pdf.internal.getNumberOfPages();
+
+        pdf.setFontSize(
+          8
+        );
+
+        pdf.setTextColor(
+          100
+        );
+
+        pdf.text(
+          `Página ${numeroPagina}`,
+          larguraPagina - 30,
+          pdf.internal.pageSize.getHeight() - 8
+        );
+      }
+    });
+
+    /* =========================================
+       NOME DO ARQUIVO
+    ========================================= */
+
+    const dataArquivo =
+      new Date()
+        .toLocaleDateString(
+          "pt-BR"
+        )
+        .replace(
+          /\//g,
+          "-"
+        );
+
+    pdf.save(
+      `historico-financeiro-${dataArquivo}.pdf`
+    );
+  } catch (erro) {
+    console.log(
+      "Erro ao gerar PDF do histórico:",
+      erro
+    );
+
+    alert(
+      "Não foi possível gerar o PDF do histórico."
+    );
+  } finally {
+    if (botao) {
+      botao.disabled =
+        false;
+
+      botao.textContent =
+        "Gerar PDF";
+    }
+  }
+}
+
+/* =========================================================
+   BOTÃO GERAR PDF
+========================================================= */
+
+if (
+  botaoGerarPdfHistorico
+) {
+  botaoGerarPdfHistorico.addEventListener(
+    "click",
+    gerarPdfHistorico
+  );
+}
+
+/* =========================================================
+   HISTÓRICO FINANCEIRO
+========================================================= */
+
+const periodoRelatorioHistorico =
+  selecionarPrimeiro(
+    "#periodo-relatorio-historico",
+    "#periodo-historico"
+  );
+
+const filtroHistoricoBarbeiro =
+  selecionarPrimeiro(
+    "#filtro-historico-barbeiro",
+    "#historico-filtro-barbeiro"
+  );
+
+const filtroHistoricoTipo =
+  selecionarPrimeiro(
+    "#filtro-historico-tipo",
+    "#filtro-historico-movimentacao",
+    "#historico-filtro-tipo"
+  );
+
+const botaoPeriodoHistoricoAnterior =
+  selecionarPrimeiro(
+    "#periodo-historico-anterior",
+    "#historico-anterior"
+  );
+
+const botaoPeriodoHistoricoProximo =
+  selecionarPrimeiro(
+    "#periodo-historico-proximo",
+    "#historico-proximo"
+  );
+
+const tituloPeriodoHistorico =
+  selecionarPrimeiro(
+    "#titulo-periodo-historico",
+    "#historico-titulo-periodo"
+  );
+
+const historicoTotalEntradas =
+  selecionarPrimeiro(
+    "#historico-total-entradas",
+    "#total-entradas-historico"
+  );
+
+const historicoTotalSaidas =
+  selecionarPrimeiro(
+    "#historico-total-saidas",
+    "#total-saidas-historico"
+  );
+
+const historicoSaldo =
+  selecionarPrimeiro(
+    "#historico-saldo",
+    "#saldo-historico"
+  );
+
+const listaHistoricoFinanceiro =
+  selecionarPrimeiro(
+    "#lista-historico-financeiro",
+    "#lista-historico"
+  );
+
+/* =========================================================
+   REGISTRAR SAÍDA
+========================================================= */
+
+const botaoRegistrarSaida =
+  selecionarPrimeiro(
+    "#botao-registrar-saida",
+    "#registrar-saida"
+  );
+
+const modalRegistrarSaida =
+  selecionarPrimeiro(
+    "#modal-registrar-saida",
+    "#modal-saida"
+  );
+
+const formRegistrarSaida =
+  selecionarPrimeiro(
+    "#form-registrar-saida",
+    "#form-saida"
+  );
+
+const descricaoSaida =
+  selecionarPrimeiro(
+    "#descricao-saida",
+    "#saida-descricao"
+  );
+
+const valorSaida =
+  selecionarPrimeiro(
+    "#valor-saida",
+    "#saida-valor"
+  );
+
+const barbeiroSaida =
+  selecionarPrimeiro(
+    "#barbeiro-saida",
+    "#saida-barbeiro"
+  );
+
+const dataSaida =
+  selecionarPrimeiro(
+    "#data-saida",
+    "#saida-data"
+  );
+
+const horaSaida =
+  selecionarPrimeiro(
+    "#hora-saida",
+    "#saida-hora"
+  );
+
+const mensagemSaida =
+  selecionarPrimeiro(
+    "#mensagem-saida",
+    "#saida-mensagem"
+  );
+
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
+
+const configuracaoSenha =
+  document.querySelector(
+    "#configuracao-senha"
+  );
+
+const descricaoConfiguracaoSenha =
+  document.querySelector(
+    "#descricao-configuracao-senha"
+  );
+
+const formAlterarSenha =
+  document.querySelector(
+    "#form-alterar-senha"
+  );
+
+const usuarioAlterarSenha =
+  document.querySelector(
+    "#usuario-alterar-senha"
+  );
+
+const novaSenha =
+  document.querySelector(
+    "#nova-senha"
+  );
+
+const confirmarNovaSenha =
+  document.querySelector(
+    "#confirmar-nova-senha"
+  );
+
+const mensagemSenha =
+  document.querySelector(
+    "#mensagem-senha"
+  );
+
+const mensagemTema =
+  document.querySelector(
+    "#mensagem-tema"
+  );
+
+const opcoesTema =
+  document.querySelectorAll(
+    'input[name="tema"]'
+  );
+
+const configuracaoGeral = doc(
+  db,
+  "configuracoes",
+  "geral"
+);
+
+const historicoQuantidadeEntradas =
+  document.querySelector(
+    "#historico-quantidade-entradas"
+  );
+
+const historicoQuantidadeSaidas =
+  document.querySelector(
+    "#historico-quantidade-saidas"
+  );
+
+const quantidadeMovimentacoesHistorico =
+  document.querySelector(
+    "#quantidade-movimentacoes-historico"
+  );
+
+/* =========================================================
+   SAIR
+========================================================= */
+
+const modalSair =
+  document.querySelector(
+    "#modal-sair"
+  );
+
+const botaoConfirmarSair =
+  document.querySelector(
+    "#confirmar-sair"
+  );
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
 
 let graficoStatus = null;
+let graficoFinanceiro = null;
+
 let mesRelatorio = new Date();
 
+let dataFinanceiro = new Date();
+let dataHistorico = new Date();
+
 let barbeiroAtual = "";
+
 let barbeiros = [];
 let clientes = [];
+let produtos = [];
+let servicos = [];
 let agendamentos = [];
 let dias = [];
+
 let agendamentoSelecionado = null;
 let clienteSelecionado = null;
 
@@ -151,180 +1615,524 @@ const ZOOM_MINIMO = 0.7;
 const ZOOM_MAXIMO = 1.6;
 const PASSO_ZOOM = 0.15;
 
-if (!nomeUsuario || !tipoUsuario) {
-  window.location.href = "index.html";
+/* =========================================================
+   PERMISSÕES
+========================================================= */
+
+function usuarioPodeVisualizarTodasAgendas() {
+  return (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  );
 }
 
+function usuarioPodeGerenciarBarbeiros() {
+  return tipoUsuario === "administrador";
+}
+
+function usuarioPodeGerenciarCatalogo() {
+  return (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  );
+}
+
+function usuarioPodeVisualizarRelatorioGeral() {
+  return (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  );
+}
+
+function usuarioPodeVisualizarFinanceiro() {
+  return tipoUsuario === "administrador";
+}
+
+/* =========================================================
+   DINHEIRO
+========================================================= */
+
+function formatarValorEmReal(valor) {
+  const numero = Number(valor) || 0;
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL"
+    }
+  );
+}
+
+function converterValorParaNumero(valor) {
+  if (typeof valor === "number") {
+    return valor;
+  }
+
+  let texto = String(valor)
+    .trim()
+    .replace("R$", "")
+    .replace(/\s/g, "");
+
+  if (texto.includes(",")) {
+    texto = texto
+      .replace(/\./g, "")
+      .replace(",", ".");
+  }
+
+  const numero = Number(texto);
+
+  return Number.isFinite(numero)
+    ? numero
+    : 0;
+}
+
+function formatarCampoValor(campo) {
+  if (!campo) {
+    return;
+  }
+
+  const numeros =
+    campo.value.replace(/\D/g, "");
+
+  if (numeros === "") {
+    campo.value = "";
+    return;
+  }
+
+  const valor =
+    Number(numeros) / 100;
+
+  campo.value =
+    formatarValorEmReal(valor);
+}
+
+/* =========================================================
+   DATAS E HORÁRIOS
+========================================================= */
+
 function criarHorarios() {
-  const horarios = [];
-  let minutos = 8 * 60 + 30;
-  const ultimoHorario = 20 * 60;
+  const listaHorarios = [];
+
+  let minutos = 8 * 60;
+
+  const ultimoHorario =
+    20 * 60 + 30;
 
   while (minutos <= ultimoHorario) {
-    const hora = String(Math.floor(minutos / 60)).padStart(2, "0");
-    const minuto = String(minutos % 60).padStart(2, "0");
+    const hora = String(
+      Math.floor(minutos / 60)
+    ).padStart(2, "0");
 
-    horarios.push(`${hora}:${minuto}`);
+    const minuto = String(
+      minutos % 60
+    ).padStart(2, "0");
+
+    listaHorarios.push(
+      `${hora}:${minuto}`
+    );
+
     minutos += 30;
   }
 
-  return horarios;
+  return listaHorarios;
 }
 
 const horarios = criarHorarios();
 
 function formatarDataParaSalvar(data) {
   const ano = data.getFullYear();
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-  const dia = String(data.getDate()).padStart(2, "0");
+
+  const mes = String(
+    data.getMonth() + 1
+  ).padStart(2, "0");
+
+  const dia = String(
+    data.getDate()
+  ).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
 }
 
 function formatarDataParaMostrar(data) {
-  return data.toLocaleDateString("pt-BR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  });
+  return data.toLocaleDateString(
+    "pt-BR",
+    {
+      weekday: "long",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    }
+  );
 }
 
 function dataPorTexto(dataTexto) {
-  const partes = dataTexto.split("-");
-  return new Date(partes[0], partes[1] - 1, partes[2]);
+  const partes =
+    dataTexto.split("-");
+
+  return new Date(
+    Number(partes[0]),
+    Number(partes[1]) - 1,
+    Number(partes[2])
+  );
 }
 
 function criarPrimeirosDias() {
   const hoje = new Date();
 
-  hoje.setHours(0, 0, 0, 0);
+  hoje.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
-  for (let numero = 0; numero < 21; numero++) {
-    const novoDia = new Date(hoje);
+  dias = [];
 
-    novoDia.setDate(hoje.getDate() + numero);
+  for (
+    let numero = 0;
+    numero < 21;
+    numero++
+  ) {
+    const novoDia =
+      new Date(hoje);
+
+    novoDia.setDate(
+      hoje.getDate() + numero
+    );
 
     dias.push(novoDia);
   }
 }
 
 function adicionarMaisDias() {
-  const ultimoDia = dias[dias.length - 1];
+  const ultimoDia =
+    dias[dias.length - 1];
 
-  for (let numero = 1; numero <= 14; numero++) {
-    const novoDia = new Date(ultimoDia);
+  for (
+    let numero = 1;
+    numero <= 14;
+    numero++
+  ) {
+    const novoDia =
+      new Date(ultimoDia);
 
-    novoDia.setDate(ultimoDia.getDate() + numero);
+    novoDia.setDate(
+      ultimoDia.getDate() +
+        numero
+    );
 
     dias.push(novoDia);
   }
 }
 
-function marcarBotaoAtivo(nomeDoBotao) {
-  document.querySelectorAll(".botao-menu").forEach((botao) => {
-    botao.classList.toggle("ativo", botao.textContent === nomeDoBotao);
-  });
+function obterInicioDaSemana(data) {
+  const inicio =
+    new Date(data);
+
+  const diaSemana =
+    inicio.getDay();
+
+  const diferenca =
+    diaSemana === 0
+      ? -6
+      : 1 - diaSemana;
+
+  inicio.setDate(
+    inicio.getDate() +
+      diferenca
+  );
+
+  inicio.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  return inicio;
+}
+
+function obterFimDaSemana(data) {
+  const fim =
+    obterInicioDaSemana(data);
+
+  fim.setDate(
+    fim.getDate() + 6
+  );
+
+  fim.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+  return fim;
+}
+
+function criarDataHora(
+  dataTexto,
+  horaTexto = "00:00"
+) {
+  return new Date(
+    `${dataTexto}T${horaTexto}:00`
+  );
+}
+
+/* =========================================================
+   TELAS
+========================================================= */
+
+function esconderTodasAsTelas() {
+  telaDashboard?.classList.add(
+    "escondida"
+  );
+
+  telaBarbeiros?.classList.add(
+    "escondida"
+  );
+
+  telaClientes?.classList.add(
+    "escondida"
+  );
+
+  telaProdutosServicos?.classList.add(
+    "escondida"
+  );
+
+  telaRelatorio?.classList.add(
+    "escondida"
+  );
+
+  telaConfiguracoes?.classList.add(
+    "escondida"
+  );
+}
+
+function marcarBotaoAtivo(
+  nomeDoBotao
+) {
+  document
+    .querySelectorAll(
+      ".botao-menu"
+    )
+    .forEach((botao) => {
+      botao.classList.toggle(
+        "ativo",
+        botao.textContent ===
+          nomeDoBotao
+      );
+    });
 }
 
 function abrirTelaDashboard() {
-  telaDashboard.classList.remove("escondida");
-  telaBarbeiros.classList.add("escondida");
-  telaClientes.classList.add("escondida");
-  telaRelatorio.classList.add("escondida");
-  telaConfiguracoes.classList.add("escondida");
+  esconderTodasAsTelas();
 
-  marcarBotaoAtivo("Dashboard");
+  telaDashboard.classList.remove(
+    "escondida"
+  );
+
+  marcarBotaoAtivo(
+    "Dashboard"
+  );
 }
 
 async function abrirTelaBarbeiros() {
-  telaDashboard.classList.add("escondida");
-  telaClientes.classList.add("escondida");
-  telaRelatorio.classList.add("escondida");
-  telaConfiguracoes.classList.add("escondida");
-  telaBarbeiros.classList.remove("escondida");
+  esconderTodasAsTelas();
 
-  marcarBotaoAtivo("Barbeiros");
+  telaBarbeiros.classList.remove(
+    "escondida"
+  );
 
-  formCadastroBarbeiro.classList.add("escondida");
+  marcarBotaoAtivo(
+    "Barbeiros"
+  );
+
+  formCadastroBarbeiro.classList.add(
+    "escondida"
+  );
+
   mensagemBarbeiro.textContent = "";
   pesquisaBarbeiro.value = "";
 
+  botaoMostrarCadastroBarbeiro.style.display =
+    usuarioPodeGerenciarBarbeiros()
+      ? ""
+      : "none";
+
   await carregarBarbeiros();
+
   mostrarListaDeBarbeiros();
 }
 
 async function abrirTelaClientes() {
-  telaDashboard.classList.add("escondida");
-  telaBarbeiros.classList.add("escondida");
-  telaRelatorio.classList.add("escondida");
-  telaConfiguracoes.classList.add("escondida");
-  telaClientes.classList.remove("escondida");
+  esconderTodasAsTelas();
 
-  marcarBotaoAtivo("Clientes cadastrados");
+  telaClientes.classList.remove(
+    "escondida"
+  );
 
-  formCadastroCliente.classList.add("escondida");
+  marcarBotaoAtivo(
+    "Clientes cadastrados"
+  );
+
+  formCadastroCliente.classList.add(
+    "escondida"
+  );
+
   mensagemCliente.textContent = "";
   pesquisaCliente.value = "";
 
   await carregarClientes();
+
   mostrarListaDeClientes();
 }
 
-function aplicarTema(tema) {
-  const temaClaro = tema === "claro";
+async function abrirTelaProdutosServicos() {
+  esconderTodasAsTelas();
 
-  document.body.classList.toggle("tema-claro", temaClaro);
+  telaProdutosServicos.classList.remove(
+    "escondida"
+  );
 
-  opcoesTema.forEach((opcao) => {
-    opcao.checked = opcao.value === (temaClaro ? "claro" : "escuro");
-  });
+  marcarBotaoAtivo(
+    "Produtos e Serviços"
+  );
+
+  formCadastroProduto.classList.add(
+    "escondida"
+  );
+
+  formCadastroServico.classList.add(
+    "escondida"
+  );
+
+  pesquisaProduto.value = "";
+  pesquisaServico.value = "";
+
+  mensagemProduto.textContent = "";
+  mensagemServico.textContent = "";
+
+  const podeGerenciar =
+    usuarioPodeGerenciarCatalogo();
+
+  botaoMostrarCadastroProduto.style.display =
+    podeGerenciar
+      ? ""
+      : "none";
+
+  botaoMostrarCadastroServico.style.display =
+    podeGerenciar
+      ? ""
+      : "none";
+
+  await Promise.all([
+    carregarProdutos(),
+    carregarServicos()
+  ]);
+
+  mostrarListaDeProdutos();
+  mostrarListaDeServicos();
 }
 
+/* =========================================================
+   TEMA
+========================================================= */
+
+function aplicarTema(tema) {
+  const temaClaro =
+    tema === "claro";
+
+  document.body.classList.toggle(
+    "tema-claro",
+    temaClaro
+  );
+
+  opcoesTema.forEach(
+    (opcao) => {
+      opcao.checked =
+        opcao.value ===
+        (
+          temaClaro
+            ? "claro"
+            : "escuro"
+        );
+    }
+  );
+}
+
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
+
 async function abrirTelaConfiguracoes() {
-  telaDashboard.classList.add("escondida");
-  telaBarbeiros.classList.add("escondida");
-  telaClientes.classList.add("escondida");
-  telaRelatorio.classList.add("escondida");
-  telaConfiguracoes.classList.remove("escondida");
+  esconderTodasAsTelas();
 
-  const administradorLogado =
-    tipoUsuario === "administrador";
+  telaConfiguracoes.classList.remove(
+    "escondida"
+  );
 
-  configuracaoSenha.classList.toggle(
-    "escondida",
-    !administradorLogado
+  configuracaoSenha.classList.remove(
+    "escondida"
   );
 
   mensagemTema.textContent = "";
   mensagemSenha.textContent = "";
 
-  if (formAlterarSenha) {
-    formAlterarSenha.reset();
+  formAlterarSenha.reset();
+
+  if (
+    tipoUsuario ===
+    "administrador"
+  ) {
+    descricaoConfiguracaoSenha.textContent =
+      "Altere a senha do administrador, da recepcionista ou de qualquer barbeiro cadastrado.";
+
+    await carregarBarbeiros();
+
+    preencherUsuariosParaAlterarSenha();
+  } else if (
+    tipoUsuario ===
+    "recepcionista"
+  ) {
+    descricaoConfiguracaoSenha.textContent =
+      "Altere somente a senha da recepcionista.";
+
+    preencherUsuarioAtualParaAlterarSenha();
+  } else {
+    descricaoConfiguracaoSenha.textContent =
+      "Altere somente a senha do seu usuário.";
+
+    preencherUsuarioAtualParaAlterarSenha();
   }
 
-  if (administradorLogado) {
-    try {
-      await carregarBarbeiros();
-      preencherUsuariosParaAlterarSenha();
-    } catch (erro) {
-      console.log(
-        "Erro ao carregar usuários para alterar senha:",
-        erro
-      );
-
-      mensagemSenha.textContent =
-        "Não foi possível carregar os usuários.";
-    }
-  }
-
-  marcarBotaoAtivo("Configurações");
+  marcarBotaoAtivo(
+    "Configurações"
+  );
 }
 
+/* =========================================================
+   MENU
+========================================================= */
+
 function montarMenu() {
+  menu.innerHTML = "";
+
   const botoesAdministrador = [
     "Dashboard",
     "Clientes cadastrados",
+    "Produtos e Serviços",
+    "Relatório",
+    "Barbeiros",
+    "Configurações",
+    "Sair"
+  ];
+
+  const botoesRecepcionista = [
+    "Dashboard",
+    "Clientes cadastrados",
+    "Produtos e Serviços",
     "Relatório",
     "Barbeiros",
     "Configurações",
@@ -334,110 +2142,283 @@ function montarMenu() {
   const botoesBarbeiro = [
     "Dashboard",
     "Clientes cadastrados",
+    "Produtos e Serviços",
     "Relatório",
     "Configurações",
     "Sair"
   ];
 
-  const botoes = tipoUsuario === "administrador"
-    ? botoesAdministrador
-    : botoesBarbeiro;
+  let botoes =
+    botoesBarbeiro;
 
-  botoes.forEach((nomeBotao) => {
-    const botao = document.createElement("button");
+  if (
+    tipoUsuario ===
+    "administrador"
+  ) {
+    botoes =
+      botoesAdministrador;
+  } else if (
+    tipoUsuario ===
+    "recepcionista"
+  ) {
+    botoes =
+      botoesRecepcionista;
+  }
 
-    botao.type = "button";
-    botao.className = "botao-menu";
-    botao.textContent = nomeBotao;
+  botoes.forEach(
+    (nomeBotao) => {
+      const botao =
+        document.createElement(
+          "button"
+        );
 
-    if (nomeBotao === "Dashboard") {
-      botao.classList.add("ativo");
-    }
+      botao.type = "button";
+      botao.className =
+        "botao-menu";
 
-    botao.addEventListener("click", async () => {
-      if (nomeBotao === "Sair") {
-        if (modalSair) {
-          modalSair.classList.remove("escondido");
-        } else {
-          sessionStorage.clear();
-          window.location.href = "index.html";
+      botao.textContent =
+        nomeBotao;
+
+      if (
+        nomeBotao ===
+        "Dashboard"
+      ) {
+        botao.classList.add(
+          "ativo"
+        );
+      }
+
+      botao.addEventListener(
+        "click",
+        async () => {
+          if (
+            nomeBotao ===
+            "Dashboard"
+          ) {
+            abrirTelaDashboard();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Clientes cadastrados"
+          ) {
+            await abrirTelaClientes();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Produtos e Serviços"
+          ) {
+            await abrirTelaProdutosServicos();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Relatório"
+          ) {
+            await abrirTelaRelatorio();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Barbeiros"
+          ) {
+            await abrirTelaBarbeiros();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Configurações"
+          ) {
+            await abrirTelaConfiguracoes();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Sair"
+          ) {
+            if (modalSair) {
+              modalSair.classList.remove(
+                "escondido"
+              );
+            } else {
+              sessionStorage.clear();
+
+              window.location.href =
+                "index.html";
+            }
+          }
         }
+      );
 
-        return;
-      }
-
-      if (nomeBotao === "Dashboard") {
-        abrirTelaDashboard();
-        return;
-      }
-
-      if (nomeBotao === "Barbeiros") {
-        await abrirTelaBarbeiros();
-        return;
-      }
-
-      if (nomeBotao === "Clientes cadastrados") {
-        await abrirTelaClientes();
-        return;
-      }
-
-      if (nomeBotao === "Relatório") {
-        await abrirTelaRelatorio();
-        return;
-      }
-
-      if (nomeBotao === "Configurações") {
-        await abrirTelaConfiguracoes();
-        return;
-      }
-
-      alert(`A página "${nomeBotao}" será criada na próxima etapa.`);
-    });
-
-    menu.appendChild(botao);
-  });
+      menu.appendChild(
+        botao
+      );
+    }
+  );
 }
 
-async function carregarBarbeiros() {
-  const resposta = await getDocs(collection(db, "barbeiros"));
+/* =========================================================
+   CARREGAR DADOS
+========================================================= */
 
-  barbeiros = resposta.docs.map((documento) => {
-    return {
-      id: documento.id,
-      ...documento.data()
-    };
-  });
+async function carregarBarbeiros() {
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "barbeiros"
+      )
+    );
+
+  barbeiros =
+    resposta.docs
+      .map(
+        (documento) => ({
+          id: documento.id,
+          ...documento.data()
+        })
+      )
+      .filter(
+        (barbeiro) =>
+          barbeiro.ativo !== false
+      )
+      .sort(
+        (a, b) =>
+          a.nome.localeCompare(
+            b.nome,
+            "pt-BR"
+          )
+      );
 }
 
 async function carregarClientes() {
-  const resposta = await getDocs(collection(db, "clientes"));
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "clientes"
+      )
+    );
 
-  clientes = resposta.docs.map((documento) => {
-    return {
-      id: documento.id,
-      ...documento.data()
-    };
-  });
+  clientes =
+    resposta.docs
+      .map(
+        (documento) => ({
+          id: documento.id,
+          ...documento.data()
+        })
+      )
+      .sort(
+        (a, b) =>
+          a.nome.localeCompare(
+            b.nome,
+            "pt-BR"
+          )
+      );
 }
+
+async function carregarProdutos() {
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "produtos"
+      )
+    );
+
+  produtos =
+    resposta.docs
+      .map(
+        (documento) => ({
+          id: documento.id,
+          ...documento.data()
+        })
+      )
+      .sort(
+        (a, b) =>
+          a.nome.localeCompare(
+            b.nome,
+            "pt-BR"
+          )
+      );
+}
+
+async function carregarServicos() {
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "servicos"
+      )
+    );
+
+  servicos =
+    resposta.docs
+      .map(
+        (documento) => ({
+          id: documento.id,
+          ...documento.data()
+        })
+      )
+      .sort(
+        (a, b) =>
+          a.nome.localeCompare(
+            b.nome,
+            "pt-BR"
+          )
+      );
+}
+
+/* =========================================================
+   SELECT BARBEIROS
+========================================================= */
 
 function preencherSelectDeBarbeiros() {
-  selectBarbeiro.innerHTML =
-    '<option value="">Escolha um barbeiro</option>';
+  selectBarbeiro.innerHTML = `
+    <option value="">
+      Escolha um barbeiro
+    </option>
+  `;
 
-  barbeiros.forEach((barbeiro) => {
-    const opcao = document.createElement("option");
+  barbeiros.forEach(
+    (barbeiro) => {
+      const opcao =
+        document.createElement(
+          "option"
+        );
 
-    opcao.value = barbeiro.nome;
-    opcao.textContent = barbeiro.nome;
+      opcao.value =
+        barbeiro.nome;
 
-    selectBarbeiro.appendChild(opcao);
-  });
+      opcao.textContent =
+        barbeiro.nome;
+
+      selectBarbeiro.appendChild(
+        opcao
+      );
+    }
+  );
+
+  if (barbeiroAtual) {
+    selectBarbeiro.value =
+      barbeiroAtual;
+  }
 }
 
+/* =========================================================
+   SENHAS
+========================================================= */
+
 function preencherUsuariosParaAlterarSenha() {
-  if (!usuarioAlterarSenha) {
-    return;
-  }
+  usuarioAlterarSenha.disabled =
+    false;
 
   usuarioAlterarSenha.innerHTML = `
     <option value="">
@@ -447,70 +2428,139 @@ function preencherUsuariosParaAlterarSenha() {
     <option value="administrador">
       Administrador
     </option>
+
+    <option value="recepcionista">
+      Recepcionista
+    </option>
   `;
 
-  [...barbeiros]
-    .sort((barbeiroA, barbeiroB) => {
-      return barbeiroA.nome.localeCompare(
-        barbeiroB.nome,
-        "pt-BR"
+  barbeiros.forEach(
+    (barbeiro) => {
+      const opcao =
+        document.createElement(
+          "option"
+        );
+
+      opcao.value =
+        barbeiro.id;
+
+      opcao.textContent =
+        barbeiro.nome;
+
+      usuarioAlterarSenha.appendChild(
+        opcao
       );
-    })
-    .forEach((barbeiro) => {
-      const opcao = document.createElement("option");
-
-      opcao.value = barbeiro.id;
-      opcao.textContent = barbeiro.nome;
-
-      usuarioAlterarSenha.appendChild(opcao);
-    });
+    }
+  );
 }
 
+function preencherUsuarioAtualParaAlterarSenha() {
+  usuarioAlterarSenha.innerHTML =
+    "";
+
+  const opcao =
+    document.createElement(
+      "option"
+    );
+
+  opcao.value =
+    usuarioId;
+
+  opcao.textContent =
+    nomeUsuario;
+
+  usuarioAlterarSenha.appendChild(
+    opcao
+  );
+
+  usuarioAlterarSenha.value =
+    usuarioId;
+
+  usuarioAlterarSenha.disabled =
+    true;
+}
+
+/* =========================================================
+   CLIENTES NO AGENDAMENTO
+========================================================= */
+
 function mostrarClientesNoAgendamento() {
-  const pesquisa = pesquisaClienteAgendamento.value
-    .trim()
-    .toLowerCase();
+  const pesquisa =
+    pesquisaClienteAgendamento.value
+      .trim()
+      .toLowerCase();
 
-  const clientesFiltrados = [...clientes]
-    .sort((clienteA, clienteB) => {
-      return clienteA.nome.localeCompare(clienteB.nome, "pt-BR");
-    })
-    .filter((cliente) => {
-      return cliente.nome.toLowerCase().includes(pesquisa);
-    });
+  const clientesFiltrados =
+    clientes.filter(
+      (cliente) =>
+        cliente.nome
+          .toLowerCase()
+          .includes(pesquisa)
+    );
 
-  listaClientesAgendamento.innerHTML = "";
+  listaClientesAgendamento.innerHTML =
+    "";
 
-  if (clientesFiltrados.length === 0) {
+  if (
+    clientesFiltrados.length === 0
+  ) {
     listaClientesAgendamento.innerHTML = `
       <p class="cliente-nao-encontrado">
         Nenhum cliente encontrado.
       </p>
     `;
+
     return;
   }
 
-  clientesFiltrados.forEach((cliente) => {
-    const botao = document.createElement("button");
+  clientesFiltrados.forEach(
+    (cliente) => {
+      const botao =
+        document.createElement(
+          "button"
+        );
 
-    botao.type = "button";
-    botao.className = "opcao-cliente-agendamento";
-    botao.textContent = cliente.nome;
+      botao.type = "button";
 
-    if (clienteSelecionado && clienteSelecionado.id === cliente.id) {
-      botao.classList.add("selecionado");
+      botao.className =
+        "opcao-cliente-agendamento";
+
+      botao.textContent =
+        cliente.nome;
+
+      if (
+        clienteSelecionado &&
+        clienteSelecionado.id ===
+          cliente.id
+      ) {
+        botao.classList.add(
+          "selecionado"
+        );
+      }
+
+      botao.addEventListener(
+        "click",
+        () => {
+          clienteSelecionado =
+            cliente;
+
+          pesquisaClienteAgendamento.value =
+            cliente.nome;
+
+          mostrarClientesNoAgendamento();
+        }
+      );
+
+      listaClientesAgendamento.appendChild(
+        botao
+      );
     }
-
-    botao.addEventListener("click", () => {
-      clienteSelecionado = cliente;
-      pesquisaClienteAgendamento.value = cliente.nome;
-
-      mostrarClientesNoAgendamento();
-    });
-
-    listaClientesAgendamento.appendChild(botao);
-  });
+  );
 }
+
+/* =========================================================
+   AGENDAMENTOS
+========================================================= */
 
 async function carregarAgendamentos() {
   if (!barbeiroAtual) {
@@ -518,34 +2568,49 @@ async function carregarAgendamentos() {
     return;
   }
 
-  const resposta = await getDocs(collection(db, "agendamentos"));
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "agendamentos"
+      )
+    );
 
-  agendamentos = resposta.docs
-    .map((documento) => {
-      return {
-        id: documento.id,
-        ...documento.data()
-      };
-    })
-    .filter((agendamento) => {
-  return (
-    agendamento.barbeiro === barbeiroAtual &&
-    agendamento.status !== "cancelado"
-  );
- });
+  agendamentos =
+    resposta.docs
+      .map(
+        (documento) => ({
+          id: documento.id,
+          ...documento.data()
+        })
+      )
+      .filter(
+        (agendamento) =>
+          agendamento.barbeiro ===
+            barbeiroAtual &&
+          agendamento.status !==
+            "cancelado"
+      );
 }
 
-function encontrarAgendamento(data, hora) {
-  return agendamentos.find((agendamento) => {
-    return agendamento.data === data && agendamento.hora === hora;
-  });
+function encontrarAgendamento(
+  data,
+  hora
+) {
+  return agendamentos.find(
+    (agendamento) =>
+      agendamento.data === data &&
+      agendamento.hora === hora
+  );
 }
 
 function mostrarProximosAgendamentos() {
-  listaProximosAgendamentos.innerHTML = "";
+  listaProximosAgendamentos.innerHTML =
+    "";
 
   if (!barbeiroAtual) {
-    quantidadeProximosAgendamentos.textContent = "0 horários";
+    quantidadeProximosAgendamentos.textContent =
+      "0 horários";
 
     listaProximosAgendamentos.innerHTML = `
       <p class="lista-agendamentos-vazia">
@@ -556,34 +2621,37 @@ function mostrarProximosAgendamentos() {
     return;
   }
 
-  const proximosAgendamentos = agendamentos
-    .filter((agendamento) => {
-      return (
-        agendamento.status !== "cancelado" &&
-        agendamento.status !== "concluido" &&
-        agendamento.status !== "nao_realizado"
+  const proximosAgendamentos =
+    agendamentos
+      .filter(
+        (agendamento) =>
+          agendamento.status !==
+            "cancelado" &&
+          agendamento.status !==
+            "concluido" &&
+          agendamento.status !==
+            "nao_realizado"
+      )
+      .sort(
+        (a, b) =>
+          criarDataHora(
+            a.data,
+            a.hora
+          ) -
+          criarDataHora(
+            b.data,
+            b.hora
+          )
       );
-    })
-    .sort((agendamentoA, agendamentoB) => {
-      const dataHoraA = new Date(
-        `${agendamentoA.data}T${agendamentoA.hora}:00`
-      );
-
-      const dataHoraB = new Date(
-        `${agendamentoB.data}T${agendamentoB.hora}:00`
-      );
-
-      return dataHoraA - dataHoraB;
-    });
-
-  const quantidade = proximosAgendamentos.length;
 
   quantidadeProximosAgendamentos.textContent =
-    quantidade === 1
+    proximosAgendamentos.length === 1
       ? "1 horário"
-      : `${quantidade} horários`;
+      : `${proximosAgendamentos.length} horários`;
 
-  if (quantidade === 0) {
+  if (
+    proximosAgendamentos.length === 0
+  ) {
     listaProximosAgendamentos.innerHTML = `
       <p class="lista-agendamentos-vazia">
         Nenhum horário marcado para ${barbeiroAtual}.
@@ -593,933 +2661,3548 @@ function mostrarProximosAgendamentos() {
     return;
   }
 
-  proximosAgendamentos.forEach((agendamento) => {
-    const botao = document.createElement("button");
+  proximosAgendamentos.forEach(
+    (agendamento) => {
+      const botao =
+        document.createElement(
+          "button"
+        );
 
-    botao.type = "button";
-    botao.className = "item-proximo-agendamento";
+      botao.type = "button";
 
-    const data = dataPorTexto(agendamento.data);
+      botao.className =
+        "item-proximo-agendamento";
 
-    const dataFormatada = data.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
+      const data =
+        dataPorTexto(
+          agendamento.data
+        );
 
-    const diaDaSemana = data.toLocaleDateString("pt-BR", {
-      weekday: "long"
-    });
+      const dataFormatada =
+        data.toLocaleDateString(
+          "pt-BR"
+        );
 
-    const dataElemento = document.createElement("div");
-    dataElemento.className = "data-proximo-agendamento";
-    dataElemento.textContent = dataFormatada;
+      const diaDaSemana =
+        data.toLocaleDateString(
+          "pt-BR",
+          {
+            weekday: "long"
+          }
+        );
 
-    const horaElemento = document.createElement("div");
-    horaElemento.className = "hora-proximo-agendamento";
-    horaElemento.textContent = agendamento.hora;
+      botao.innerHTML = `
+        <div class="data-proximo-agendamento">
+          ${dataFormatada}
+        </div>
 
-    const clienteElemento = document.createElement("div");
-    clienteElemento.className = "cliente-proximo-agendamento";
+        <div class="hora-proximo-agendamento">
+          ${agendamento.hora}
+        </div>
 
-    const tituloCliente = document.createElement("strong");
-    tituloCliente.textContent = agendamento.cliente;
+        <div class="cliente-proximo-agendamento">
+          <strong>
+            ${agendamento.cliente}
+          </strong>
 
-    const textoDia = document.createElement("small");
-    textoDia.textContent = diaDaSemana;
+          <small>
+            ${diaDaSemana}
+          </small>
+        </div>
 
-    clienteElemento.appendChild(tituloCliente);
-    clienteElemento.appendChild(textoDia);
+        <div class="servico-proximo-agendamento">
+          <strong>
+            ${
+              agendamento.servico ||
+              agendamento.tipo ||
+              "Horário marcado"
+            }
+          </strong>
 
-    const servicoElemento = document.createElement("div");
-    servicoElemento.className = "servico-proximo-agendamento";
+          <small>
+            ${agendamento.barbeiro}
+          </small>
+        </div>
+      `;
 
-    const tituloServico = document.createElement("strong");
-    tituloServico.textContent =
-      agendamento.tipo || "Horário marcado";
+      botao.addEventListener(
+        "click",
+        () => {
+          abrirDetalhes(
+            agendamento
+          );
+        }
+      );
 
-    const textoBarbeiro = document.createElement("small");
-    textoBarbeiro.textContent = agendamento.barbeiro;
-
-    servicoElemento.appendChild(tituloServico);
-    servicoElemento.appendChild(textoBarbeiro);
-
-    botao.appendChild(dataElemento);
-    botao.appendChild(horaElemento);
-    botao.appendChild(clienteElemento);
-    botao.appendChild(servicoElemento);
-
-    botao.addEventListener("click", () => {
-      abrirDetalhes(agendamento);
-    });
-
-    listaProximosAgendamentos.appendChild(botao);
-  });
+      listaProximosAgendamentos.appendChild(
+        botao
+      );
+    }
+  );
 }
 
 function mostrarAgenda() {
-  const grade = document.createElement("div");
+  const grade =
+    document.createElement(
+      "div"
+    );
 
-  grade.className = "grade-agenda";
-  const larguraHorario = Math.round(82 * zoomAgenda);
-  const larguraColuna = Math.round(155 * zoomAgenda);
-  const alturaCabecalho = Math.round(50 * zoomAgenda);
-  const alturaLinha = Math.round(74 * zoomAgenda);
-  const tamanhoTexto = Math.round(13 * zoomAgenda);
+  grade.className =
+    "grade-agenda";
+
+  const larguraHorario =
+    Math.round(
+      82 * zoomAgenda
+    );
+
+  const larguraColuna =
+    Math.round(
+      155 * zoomAgenda
+    );
+
+  const alturaCabecalho =
+    Math.round(
+      50 * zoomAgenda
+    );
+
+  const alturaLinha =
+    Math.round(
+      74 * zoomAgenda
+    );
+
+  const tamanhoTexto =
+    Math.round(
+      13 * zoomAgenda
+    );
 
   grade.style.gridTemplateColumns =
     `${larguraHorario}px repeat(${dias.length}, ${larguraColuna}px)`;
 
-  grade.style.setProperty("--largura-coluna", `${larguraColuna}px`);
-  grade.style.setProperty("--altura-cabecalho", `${alturaCabecalho}px`);
-  grade.style.setProperty("--altura-linha", `${alturaLinha}px`);
-  grade.style.setProperty("--tamanho-texto", `${tamanhoTexto}px`);
+  grade.style.setProperty(
+    "--largura-coluna",
+    `${larguraColuna}px`
+  );
 
-  const canto = document.createElement("div");
-  canto.className = "canto-horario";
+  grade.style.setProperty(
+    "--altura-cabecalho",
+    `${alturaCabecalho}px`
+  );
+
+  grade.style.setProperty(
+    "--altura-linha",
+    `${alturaLinha}px`
+  );
+
+  grade.style.setProperty(
+    "--tamanho-texto",
+    `${tamanhoTexto}px`
+  );
+
+  const canto =
+    document.createElement(
+      "div"
+    );
+
+  canto.className =
+    "canto-horario";
+
   grade.appendChild(canto);
 
   dias.forEach((dia) => {
-    const cabecalhoDia = document.createElement("div");
+    const cabecalho =
+      document.createElement(
+        "div"
+      );
 
-    cabecalhoDia.className = "dia-cabecalho";
-    cabecalhoDia.textContent = formatarDataParaMostrar(dia);
+    cabecalho.className =
+      "dia-cabecalho";
 
-    grade.appendChild(cabecalhoDia);
+    cabecalho.textContent =
+      formatarDataParaMostrar(
+        dia
+      );
+
+    grade.appendChild(
+      cabecalho
+    );
   });
 
-  horarios.forEach((hora) => {
-    const horario = document.createElement("div");
+  horarios.forEach(
+    (hora) => {
+      const horario =
+        document.createElement(
+          "div"
+        );
 
-    horario.className = "horario";
-    horario.textContent = hora;
+      horario.className =
+        "horario";
 
-    grade.appendChild(horario);
+      horario.textContent =
+        hora;
 
-    dias.forEach((dia) => {
-      const data = formatarDataParaSalvar(dia);
-      const agendamento = encontrarAgendamento(data, hora);
+      grade.appendChild(
+        horario
+      );
 
-      const celula = document.createElement("div");
+      dias.forEach(
+        (dia) => {
+          const data =
+            formatarDataParaSalvar(
+              dia
+            );
 
-      celula.className = "celula-horario";
+          const agendamento =
+            encontrarAgendamento(
+              data,
+              hora
+            );
 
-      if (agendamento) {
-        celula.classList.add("ocupado");
+          const celula =
+            document.createElement(
+              "div"
+            );
 
-        if (agendamento.status === "concluido") {
-        celula.classList.add("concluido");
-        }
+          celula.className =
+            "celula-horario";
 
-        if (
-        agendamento.status === "cancelado" ||
-        agendamento.status === "nao_realizado"
-        ) {
-        celula.classList.add("nao-realizado");
-        }
+          if (agendamento) {
+            celula.classList.add(
+              "ocupado"
+            );
 
-        const nome = document.createElement("span");
-        nome.className = "nome-agendamento";
-        nome.textContent = agendamento.cliente;
+            if (
+              agendamento.status ===
+              "concluido"
+            ) {
+              celula.classList.add(
+                "concluido"
+              );
+            }
 
-        const tipo = document.createElement("span");
-        tipo.className = "tipo-agendamento-grade";
-        tipo.textContent = agendamento.tipo || "Horário marcado";
+            if (
+              agendamento.status ===
+                "cancelado" ||
+              agendamento.status ===
+                "nao_realizado"
+            ) {
+              celula.classList.add(
+                "nao-realizado"
+              );
+            }
 
-        celula.appendChild(nome);
-        celula.appendChild(tipo);
+            const nome =
+              document.createElement(
+                "span"
+              );
 
-        celula.addEventListener("click", () => {
-          abrirDetalhes(agendamento);
-        });
-      } else {
-        celula.addEventListener("click", async () => {
-          if (!barbeiroAtual) {
-            alert("Escolha um barbeiro antes de criar um agendamento.");
-            return;
+            nome.className =
+              "nome-agendamento";
+
+            nome.textContent =
+              agendamento.cliente;
+
+            const tipo =
+              document.createElement(
+                "span"
+              );
+
+            tipo.className =
+              "tipo-agendamento-grade";
+
+            tipo.textContent =
+              agendamento.servico ||
+              agendamento.tipo ||
+              "Horário marcado";
+
+            celula.appendChild(
+              nome
+            );
+
+            celula.appendChild(
+              tipo
+            );
+
+            celula.addEventListener(
+              "click",
+              () => {
+                abrirDetalhes(
+                  agendamento
+                );
+              }
+            );
+          } else {
+            celula.addEventListener(
+              "click",
+              async () => {
+                if (
+                  !barbeiroAtual
+                ) {
+                  alert(
+                    "Escolha um barbeiro antes de criar um agendamento."
+                  );
+
+                  return;
+                }
+
+                await abrirNovoAgendamento(
+                  data,
+                  hora
+                );
+              }
+            );
           }
 
-          await abrirNovoAgendamento(data, hora);
-        });
-      }
-
-      grade.appendChild(celula);
-    });
-  });
+          grade.appendChild(
+            celula
+          );
+        }
+      );
+    }
+  );
 
   agenda.innerHTML = "";
-  agenda.appendChild(grade);
+
+  agenda.appendChild(
+    grade
+  );
+
   mostrarProximosAgendamentos();
 }
 
-async function abrirNovoAgendamento(data, hora) {
+async function abrirNovoAgendamento(
+  data,
+  hora
+) {
   await carregarClientes();
-  clienteSelecionado = null;
-    pesquisaClienteAgendamento.value = "";
-    document.querySelector(
-    'input[name="tipo-agendamento"][value="Horário marcado"]'
-    ).checked = true;
-    mostrarClientesNoAgendamento();
 
-    if (clientes.length === 0)  {
-    alert("Cadastre um cliente antes de criar um agendamento.");
+  if (
+    clientes.length === 0
+  ) {
+    alert(
+      "Cadastre um cliente antes de criar um agendamento."
+    );
+
     return;
   }
 
-  dataAgendamento.value = data;
-  horaAgendamento.value = hora;
+  clienteSelecionado = null;
 
-  const dataFormatada = dataPorTexto(data).toLocaleDateString("pt-BR");
+  pesquisaClienteAgendamento.value =
+    "";
 
-  informacaoHorario.textContent = `${dataFormatada} às ${hora}`;
-  modalNovo.classList.remove("escondido");
-}
+  const horarioMarcado =
+    document.querySelector(
+      'input[name="tipo-agendamento"][value="Horário marcado"]'
+    );
 
-function abrirDetalhes(agendamento) {
-  agendamentoSelecionado = agendamento;
+  if (horarioMarcado) {
+    horarioMarcado.checked =
+      true;
+  }
 
-  detalheCliente.textContent = agendamento.cliente;
-  detalheData.textContent = dataPorTexto(agendamento.data).toLocaleDateString(
-    "pt-BR"
+  mostrarClientesNoAgendamento();
+
+  dataAgendamento.value =
+    data;
+
+  horaAgendamento.value =
+    hora;
+
+  const dataFormatada =
+    dataPorTexto(
+      data
+    ).toLocaleDateString(
+      "pt-BR"
+    );
+
+  informacaoHorario.textContent =
+    `${dataFormatada} às ${hora}`;
+
+  modalNovo.classList.remove(
+    "escondido"
   );
-  detalheHora.textContent = agendamento.hora;
-
-  modalDetalhes.classList.remove("escondido");
 }
 
-function fecharModal(idModal) {
-  document.querySelector(`#${idModal}`).classList.add("escondido");
+function abrirDetalhes(
+  agendamento
+) {
+  agendamentoSelecionado =
+    agendamento;
+
+  detalheCliente.textContent =
+    agendamento.cliente;
+
+  detalheData.textContent =
+    dataPorTexto(
+      agendamento.data
+    ).toLocaleDateString(
+      "pt-BR"
+    );
+
+  detalheHora.textContent =
+    agendamento.hora;
+
+  modalDetalhes.classList.remove(
+    "escondido"
+  );
+}
+
+function fecharModal(
+  idModal
+) {
+  const modal =
+    document.querySelector(
+      `#${idModal}`
+    );
+
+  if (modal) {
+    modal.classList.add(
+      "escondido"
+    );
+  }
 }
 
 async function atualizarAgenda() {
   await carregarAgendamentos();
+
   mostrarAgenda();
 }
 
-function mostrarListaDeBarbeiros() {
-  const pesquisa = pesquisaBarbeiro.value
-    .trim()
-    .toLowerCase();
+/* =========================================================
+   SALVAR AGENDAMENTO
+========================================================= */
 
-  const barbeirosFiltrados = barbeiros.filter((barbeiro) => {
-    return barbeiro.nome
-      .toLowerCase()
-      .includes(pesquisa);
-  });
+formAgendamento.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
 
-  listaGerenciarBarbeiros.innerHTML = "";
+    if (!barbeiroAtual) {
+      alert(
+        "Escolha um barbeiro antes de salvar o agendamento."
+      );
 
-  if (barbeirosFiltrados.length === 0) {
-    listaGerenciarBarbeiros.innerHTML =
-      '<p class="lista-vazia">Nenhum barbeiro encontrado.</p>';
+      return;
+    }
 
-    return;
+    if (!clienteSelecionado) {
+      alert(
+        "Escolha um cliente."
+      );
+
+      return;
+    }
+
+    const tipoEscolhido =
+      document.querySelector(
+        'input[name="tipo-agendamento"]:checked'
+      );
+
+    if (!tipoEscolhido) {
+      alert(
+        "Escolha o tipo do atendimento."
+      );
+
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(
+          db,
+          "agendamentos"
+        ),
+        {
+          barbeiro:
+            barbeiroAtual,
+
+          cliente:
+            clienteSelecionado.nome,
+
+          clienteId:
+            clienteSelecionado.id,
+
+          tipo:
+            tipoEscolhido.value,
+
+          status:
+            "pendente",
+
+          data:
+            dataAgendamento.value,
+
+          hora:
+            horaAgendamento.value,
+
+          dataCadastro:
+            Date.now()
+        }
+      );
+
+      fecharModal(
+        "modal-novo"
+      );
+
+      await atualizarAgenda();
+    } catch (erro) {
+      console.log(
+        "Erro ao salvar agendamento:",
+        erro
+      );
+
+      alert(
+        "Não foi possível salvar o agendamento."
+      );
+    }
   }
+);
 
-  barbeirosFiltrados.forEach((barbeiro) => {
-    const linha = document.createElement("div");
-    linha.className = "item-lista";
+/* =========================================================
+   CONCLUSÃO DO ATENDIMENTO
+========================================================= */
 
-    const nome = document.createElement("strong");
-    nome.textContent = barbeiro.nome;
-
-    const botaoExcluir = document.createElement("button");
-    botaoExcluir.type = "button";
-    botaoExcluir.className = "botao-excluir";
-    botaoExcluir.textContent = "Excluir";
-
-    botaoExcluir.addEventListener("click", async () => {
-      mensagemBarbeiro.textContent = "";
-
-      try {
-        const resposta = await getDocs(
-          collection(db, "agendamentos")
-        );
-
-        const temHorarioPendente = resposta.docs.some((documento) => {
-          const agendamento = documento.data();
-
-          const pertenceAoBarbeiro =
-            agendamento.barbeiro === barbeiro.nome;
-
-          const estaPendente =
-            agendamento.status === "pendente" ||
-            !agendamento.status;
-
-          return pertenceAoBarbeiro && estaPendente;
-        });
-
-        if (temHorarioPendente) {
-          mensagemBarbeiro.textContent =
-            "Não é possível excluir este barbeiro porque ele possui um horário pendente.";
-
-          return;
-        }
-
-        const confirmouExclusao = confirm(
-          `Deseja excluir o barbeiro ${barbeiro.nome}?`
-        );
-
-        if (!confirmouExclusao) {
-          return;
-        }
-
-        await deleteDoc(
-          doc(db, "barbeiros", barbeiro.id)
-        );
-
-        mensagemBarbeiro.textContent =
-          `${barbeiro.nome} foi excluído com sucesso.`;
-
-        if (barbeiroAtual === barbeiro.nome) {
-          barbeiroAtual = "";
-        }
-
-        await carregarBarbeiros();
-
-        preencherSelectDeBarbeiros();
-        mostrarListaDeBarbeiros();
-      } catch (erro) {
-        console.log("Erro ao excluir barbeiro:", erro);
-
-        mensagemBarbeiro.textContent =
-          "Não foi possível excluir o barbeiro.";
-      }
-    });
-
-    linha.appendChild(nome);
-    linha.appendChild(botaoExcluir);
-
-    listaGerenciarBarbeiros.appendChild(linha);
-  });
-}
-
-function mostrarListaDeClientes() {
-  const pesquisa = pesquisaCliente.value.trim().toLowerCase();
-
-  const clientesFiltrados = clientes.filter((cliente) => {
-    return (
-      cliente.nome.toLowerCase().includes(pesquisa) ||
-      cliente.celular.includes(pesquisa)
-    );
-  });
-
-  listaGerenciarClientes.innerHTML = "";
-
-  if (clientesFiltrados.length === 0) {
-    listaGerenciarClientes.innerHTML =
-      '<p class="lista-vazia">Nenhum cliente encontrado.</p>';
-
-    return;
-  }
-
-  clientesFiltrados.forEach((cliente) => {
-    const linha = document.createElement("div");
-
-    linha.className = "item-lista";
-
-    const informacoes = document.createElement("div");
-
-    const nome = document.createElement("strong");
-
-    nome.textContent = cliente.nome;
-
-    const celular = document.createElement("small");
-
-    celular.textContent = cliente.celular;
-
-    informacoes.appendChild(nome);
-    informacoes.appendChild(celular);
-
-    const botaoExcluir = document.createElement("button");
-
-    botaoExcluir.type = "button";
-    botaoExcluir.className = "botao-excluir";
-    botaoExcluir.textContent = "Excluir";
-
-    botaoExcluir.addEventListener("click", async () => {
-      mensagemCliente.textContent = "";
-
-      try {
-        const resposta = await getDocs(
-          collection(db, "agendamentos")
-        );
-
-        const temHorarioPendente = resposta.docs.some((documento) => {
-          const agendamento = documento.data();
-
-          const pertenceAoCliente =
-            agendamento.clienteId === cliente.id ||
-            agendamento.cliente === cliente.nome;
-
-          const estaPendente =
-            agendamento.status !== "cancelado" &&
-            agendamento.status !== "concluido" &&
-            agendamento.status !== "nao_realizado";
-
-          return pertenceAoCliente && estaPendente;
-        });
-
-        if (temHorarioPendente) {
-          mensagemCliente.textContent =
-            "Não é possível excluir este cliente porque ele possui um horário pendente.";
-
-          return;
-        }
-
-        const confirmouExclusao = confirm(
-          `Deseja excluir o cliente ${cliente.nome}?`
-        );
-
-        if (!confirmouExclusao) {
-          return;
-        }
-
-        await deleteDoc(
-          doc(db, "clientes", cliente.id)
-        );
-
-        mensagemCliente.textContent =
-          `${cliente.nome} foi excluído com sucesso.`;
-
-        await carregarClientes();
-        mostrarListaDeClientes();
-      } catch (erro) {
-        console.log("Erro ao excluir cliente:", erro);
-
-        mensagemCliente.textContent =
-          "Não foi possível excluir o cliente.";
-      }
-    });
-
-    linha.appendChild(informacoes);
-    linha.appendChild(botaoExcluir);
-
-    listaGerenciarClientes.appendChild(linha);
-  });
-}
-
-formAgendamento.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const clienteEscolhido = clienteSelecionado;
-
-  if (!clienteEscolhido) {
-    alert("Escolha um cliente.");
-    return;
-  }
-
-  try {
-   const tipoEscolhido = document.querySelector(
-  'input[name="tipo-agendamento"]:checked'
-    ).value;
-
-   await addDoc(collection(db, "agendamentos"), {
-    barbeiro: barbeiroAtual,
-    cliente: clienteEscolhido.nome,
-    clienteId: clienteEscolhido.id,
-    tipo: tipoEscolhido,
-    status: "pendente",
-    data: dataAgendamento.value,
-    hora: horaAgendamento.value
-    });
-
-    fecharModal("modal-novo");
-    await atualizarAgenda();
-  } catch (erro) {
-    alert("Não foi possível salvar o agendamento.");
-    console.log(erro);
-  }
-});
-
-botaoCancelarAgendamento.addEventListener("click", async () => {
+async function abrirConclusaoAtendimento() {
   if (!agendamentoSelecionado) {
     return;
   }
 
-  await updateDoc(
-    doc(db, "agendamentos", agendamentoSelecionado.id),
-    {
-      status: "cancelado"
+  mensagemConclusaoAtendimento.textContent = "";
+
+  try {
+    await Promise.all([
+      carregarProdutos(),
+      carregarServicos()
+    ]);
+  } catch (erro) {
+    console.log(erro);
+
+    alert(
+      "Não foi possível carregar os produtos e serviços."
+    );
+
+    return;
+  }
+
+  if (servicos.length === 0) {
+    alert(
+      "Cadastre pelo menos um serviço antes de concluir o atendimento."
+    );
+
+    return;
+  }
+
+  conclusaoCliente.textContent =
+    agendamentoSelecionado.cliente;
+
+  conclusaoBarbeiro.textContent =
+    agendamentoSelecionado.barbeiro;
+
+  const dataFormatada =
+    dataPorTexto(
+      agendamentoSelecionado.data
+    ).toLocaleDateString(
+      "pt-BR"
+    );
+
+  conclusaoDataHora.textContent =
+    `${dataFormatada} às ${agendamentoSelecionado.hora}`;
+
+  servicos.forEach(
+    (servico) => {
+      const opcao =
+        document.createElement(
+          "option"
+        );
+
+      opcao.value =
+        servico.id;
+
+      opcao.textContent =
+        `${servico.nome} — ${formatarValorEmReal(servico.valor)}`;
+
+      servicoAtendimento.appendChild(
+        opcao
+      );
     }
   );
 
-  fecharModal("modal-detalhes");
-  await atualizarAgenda();
-});
+  if (produtos.length === 0) {
+    const opcao =
+      document.createElement(
+        "option"
+      );
 
-botaoMostrarCadastroBarbeiro.addEventListener("click", () => {
-  if (tipoUsuario !== "administrador") {
-    mensagemBarbeiro.textContent =
-      "Somente o administrador pode cadastrar barbeiros.";
+    opcao.disabled = true;
+
+    opcao.textContent =
+      "Nenhum produto cadastrado";
+
+    produtoAtendimento.appendChild(
+      opcao
+    );
+  } else {
+    produtos.forEach(
+      (produto) => {
+        const opcao =
+          document.createElement(
+            "option"
+          );
+
+        opcao.value =
+          produto.id;
+
+        opcao.textContent =
+          `${produto.nome} — ${formatarValorEmReal(produto.valor)}`;
+
+        produtoAtendimento.appendChild(
+          opcao
+        );
+      }
+    );
+  }
+
+
+  /* =========================================
+     LIMPAR SELEÇÕES
+  ========================================= */
+
+  Array.from(
+    servicoAtendimento.options
+  ).forEach(
+    (opcao) => {
+      opcao.selected = false;
+    }
+  );
+
+  Array.from(
+    produtoAtendimento.options
+  ).forEach(
+    (opcao) => {
+      opcao.selected = false;
+    }
+  );
+
+  formaPagamentoAtendimento.value = "";
+
+
+  /* =========================================
+     DESCONTO
+  ========================================= */
+
+  if (teveDescontoAtendimento) {
+    teveDescontoAtendimento.value =
+      "nao";
+  }
+
+  if (valorDescontoAtendimento) {
+    valorDescontoAtendimento.value =
+      "";
+  }
+
+  if (areaDescontoAtendimento) {
+    areaDescontoAtendimento.classList.add(
+      "escondida"
+    );
+  }
+
+
+  atualizarValoresConclusao();
+
+  fecharModal(
+    "modal-detalhes"
+  );
+
+  modalConcluirAtendimento.classList.remove(
+    "escondido"
+  );
+}
+
+function atualizarValoresConclusao() {
+
+  /* =========================================
+     PEGAR TODOS OS SERVIÇOS SELECIONADOS
+  ========================================= */
+
+  const selectsServicos =
+    document.querySelectorAll(
+      ".select-servico-atendimento"
+    );
+
+  const servicosSelecionados = [];
+
+  selectsServicos.forEach(
+    (select) => {
+
+      if (!select.value) {
+        return;
+      }
+
+      const servico =
+        servicos.find(
+          (item) =>
+            item.id === select.value
+        );
+
+      if (servico) {
+        servicosSelecionados.push(
+          servico
+        );
+      }
+    }
+  );
+
+
+  /* =========================================
+     PEGAR TODOS OS PRODUTOS SELECIONADOS
+  ========================================= */
+
+  const selectsProdutos =
+    document.querySelectorAll(
+      ".select-produto-atendimento"
+    );
+
+  const produtosSelecionados = [];
+
+  selectsProdutos.forEach(
+    (select) => {
+
+      if (!select.value) {
+        return;
+      }
+
+      const produto =
+        produtos.find(
+          (item) =>
+            item.id === select.value
+        );
+
+      if (produto) {
+        produtosSelecionados.push(
+          produto
+        );
+      }
+    }
+  );
+
+
+  /* =========================================
+     SOMAR SERVIÇOS
+  ========================================= */
+
+  const valorServico =
+    servicosSelecionados.reduce(
+      (total, servico) => {
+
+        return (
+          total +
+          (
+            Number(servico.valor) ||
+            0
+          )
+        );
+      },
+      0
+    );
+
+
+  /* =========================================
+     SOMAR PRODUTOS
+  ========================================= */
+
+  const valorProduto =
+    produtosSelecionados.reduce(
+      (total, produto) => {
+
+        return (
+          total +
+          (
+            Number(produto.valor) ||
+            0
+          )
+        );
+      },
+      0
+    );
+
+
+  const valorBruto =
+    valorServico +
+    valorProduto;
+
+
+  /* =========================================
+     DESCONTO
+  ========================================= */
+
+  const temDesconto =
+    teveDescontoAtendimento?.value ===
+    "sim";
+
+  let desconto = 0;
+
+  if (
+    temDesconto &&
+    valorDescontoAtendimento
+  ) {
+    desconto =
+      converterValorParaNumero(
+        valorDescontoAtendimento.value
+      );
+  }
+
+  if (desconto < 0) {
+    desconto = 0;
+  }
+
+
+  const valorLiquido =
+    Math.max(
+      0,
+      valorBruto - desconto
+    );
+
+
+  /* =========================================
+     MOSTRAR VALORES
+  ========================================= */
+
+  valorServicoAtendimento.textContent =
+    formatarValorEmReal(
+      valorServico
+    );
+
+  valorProdutoAtendimento.textContent =
+    formatarValorEmReal(
+      valorProduto
+    );
+
+  valorTotalAtendimento.textContent =
+    formatarValorEmReal(
+      valorBruto
+    );
+
+
+  if (valorFinalAtendimento) {
+
+    valorFinalAtendimento.textContent =
+      formatarValorEmReal(
+        valorLiquido
+      );
+  }
+}
+
+servicoAtendimento.addEventListener(
+  "change",
+  atualizarValoresConclusao
+);
+
+produtoAtendimento.addEventListener(
+  "change",
+  atualizarValoresConclusao
+);
+
+if (teveDescontoAtendimento) {
+  teveDescontoAtendimento.addEventListener(
+    "change",
+    () => {
+      const temDesconto =
+        teveDescontoAtendimento.value ===
+        "sim";
+
+      if (areaDescontoAtendimento) {
+        areaDescontoAtendimento.classList.toggle(
+          "escondida",
+          !temDesconto
+        );
+      }
+
+      if (!temDesconto) {
+        if (valorDescontoAtendimento) {
+          valorDescontoAtendimento.value =
+            "";
+        }
+      }
+
+      atualizarValoresConclusao();
+    }
+  );
+}
+
+if (valorDescontoAtendimento) {
+  valorDescontoAtendimento.addEventListener(
+    "input",
+    () => {
+      formatarCampoValor(
+        valorDescontoAtendimento
+      );
+
+      atualizarValoresConclusao();
+    }
+  );
+}
+
+botaoConcluirAgendamento.addEventListener(
+  "click",
+  abrirConclusaoAtendimento
+);
+
+formConcluirAtendimento.addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+    mensagemConclusaoAtendimento.textContent =
+      "";
+
+    if (!agendamentoSelecionado) {
+
+      mensagemConclusaoAtendimento.textContent =
+        "Nenhum agendamento foi selecionado.";
+
+      return;
+    }
+
+
+    /* =========================================
+       PEGAR TODOS OS SERVIÇOS
+    ========================================= */
+
+    const selectsServicos =
+      document.querySelectorAll(
+        ".select-servico-atendimento"
+      );
+
+    const servicosSelecionados = [];
+
+    selectsServicos.forEach(
+      (select) => {
+
+        if (!select.value) {
+          return;
+        }
+
+        const servico =
+          servicos.find(
+            (item) =>
+              item.id === select.value
+          );
+
+        if (servico) {
+          servicosSelecionados.push(
+            servico
+          );
+        }
+      }
+    );
+
+
+    /* =========================================
+       PEGAR TODOS OS PRODUTOS
+    ========================================= */
+
+    const selectsProdutos =
+      document.querySelectorAll(
+        ".select-produto-atendimento"
+      );
+
+    const produtosSelecionados = [];
+
+    selectsProdutos.forEach(
+      (select) => {
+
+        if (!select.value) {
+          return;
+        }
+
+        const produto =
+          produtos.find(
+            (item) =>
+              item.id === select.value
+          );
+
+        if (produto) {
+          produtosSelecionados.push(
+            produto
+          );
+        }
+      }
+    );
+
+
+    const formaPagamento =
+      formaPagamentoAtendimento.value;
+
+
+    /* =========================================
+       VALIDAÇÕES
+    ========================================= */
+
+    if (
+      servicosSelecionados.length === 0
+    ) {
+
+      mensagemConclusaoAtendimento.textContent =
+        "Selecione pelo menos um serviço realizado.";
+
+      servicoAtendimento.focus();
+
+      return;
+    }
+
+
+    if (!formaPagamento) {
+
+      mensagemConclusaoAtendimento.textContent =
+        "Selecione a forma de pagamento.";
+
+      formaPagamentoAtendimento.focus();
+
+      return;
+    }
+
+
+    /* =========================================
+       VALOR DOS SERVIÇOS
+    ========================================= */
+
+    const valorServico =
+      servicosSelecionados.reduce(
+        (total, servico) => {
+
+          return (
+            total +
+            (
+              Number(servico.valor) ||
+              0
+            )
+          );
+        },
+        0
+      );
+
+
+    /* =========================================
+       VALOR DOS PRODUTOS
+    ========================================= */
+
+    const valorProduto =
+      produtosSelecionados.reduce(
+        (total, produto) => {
+
+          return (
+            total +
+            (
+              Number(produto.valor) ||
+              0
+            )
+          );
+        },
+        0
+      );
+
+
+    const valorBruto =
+      valorServico +
+      valorProduto;
+
+
+    /* =========================================
+       NOMES
+    ========================================= */
+
+    const nomesServicos =
+      servicosSelecionados.map(
+        (servico) =>
+          servico.nome
+      );
+
+    const nomesProdutos =
+      produtosSelecionados.map(
+        (produto) =>
+          produto.nome
+      );
+
+
+    const textoServicos =
+      nomesServicos.join(" + ");
+
+    const textoProdutos =
+      nomesProdutos.join(" + ");
+
+
+    /* =========================================
+       DESCONTO
+    ========================================= */
+
+    const temDesconto =
+      teveDescontoAtendimento?.value ===
+      "sim";
+
+    let valorDesconto = 0;
+
+
+    if (temDesconto) {
+
+      valorDesconto =
+        converterValorParaNumero(
+          valorDescontoAtendimento?.value ||
+          ""
+        );
+    }
+
+
+    if (
+      temDesconto &&
+      valorDesconto <= 0
+    ) {
+
+      mensagemConclusaoAtendimento.textContent =
+        "Informe um valor válido para o desconto.";
+
+      valorDescontoAtendimento?.focus();
+
+      return;
+    }
+
+
+    if (
+      valorDesconto >
+      valorBruto
+    ) {
+
+      mensagemConclusaoAtendimento.textContent =
+        "O desconto não pode ser maior que o valor do atendimento.";
+
+      valorDescontoAtendimento?.focus();
+
+      return;
+    }
+
+
+    const valorLiquido =
+      valorBruto -
+      valorDesconto;
+
+
+    /* =========================================
+       DADOS DO AGENDAMENTO
+    ========================================= */
+
+    const agendamentoId =
+      agendamentoSelecionado.id;
+
+    const barbeiroAtendimento =
+      agendamentoSelecionado.barbeiro;
+
+    const clienteAtendimento =
+      agendamentoSelecionado.cliente;
+
+    const dataAtendimento =
+      agendamentoSelecionado.data;
+
+    const horaAtendimento =
+      agendamentoSelecionado.hora;
+
+
+    try {
+
+      /* =========================================
+         SALVAR ATENDIMENTO
+      ========================================= */
+
+      await updateDoc(
+        doc(
+          db,
+          "agendamentos",
+          agendamentoId
+        ),
+        {
+
+          status:
+            "concluido",
+
+
+          /* ===============================
+             SERVIÇOS
+          =============================== */
+
+          servicosIds:
+            servicosSelecionados.map(
+              (servico) =>
+                servico.id
+            ),
+
+          servicos:
+            servicosSelecionados.map(
+              (servico) => ({
+
+                id:
+                  servico.id,
+
+                nome:
+                  servico.nome,
+
+                valor:
+                  Number(
+                    servico.valor
+                  ) || 0
+
+              })
+            ),
+
+
+          /*
+            Mantemos também esses campos
+            para compatibilidade com outras
+            partes do sistema.
+          */
+
+          servicoId:
+            servicosSelecionados[0]?.id ||
+            "",
+
+          servico:
+            textoServicos,
+
+          valorServico,
+
+
+          /* ===============================
+             PRODUTOS
+          =============================== */
+
+          produtosIds:
+            produtosSelecionados.map(
+              (produto) =>
+                produto.id
+            ),
+
+          produtos:
+            produtosSelecionados.map(
+              (produto) => ({
+
+                id:
+                  produto.id,
+
+                nome:
+                  produto.nome,
+
+                valor:
+                  Number(
+                    produto.valor
+                  ) || 0
+
+              })
+            ),
+
+          produtoId:
+            produtosSelecionados[0]?.id ||
+            "",
+
+          produto:
+            textoProdutos,
+
+          valorProduto,
+
+
+          /* ===============================
+             VALORES
+          =============================== */
+
+          valorTotal:
+            valorBruto,
+
+          valorTotalBruto:
+            valorBruto,
+
+          teveDesconto:
+            temDesconto,
+
+          valorDesconto:
+            valorDesconto,
+
+          valorLiquido:
+            valorLiquido,
+
+          formaPagamento,
+
+          concluidoPor:
+            nomeUsuario,
+
+          tipoUsuarioConclusao:
+            tipoUsuario,
+
+          dataConclusao:
+            Date.now()
+        }
+      );
+
+
+      /* =========================================
+         MOVIMENTAÇÃO DO DESCONTO
+      ========================================= */
+
+      const documentoDesconto =
+        doc(
+          db,
+          "movimentacoesFinanceiras",
+          `desconto_${agendamentoId}`
+        );
+
+
+      if (
+        temDesconto &&
+        valorDesconto > 0
+      ) {
+
+        await setDoc(
+          documentoDesconto,
+          {
+
+            tipo:
+              "saida",
+
+            origem:
+              "desconto",
+
+            categoria:
+              "desconto",
+
+            descricao:
+              `Desconto do atendimento - ${textoServicos}`,
+
+            valor:
+              valorDesconto,
+
+            data:
+              dataAtendimento,
+
+            hora:
+              horaAtendimento,
+
+            barbeiro:
+              barbeiroAtendimento,
+
+            cliente:
+              clienteAtendimento,
+
+            servico:
+              textoServicos,
+
+            servicos:
+              servicosSelecionados.map(
+                (servico) => ({
+
+                  id:
+                    servico.id,
+
+                  nome:
+                    servico.nome,
+
+                  valor:
+                    Number(
+                      servico.valor
+                    ) || 0
+                })
+              ),
+
+            produto:
+              textoProdutos,
+
+            produtos:
+              produtosSelecionados.map(
+                (produto) => ({
+
+                  id:
+                    produto.id,
+
+                  nome:
+                    produto.nome,
+
+                  valor:
+                    Number(
+                      produto.valor
+                    ) || 0
+                })
+              ),
+
+            formaPagamento:
+              formaPagamento,
+
+            agendamentoId:
+              agendamentoId,
+
+            prioridadeHistorico:
+              2,
+
+            criadoPor:
+              nomeUsuario,
+
+            usuarioId:
+              usuarioId,
+
+            dataCadastro:
+              Date.now()
+          },
+          {
+            merge:
+              true
+          }
+        );
+
+      } else {
+
+        await deleteDoc(
+          documentoDesconto
+        );
+      }
+
+
+      /* =========================================
+         FECHAR / ATUALIZAR
+      ========================================= */
+
+      fecharModal(
+        "modal-concluir-atendimento"
+      );
+
+      agendamentoSelecionado =
+        null;
+
+      await atualizarAgenda();
+
+
+      if (
+        conteudoRelatorioHistorico &&
+        !conteudoRelatorioHistorico.classList.contains(
+          "escondida"
+        )
+      ) {
+
+        await atualizarHistoricoFinanceiro();
+      }
+
+
+    } catch (erro) {
+
+      console.log(
+        "Erro ao concluir atendimento:",
+        erro
+      );
+
+      mensagemConclusaoAtendimento.textContent =
+        "Não foi possível concluir o atendimento.";
+    }
+  }
+);
+
+/* =========================================================
+   CANCELAR / NÃO REALIZADO
+========================================================= */
+
+botaoCancelarAgendamento.addEventListener(
+  "click",
+  async () => {
+    if (!agendamentoSelecionado) {
+      return;
+    }
+
+    try {
+      await updateDoc(
+        doc(
+          db,
+          "agendamentos",
+          agendamentoSelecionado.id
+        ),
+        {
+          status:
+            "cancelado"
+        }
+      );
+
+      fecharModal(
+        "modal-detalhes"
+      );
+
+      agendamentoSelecionado =
+        null;
+
+      await atualizarAgenda();
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      alert(
+        "Não foi possível cancelar o agendamento."
+      );
+    }
+  }
+);
+
+botaoNaoRealizadoAgendamento.addEventListener(
+  "click",
+  async () => {
+    if (!agendamentoSelecionado) {
+      return;
+    }
+
+    try {
+      await updateDoc(
+        doc(
+          db,
+          "agendamentos",
+          agendamentoSelecionado.id
+        ),
+        {
+          status:
+            "nao_realizado"
+        }
+      );
+
+      fecharModal(
+        "modal-detalhes"
+      );
+
+      agendamentoSelecionado =
+        null;
+
+      await atualizarAgenda();
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      alert(
+        "Não foi possível atualizar o agendamento."
+      );
+    }
+  }
+);
+
+/* =========================================================
+   BARBEIROS
+========================================================= */
+
+function mostrarListaDeBarbeiros() {
+  const pesquisa =
+    pesquisaBarbeiro.value
+      .trim()
+      .toLowerCase();
+
+  const filtrados =
+    barbeiros.filter(
+      (barbeiro) =>
+        barbeiro.nome
+          .toLowerCase()
+          .includes(
+            pesquisa
+          )
+    );
+
+  listaGerenciarBarbeiros.innerHTML =
+    "";
+
+  if (
+    filtrados.length === 0
+  ) {
+    listaGerenciarBarbeiros.innerHTML = `
+      <p class="lista-vazia">
+        Nenhum barbeiro encontrado.
+      </p>
+    `;
 
     return;
   }
 
-  formCadastroBarbeiro.classList.toggle("escondida");
+  filtrados.forEach(
+    (barbeiro) => {
+      const linha =
+        document.createElement(
+          "div"
+        );
 
-  mensagemBarbeiro.textContent = "";
+      linha.className =
+        "item-lista";
 
-  if (!formCadastroBarbeiro.classList.contains("escondida")) {
-    formCadastroBarbeiro.reset();
-    nomeNovoBarbeiro.focus();
-  }
-});
+      const informacoes =
+        document.createElement(
+          "div"
+        );
 
-formCadastroBarbeiro.addEventListener("submit", async (event) => {
-  event.preventDefault();
+      const nome =
+        document.createElement(
+          "strong"
+        );
 
-  mensagemBarbeiro.textContent = "";
+      nome.textContent =
+        barbeiro.nome;
 
-  const nome = nomeNovoBarbeiro.value.trim();
-  const senha = senhaNovoBarbeiro.value.trim();
-  const confirmarSenha = confirmarSenhaNovoBarbeiro.value.trim();
+      const descricao =
+        document.createElement(
+          "small"
+        );
 
-  if (tipoUsuario !== "administrador") {
+      descricao.textContent =
+        "Barbeiro cadastrado";
+
+      informacoes.append(
+        nome,
+        descricao
+      );
+
+      linha.appendChild(
+        informacoes
+      );
+
+      if (
+        usuarioPodeGerenciarBarbeiros()
+      ) {
+        const botaoExcluir =
+          document.createElement(
+            "button"
+          );
+
+        botaoExcluir.type =
+          "button";
+
+        botaoExcluir.className =
+          "botao-excluir";
+
+        botaoExcluir.textContent =
+          "Excluir";
+
+        botaoExcluir.addEventListener(
+          "click",
+          async () => {
+            const resposta =
+              await getDocs(
+                collection(
+                  db,
+                  "agendamentos"
+                )
+              );
+
+            const temPendente =
+              resposta.docs.some(
+                (documento) => {
+                  const agendamento =
+                    documento.data();
+
+                  return (
+                    agendamento.barbeiro ===
+                      barbeiro.nome &&
+                    agendamento.status !==
+                      "cancelado" &&
+                    agendamento.status !==
+                      "concluido" &&
+                    agendamento.status !==
+                      "nao_realizado"
+                  );
+                }
+              );
+
+            if (temPendente) {
+              mensagemBarbeiro.textContent =
+                "Não é possível excluir este barbeiro porque ele possui um horário pendente.";
+
+              return;
+            }
+
+            if (
+              !confirm(
+                `Deseja excluir o barbeiro ${barbeiro.nome}?`
+              )
+            ) {
+              return;
+            }
+
+            await deleteDoc(
+              doc(
+                db,
+                "barbeiros",
+                barbeiro.id
+              )
+            );
+
+            mensagemBarbeiro.textContent =
+              `${barbeiro.nome} foi excluído com sucesso.`;
+
+            if (
+              barbeiroAtual ===
+              barbeiro.nome
+            ) {
+              barbeiroAtual =
+                "";
+            }
+
+            await carregarBarbeiros();
+
+            preencherSelectDeBarbeiros();
+
+            mostrarListaDeBarbeiros();
+          }
+        );
+
+        linha.appendChild(
+          botaoExcluir
+        );
+      }
+
+      listaGerenciarBarbeiros.appendChild(
+        linha
+      );
+    }
+  );
+}
+
+botaoMostrarCadastroBarbeiro.addEventListener(
+  "click",
+  () => {
+    if (
+      !usuarioPodeGerenciarBarbeiros()
+    ) {
+      mensagemBarbeiro.textContent =
+        "Somente o administrador pode cadastrar barbeiros.";
+
+      return;
+    }
+
+    formCadastroBarbeiro.classList.toggle(
+      "escondida"
+    );
+
     mensagemBarbeiro.textContent =
-      "Somente o administrador pode cadastrar barbeiros.";
+      "";
+
+    if (
+      !formCadastroBarbeiro.classList.contains(
+        "escondida"
+      )
+    ) {
+      formCadastroBarbeiro.reset();
+
+      nomeNovoBarbeiro.focus();
+    }
+  }
+);
+
+formCadastroBarbeiro.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    mensagemBarbeiro.textContent =
+      "";
+
+    if (
+      !usuarioPodeGerenciarBarbeiros()
+    ) {
+      return;
+    }
+
+    const nome =
+      nomeNovoBarbeiro.value.trim();
+
+    const senha =
+      senhaNovoBarbeiro.value.trim();
+
+    const confirmacao =
+      confirmarSenhaNovoBarbeiro.value.trim();
+
+    if (!nome) {
+      mensagemBarbeiro.textContent =
+        "Digite o nome do barbeiro.";
+
+      return;
+    }
+
+    if (
+      senha.length < 4
+    ) {
+      mensagemBarbeiro.textContent =
+        "A senha precisa ter pelo menos 4 caracteres.";
+
+      return;
+    }
+
+    if (
+      senha !== confirmacao
+    ) {
+      mensagemBarbeiro.textContent =
+        "As senhas digitadas não são iguais.";
+
+      return;
+    }
+
+    const jaExiste =
+      barbeiros.some(
+        (barbeiro) =>
+          barbeiro.nome.toLowerCase() ===
+          nome.toLowerCase()
+      );
+
+    if (jaExiste) {
+      mensagemBarbeiro.textContent =
+        "Esse barbeiro já está cadastrado.";
+
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(
+          db,
+          "barbeiros"
+        ),
+        {
+          nome,
+          senha,
+          ativo: true,
+          dataCadastro:
+            Date.now()
+        }
+      );
+
+      formCadastroBarbeiro.reset();
+
+      mensagemBarbeiro.textContent =
+        `${nome} foi cadastrado com sucesso.`;
+
+      await carregarBarbeiros();
+
+      preencherSelectDeBarbeiros();
+
+      mostrarListaDeBarbeiros();
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      mensagemBarbeiro.textContent =
+        "Não foi possível cadastrar o barbeiro.";
+    }
+  }
+);
+
+/* =========================================================
+   CLIENTES
+========================================================= */
+
+function mostrarListaDeClientes() {
+  const pesquisa =
+    pesquisaCliente.value
+      .trim()
+      .toLowerCase();
+
+  const filtrados =
+    clientes.filter(
+      (cliente) =>
+        cliente.nome
+          .toLowerCase()
+          .includes(
+            pesquisa
+          ) ||
+        cliente.celular.includes(
+          pesquisa
+        )
+    );
+
+  listaGerenciarClientes.innerHTML =
+    "";
+
+  if (
+    filtrados.length === 0
+  ) {
+    listaGerenciarClientes.innerHTML = `
+      <p class="lista-vazia">
+        Nenhum cliente encontrado.
+      </p>
+    `;
 
     return;
   }
 
-  if (nome === "") {
-    mensagemBarbeiro.textContent =
-      "Digite o nome do barbeiro.";
+  filtrados.forEach(
+    (cliente) => {
+      const linha =
+        document.createElement(
+          "div"
+        );
 
-    nomeNovoBarbeiro.focus();
-    return;
+      linha.className =
+        "item-lista";
+
+      const informacoes =
+        document.createElement(
+          "div"
+        );
+
+      const nome =
+        document.createElement(
+          "strong"
+        );
+
+      nome.textContent =
+        cliente.nome;
+
+      const celular =
+        document.createElement(
+          "small"
+        );
+
+      celular.textContent =
+        cliente.celular;
+
+      informacoes.append(
+        nome,
+        celular
+      );
+
+      const botaoExcluir =
+        document.createElement(
+          "button"
+        );
+
+      botaoExcluir.type =
+        "button";
+
+      botaoExcluir.className =
+        "botao-excluir";
+
+      botaoExcluir.textContent =
+        "Excluir";
+
+      botaoExcluir.addEventListener(
+        "click",
+        async () => {
+          const resposta =
+            await getDocs(
+              collection(
+                db,
+                "agendamentos"
+              )
+            );
+
+          const temPendente =
+            resposta.docs.some(
+              (documento) => {
+                const agendamento =
+                  documento.data();
+
+                const pertence =
+                  agendamento.clienteId ===
+                    cliente.id ||
+                  agendamento.cliente ===
+                    cliente.nome;
+
+                const pendente =
+                  agendamento.status !==
+                    "cancelado" &&
+                  agendamento.status !==
+                    "concluido" &&
+                  agendamento.status !==
+                    "nao_realizado";
+
+                return (
+                  pertence &&
+                  pendente
+                );
+              }
+            );
+
+          if (temPendente) {
+            mensagemCliente.textContent =
+              "Não é possível excluir este cliente porque ele possui um horário pendente.";
+
+            return;
+          }
+
+          if (
+            !confirm(
+              `Deseja excluir o cliente ${cliente.nome}?`
+            )
+          ) {
+            return;
+          }
+
+          await deleteDoc(
+            doc(
+              db,
+              "clientes",
+              cliente.id
+            )
+          );
+
+          mensagemCliente.textContent =
+            `${cliente.nome} foi excluído com sucesso.`;
+
+          await carregarClientes();
+
+          mostrarListaDeClientes();
+        }
+      );
+
+      linha.append(
+        informacoes,
+        botaoExcluir
+      );
+
+      listaGerenciarClientes.appendChild(
+        linha
+      );
+    }
+  );
+}
+
+botaoMostrarCadastroCliente.addEventListener(
+  "click",
+  () => {
+    formCadastroCliente.classList.toggle(
+      "escondida"
+    );
+
+    mensagemCliente.textContent =
+      "";
+
+    if (
+      !formCadastroCliente.classList.contains(
+        "escondida"
+      )
+    ) {
+      formCadastroCliente.reset();
+
+      nomeNovoCliente.focus();
+    }
   }
-
-  if (senha.length < 4) {
-    mensagemBarbeiro.textContent =
-      "A senha precisa ter pelo menos 4 caracteres.";
-
-    senhaNovoBarbeiro.focus();
-    return;
-  }
-
-  if (senha !== confirmarSenha) {
-    mensagemBarbeiro.textContent =
-      "As senhas digitadas não são iguais.";
-
-    confirmarSenhaNovoBarbeiro.value = "";
-    confirmarSenhaNovoBarbeiro.focus();
-
-    return;
-  }
-
-  const barbeiroJaExiste = barbeiros.some((barbeiro) => {
-    return barbeiro.nome.toLowerCase() === nome.toLowerCase();
-  });
-
-  if (barbeiroJaExiste) {
-    mensagemBarbeiro.textContent =
-      "Esse barbeiro já está cadastrado.";
-
-    nomeNovoBarbeiro.focus();
-    return;
-  }
-
-  try {
-    await addDoc(collection(db, "barbeiros"), {
-      nome: nome,
-      senha: senha,
-      ativo: true,
-      dataCadastro: Date.now()
-    });
-
-    formCadastroBarbeiro.reset();
-
-    mensagemBarbeiro.textContent =
-      `${nome} foi cadastrado com sucesso.`;
-
-    await carregarBarbeiros();
-    preencherSelectDeBarbeiros();
-    mostrarListaDeBarbeiros();
-  } catch (erro) {
-    console.log("Erro ao cadastrar barbeiro:", erro);
-
-    mensagemBarbeiro.textContent =
-      "Não foi possível cadastrar o barbeiro.";
-  }
-});
-
-botaoMostrarCadastroCliente.addEventListener("click", () => {
-  formCadastroCliente.classList.toggle("escondida");
-
-  if (!formCadastroCliente.classList.contains("escondida")) {
-    nomeNovoCliente.focus();
-  }
-});
+);
 
 function formatarCelular(valor) {
-  const numeros = valor.replace(/\D/g, "").slice(0, 11);
+  const numeros =
+    valor
+      .replace(/\D/g, "")
+      .slice(0, 11);
 
-  if (numeros.length <= 2) {
+  if (
+    numeros.length <= 2
+  ) {
     return numeros;
   }
 
-  if (numeros.length <= 7) {
+  if (
+    numeros.length <= 7
+  ) {
     return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
   }
 
   return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
 }
 
-celularNovoCliente.addEventListener("input", () => {
-  celularNovoCliente.value = formatarCelular(celularNovoCliente.value);
-});
-
-formCadastroCliente.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const nome = nomeNovoCliente.value.trim();
-  const celular = celularNovoCliente.value.trim();
-  const celularSomenteNumeros = celular.replace(/\D/g, "");
-
-  if (celularSomenteNumeros.length !== 11) {
-    mensagemCliente.textContent =
-      "Digite um número de celular com 11 dígitos.";
-    return;
+celularNovoCliente.addEventListener(
+  "input",
+  () => {
+    celularNovoCliente.value =
+      formatarCelular(
+        celularNovoCliente.value
+      );
   }
+);
 
-  const clienteJaExiste = clientes.some((cliente) => {
-    const celularCliente = cliente.celular.replace(/\D/g, "");
+formCadastroCliente.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
 
-    return (
-      cliente.nome.toLowerCase() === nome.toLowerCase() ||
-      celularCliente === celularSomenteNumeros
+    mensagemCliente.textContent =
+      "";
+
+    const nome =
+      nomeNovoCliente.value.trim();
+
+    const celular =
+      celularNovoCliente.value.trim();
+
+    const somenteNumeros =
+      celular.replace(
+        /\D/g,
+        ""
+      );
+
+    if (!nome) {
+      mensagemCliente.textContent =
+        "Digite o nome do cliente.";
+
+      return;
+    }
+
+    if (
+      somenteNumeros.length !==
+      11
+    ) {
+      mensagemCliente.textContent =
+        "Digite um número de celular com 11 dígitos.";
+
+      return;
+    }
+
+    const jaExiste =
+      clientes.some(
+        (cliente) => {
+          const celularCliente =
+            cliente.celular.replace(
+              /\D/g,
+              ""
+            );
+
+          return (
+            cliente.nome.toLowerCase() ===
+              nome.toLowerCase() ||
+            celularCliente ===
+              somenteNumeros
+          );
+        }
+      );
+
+    if (jaExiste) {
+      mensagemCliente.textContent =
+        "Já existe um cliente com esse nome ou celular.";
+
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(
+          db,
+          "clientes"
+        ),
+        {
+          nome,
+          celular,
+          dataCadastro:
+            Date.now()
+        }
+      );
+
+      formCadastroCliente.reset();
+
+      mensagemCliente.textContent =
+        `${nome} foi cadastrado com sucesso.`;
+
+      await carregarClientes();
+
+      mostrarListaDeClientes();
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      mensagemCliente.textContent =
+        "Não foi possível cadastrar o cliente.";
+    }
+  }
+);
+
+/* =========================================================
+   PRODUTOS
+========================================================= */
+
+function mostrarListaDeProdutos() {
+  const pesquisa =
+    pesquisaProduto.value
+      .trim()
+      .toLowerCase();
+
+  const filtrados =
+    produtos.filter(
+      (produto) =>
+        produto.nome
+          .toLowerCase()
+          .includes(
+            pesquisa
+          )
     );
-  });
 
-  if (clienteJaExiste) {
-    mensagemCliente.textContent =
-      "Já existe um cliente com esse nome ou celular.";
+  listaProdutos.innerHTML =
+    "";
+
+  if (
+    filtrados.length === 0
+  ) {
+    listaProdutos.innerHTML = `
+      <p class="lista-vazia">
+        Nenhum produto encontrado.
+      </p>
+    `;
+
     return;
   }
 
-  await addDoc(collection(db, "clientes"), {
-    nome: nome,
-    celular: celular
-  });
+  filtrados.forEach(
+    (produto) => {
+      const linha =
+        document.createElement(
+          "div"
+        );
 
-  nomeNovoCliente.value = "";
-  celularNovoCliente.value = "";
+      linha.className =
+        "item-lista";
 
-  mensagemCliente.textContent = `${nome} foi cadastrado com sucesso.`;
+      const informacoes =
+        document.createElement(
+          "div"
+        );
 
-  await carregarClientes();
-  mostrarListaDeClientes();
-});
+      const nome =
+        document.createElement(
+          "strong"
+        );
 
-pesquisaBarbeiro.addEventListener("input", () => {
-  mostrarListaDeBarbeiros();
-});
+      nome.textContent =
+        produto.nome;
 
-pesquisaCliente.addEventListener("input", () => {
-  mostrarListaDeClientes();
-});
+      const valor =
+        document.createElement(
+          "small"
+        );
 
-selectBarbeiro.addEventListener("change", async () => {
-  barbeiroAtual = selectBarbeiro.value;
+      valor.textContent =
+        formatarValorEmReal(
+          produto.valor
+        );
 
-  if (!barbeiroAtual) {
-    textoAgenda.textContent = "Escolha um barbeiro para ver a agenda.";
-    mostrarAgenda();
+      informacoes.append(
+        nome,
+        valor
+      );
+
+      linha.appendChild(
+        informacoes
+      );
+
+      if (
+        usuarioPodeGerenciarCatalogo()
+      ) {
+        const botoes =
+          document.createElement(
+            "div"
+          );
+
+        botoes.className =
+          "acoes-item-catalogo";
+
+        const editar =
+          document.createElement(
+            "button"
+          );
+
+        editar.type =
+          "button";
+
+        editar.className =
+          "botao-secundario";
+
+        editar.textContent =
+          "Editar";
+
+        editar.addEventListener(
+          "click",
+          () => {
+            abrirEdicaoCatalogo(
+              "produto",
+              produto
+            );
+          }
+        );
+
+        const excluir =
+          document.createElement(
+            "button"
+          );
+
+        excluir.type =
+          "button";
+
+        excluir.className =
+          "botao-excluir";
+
+        excluir.textContent =
+          "Excluir";
+
+        excluir.addEventListener(
+          "click",
+          async () => {
+            if (
+              !confirm(
+                `Deseja excluir o produto ${produto.nome}?`
+              )
+            ) {
+              return;
+            }
+
+            try {
+              await deleteDoc(
+                doc(
+                  db,
+                  "produtos",
+                  produto.id
+                )
+              );
+
+              mensagemProduto.textContent =
+                `${produto.nome} foi excluído com sucesso.`;
+
+              await carregarProdutos();
+
+              mostrarListaDeProdutos();
+            } catch (erro) {
+              console.log(
+                erro
+              );
+
+              mensagemProduto.textContent =
+                "Não foi possível excluir o produto.";
+            }
+          }
+        );
+
+        botoes.append(
+          editar,
+          excluir
+        );
+
+        linha.appendChild(
+          botoes
+        );
+      }
+
+      listaProdutos.appendChild(
+        linha
+      );
+    }
+  );
+}
+
+botaoMostrarCadastroProduto.addEventListener(
+  "click",
+  () => {
+    if (
+      !usuarioPodeGerenciarCatalogo()
+    ) {
+      return;
+    }
+
+    formCadastroProduto.classList.toggle(
+      "escondida"
+    );
+
+    mensagemProduto.textContent =
+      "";
+
+    if (
+      !formCadastroProduto.classList.contains(
+        "escondida"
+      )
+    ) {
+      formCadastroProduto.reset();
+
+      nomeNovoProduto.focus();
+    }
+  }
+);
+
+valorNovoProduto.addEventListener(
+  "input",
+  () =>
+    formatarCampoValor(
+      valorNovoProduto
+    )
+);
+
+formCadastroProduto.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    mensagemProduto.textContent =
+      "";
+
+    if (
+      !usuarioPodeGerenciarCatalogo()
+    ) {
+      return;
+    }
+
+    const nome =
+      nomeNovoProduto.value.trim();
+
+    const valor =
+      converterValorParaNumero(
+        valorNovoProduto.value
+      );
+
+    if (!nome) {
+      mensagemProduto.textContent =
+        "Digite o nome do produto.";
+
+      return;
+    }
+
+    if (valor <= 0) {
+      mensagemProduto.textContent =
+        "Digite um valor válido para o produto.";
+
+      return;
+    }
+
+    const jaExiste =
+      produtos.some(
+        (produto) =>
+          produto.nome.toLowerCase() ===
+          nome.toLowerCase()
+      );
+
+    if (jaExiste) {
+      mensagemProduto.textContent =
+        "Esse produto já está cadastrado.";
+
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(
+          db,
+          "produtos"
+        ),
+        {
+          nome,
+          valor,
+          ativo: true,
+          dataCadastro:
+            Date.now()
+        }
+      );
+
+      formCadastroProduto.reset();
+
+      mensagemProduto.textContent =
+        `${nome} foi cadastrado com sucesso.`;
+
+      await carregarProdutos();
+
+      mostrarListaDeProdutos();
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      mensagemProduto.textContent =
+        "Não foi possível cadastrar o produto.";
+    }
+  }
+);
+
+/* =========================================================
+   SERVIÇOS
+========================================================= */
+
+function mostrarListaDeServicos() {
+  const pesquisa =
+    pesquisaServico.value
+      .trim()
+      .toLowerCase();
+
+  const filtrados =
+    servicos.filter(
+      (servico) =>
+        servico.nome
+          .toLowerCase()
+          .includes(
+            pesquisa
+          )
+    );
+
+  listaServicos.innerHTML =
+    "";
+
+  if (
+    filtrados.length === 0
+  ) {
+    listaServicos.innerHTML = `
+      <p class="lista-vazia">
+        Nenhum serviço encontrado.
+      </p>
+    `;
+
     return;
   }
 
-  textoAgenda.textContent = `Agenda de ${barbeiroAtual}.`;
+  filtrados.forEach(
+    (servico) => {
+      const linha =
+        document.createElement(
+          "div"
+        );
 
-  await atualizarAgenda();
-});
+      linha.className =
+        "item-lista";
 
-agendaScroll.addEventListener("scroll", () => {
-  const chegouAoFim =
-    agendaScroll.scrollLeft + agendaScroll.clientWidth >=
-    agendaScroll.scrollWidth - 300;
+      const informacoes =
+        document.createElement(
+          "div"
+        );
 
-  if (chegouAoFim) {
-    const posicaoHorizontal = agendaScroll.scrollLeft;
-    const posicaoVertical = agendaScroll.scrollTop;
+      const nome =
+        document.createElement(
+          "strong"
+        );
+
+      nome.textContent =
+        servico.nome;
+
+      const valor =
+        document.createElement(
+          "small"
+        );
+
+      valor.textContent =
+        formatarValorEmReal(
+          servico.valor
+        );
+
+      informacoes.append(
+        nome,
+        valor
+      );
+
+      linha.appendChild(
+        informacoes
+      );
+
+      if (
+        usuarioPodeGerenciarCatalogo()
+      ) {
+        const botoes =
+          document.createElement(
+            "div"
+          );
+
+        botoes.className =
+          "acoes-item-catalogo";
+
+        const editar =
+          document.createElement(
+            "button"
+          );
+
+        editar.type =
+          "button";
+
+        editar.className =
+          "botao-secundario";
+
+        editar.textContent =
+          "Editar";
+
+        editar.addEventListener(
+          "click",
+          () => {
+            abrirEdicaoCatalogo(
+              "servico",
+              servico
+            );
+          }
+        );
+
+        const excluir =
+          document.createElement(
+            "button"
+          );
+
+        excluir.type =
+          "button";
+
+        excluir.className =
+          "botao-excluir";
+
+        excluir.textContent =
+          "Excluir";
+
+        excluir.addEventListener(
+          "click",
+          async () => {
+            if (
+              !confirm(
+                `Deseja excluir o serviço ${servico.nome}?`
+              )
+            ) {
+              return;
+            }
+
+            try {
+              await deleteDoc(
+                doc(
+                  db,
+                  "servicos",
+                  servico.id
+                )
+              );
+
+              mensagemServico.textContent =
+                `${servico.nome} foi excluído com sucesso.`;
+
+              await carregarServicos();
+
+              mostrarListaDeServicos();
+            } catch (erro) {
+              console.log(
+                erro
+              );
+
+              mensagemServico.textContent =
+                "Não foi possível excluir o serviço.";
+            }
+          }
+        );
+
+        botoes.append(
+          editar,
+          excluir
+        );
+
+        linha.appendChild(
+          botoes
+        );
+      }
+
+      listaServicos.appendChild(
+        linha
+      );
+    }
+  );
+}
+
+botaoMostrarCadastroServico.addEventListener(
+  "click",
+  () => {
+    if (
+      !usuarioPodeGerenciarCatalogo()
+    ) {
+      return;
+    }
+
+    formCadastroServico.classList.toggle(
+      "escondida"
+    );
+
+    mensagemServico.textContent =
+      "";
+
+    if (
+      !formCadastroServico.classList.contains(
+        "escondida"
+      )
+    ) {
+      formCadastroServico.reset();
+
+      nomeNovoServico.focus();
+    }
+  }
+);
+
+valorNovoServico.addEventListener(
+  "input",
+  () =>
+    formatarCampoValor(
+      valorNovoServico
+    )
+);
+
+formCadastroServico.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    mensagemServico.textContent =
+      "";
+
+    if (
+      !usuarioPodeGerenciarCatalogo()
+    ) {
+      return;
+    }
+
+    const nome =
+      nomeNovoServico.value.trim();
+
+    const valor =
+      converterValorParaNumero(
+        valorNovoServico.value
+      );
+
+    if (!nome) {
+      mensagemServico.textContent =
+        "Digite o nome do serviço.";
+
+      return;
+    }
+
+    if (valor <= 0) {
+      mensagemServico.textContent =
+        "Digite um valor válido para o serviço.";
+
+      return;
+    }
+
+    const jaExiste =
+      servicos.some(
+        (servico) =>
+          servico.nome.toLowerCase() ===
+          nome.toLowerCase()
+      );
+
+    if (jaExiste) {
+      mensagemServico.textContent =
+        "Esse serviço já está cadastrado.";
+
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(
+          db,
+          "servicos"
+        ),
+        {
+          nome,
+          valor,
+          ativo: true,
+          dataCadastro:
+            Date.now()
+        }
+      );
+
+      formCadastroServico.reset();
+
+      mensagemServico.textContent =
+        `${nome} foi cadastrado com sucesso.`;
+
+      await carregarServicos();
+
+      mostrarListaDeServicos();
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      mensagemServico.textContent =
+        "Não foi possível cadastrar o serviço.";
+    }
+  }
+);
+
+/* =========================================================
+   EDITAR CATÁLOGO
+========================================================= */
+
+function abrirEdicaoCatalogo(
+  tipo,
+  item
+) {
+  if (
+    !usuarioPodeGerenciarCatalogo()
+  ) {
+    return;
+  }
+
+  idEditarCatalogo.value =
+    item.id;
+
+  tipoEditarCatalogo.value =
+    tipo;
+
+  nomeEditarCatalogo.value =
+    item.nome;
+
+  valorEditarCatalogo.value =
+    formatarValorEmReal(
+      item.valor
+    );
+
+  tituloEditarCatalogo.textContent =
+    tipo === "produto"
+      ? "Editar produto"
+      : "Editar serviço";
+
+  mensagemEditarCatalogo.textContent =
+    "";
+
+  modalEditarCatalogo.classList.remove(
+    "escondido"
+  );
+}
+
+valorEditarCatalogo.addEventListener(
+  "input",
+  () =>
+    formatarCampoValor(
+      valorEditarCatalogo
+    )
+);
+
+formEditarCatalogo.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    mensagemEditarCatalogo.textContent =
+      "";
+
+    if (
+      !usuarioPodeGerenciarCatalogo()
+    ) {
+      return;
+    }
+
+    const id =
+      idEditarCatalogo.value;
+
+    const tipo =
+      tipoEditarCatalogo.value;
+
+    const nome =
+      nomeEditarCatalogo.value.trim();
+
+    const valor =
+      converterValorParaNumero(
+        valorEditarCatalogo.value
+      );
+
+    if (
+      !id ||
+      !tipo
+    ) {
+      mensagemEditarCatalogo.textContent =
+        "Item não encontrado.";
+
+      return;
+    }
+
+    if (!nome) {
+      mensagemEditarCatalogo.textContent =
+        "Digite o nome do item.";
+
+      return;
+    }
+
+    if (valor <= 0) {
+      mensagemEditarCatalogo.textContent =
+        "Digite um valor válido.";
+
+      return;
+    }
+
+    const nomeColecao =
+      tipo === "produto"
+        ? "produtos"
+        : "servicos";
+
+    try {
+      await updateDoc(
+        doc(
+          db,
+          nomeColecao,
+          id
+        ),
+        {
+          nome,
+          valor,
+          dataAtualizacao:
+            Date.now()
+        }
+      );
+
+      fecharModal(
+        "modal-editar-catalogo"
+      );
+
+      if (
+        tipo === "produto"
+      ) {
+        await carregarProdutos();
+
+        mostrarListaDeProdutos();
+
+        mensagemProduto.textContent =
+          "Produto atualizado com sucesso.";
+      } else {
+        await carregarServicos();
+
+        mostrarListaDeServicos();
+
+        mensagemServico.textContent =
+          "Serviço atualizado com sucesso.";
+      }
+    } catch (erro) {
+      console.log(
+        erro
+      );
+
+      mensagemEditarCatalogo.textContent =
+        "Não foi possível salvar as alterações.";
+    }
+  }
+);
+
+/* =========================================================
+   PESQUISAS
+========================================================= */
+
+pesquisaBarbeiro.addEventListener(
+  "input",
+  mostrarListaDeBarbeiros
+);
+
+pesquisaCliente.addEventListener(
+  "input",
+  mostrarListaDeClientes
+);
+
+pesquisaProduto.addEventListener(
+  "input",
+  mostrarListaDeProdutos
+);
+
+pesquisaServico.addEventListener(
+  "input",
+  mostrarListaDeServicos
+);
+
+pesquisaClienteAgendamento.addEventListener(
+  "input",
+  () => {
+    clienteSelecionado =
+      null;
+
+    mostrarClientesNoAgendamento();
+  }
+);
+
+/* =========================================================
+   SELECIONAR BARBEIRO
+========================================================= */
+
+selectBarbeiro.addEventListener(
+  "change",
+  async () => {
+    barbeiroAtual =
+      selectBarbeiro.value;
+
+    if (!barbeiroAtual) {
+      textoAgenda.textContent =
+        "Escolha um barbeiro para ver a agenda.";
+
+      agendamentos = [];
+
+      mostrarAgenda();
+
+      return;
+    }
+
+    textoAgenda.textContent =
+      `Agenda de ${barbeiroAtual}.`;
+
+    await atualizarAgenda();
+  }
+);
+
+/* =========================================================
+   ROLAGEM DA AGENDA
+========================================================= */
+
+agendaScroll.addEventListener(
+  "scroll",
+  () => {
+    const chegouAoFim =
+      agendaScroll.scrollLeft +
+        agendaScroll.clientWidth >=
+      agendaScroll.scrollWidth -
+        300;
+
+    if (!chegouAoFim) {
+      return;
+    }
+
+    const horizontal =
+      agendaScroll.scrollLeft;
+
+    const vertical =
+      agendaScroll.scrollTop;
 
     adicionarMaisDias();
+
     mostrarAgenda();
 
-    agendaScroll.scrollLeft = posicaoHorizontal;
-    agendaScroll.scrollTop = posicaoVertical;
+    agendaScroll.scrollLeft =
+      horizontal;
+
+    agendaScroll.scrollTop =
+      vertical;
   }
-});
+);
 
-document.querySelectorAll("[data-fechar]").forEach((botao) => {
-  botao.addEventListener("click", () => {
-    fecharModal(botao.dataset.fechar);
-  });
-});
+/* =========================================================
+   ABAS DO RELATÓRIO
+========================================================= */
 
-async function iniciarDashboard() {
-  montarMenu();
-  criarPrimeirosDias();
+function desativarAbasRelatorio() {
+  conteudoRelatorioDesempenho?.classList.add(
+    "escondida"
+  );
 
-  boasVindas.textContent = `Boas-vindas, ${nomeUsuario}!`;
+  conteudoRelatorioFinanceiro?.classList.add(
+    "escondida"
+  );
 
-  try {
+  conteudoRelatorioHistorico?.classList.add(
+    "escondida"
+  );
+
+  abaRelatorioDesempenho?.classList.remove(
+    "ativo"
+  );
+
+  abaRelatorioFinanceiro?.classList.remove(
+    "ativo"
+  );
+
+  abaRelatorioHistorico?.classList.remove(
+    "ativo"
+  );
+}
+
+function abrirRelatorioDesempenho() {
+  desativarAbasRelatorio();
+
+  conteudoRelatorioDesempenho.classList.remove(
+    "escondida"
+  );
+
+  abaRelatorioDesempenho.classList.add(
+    "ativo"
+  );
+}
+
+async function abrirRelatorioFinanceiro() {
+  if (
+    !usuarioPodeVisualizarFinanceiro()
+  ) {
+    return;
+  }
+
+  desativarAbasRelatorio();
+
+  conteudoRelatorioFinanceiro.classList.remove(
+    "escondida"
+  );
+
+  abaRelatorioFinanceiro.classList.add(
+    "ativo"
+  );
+
+  await atualizarFinanceiro();
+}
+
+async function abrirRelatorioHistorico() {
+  if (
+    !usuarioPodeVisualizarFinanceiro() ||
+    !conteudoRelatorioHistorico
+  ) {
+    return;
+  }
+
+  desativarAbasRelatorio();
+
+  conteudoRelatorioHistorico.classList.remove(
+    "escondida"
+  );
+
+  abaRelatorioHistorico?.classList.add(
+    "ativo"
+  );
+
+  await atualizarHistoricoFinanceiro();
+}
+
+/* =========================================================
+   ABRIR TELA RELATÓRIO
+========================================================= */
+
+async function abrirTelaRelatorio() {
+  esconderTodasAsTelas();
+
+  telaRelatorio.classList.remove(
+    "escondida"
+  );
+
+  marcarBotaoAtivo(
+    "Relatório"
+  );
+
+  if (
+    barbeiros.length === 0
+  ) {
     await carregarBarbeiros();
-
-    if (tipoUsuario === "administrador") {
-      escolherBarbeiro.classList.add("ativo");
-      preencherSelectDeBarbeiros();
-
-      textoAgenda.textContent = "Escolha um barbeiro para ver a agenda.";
-      mostrarAgenda();
-    } else {
-      barbeiroAtual = nomeUsuario;
-      textoAgenda.textContent = `Sua agenda: ${barbeiroAtual}.`;
-
-      await atualizarAgenda();
-    }
-  } catch (erro) {
-    textoAgenda.textContent = "Não foi possível conectar ao Firebase.";
-    console.log(erro);
-  }
-}
-
-pesquisaClienteAgendamento.addEventListener("input", () => {
-  clienteSelecionado = null;
-
-  mostrarClientesNoAgendamento();
-});
-
-botaoConcluirAgendamento.addEventListener("click", async () => {
-  if (!agendamentoSelecionado) {
-    return;
   }
 
-  await updateDoc(
-    doc(db, "agendamentos", agendamentoSelecionado.id),
-    {
-      status: "concluido"
-    }
-  );
+  filtroRelatorioBarbeiro.innerHTML =
+    "";
 
-  fecharModal("modal-detalhes");
-  await atualizarAgenda();
-});
+  if (
+    usuarioPodeVisualizarRelatorioGeral()
+  ) {
+    filtroRelatorioBarbeiro.innerHTML = `
+      <option value="todos">
+        Barbearia inteira
+      </option>
+    `;
 
-botaoNaoRealizadoAgendamento.addEventListener("click", async () => {
-  if (!agendamentoSelecionado) {
-    return;
-  }
+    barbeiros.forEach(
+      (barbeiro) => {
+        const opcao =
+          document.createElement(
+            "option"
+          );
 
-  await updateDoc(
-    doc(db, "agendamentos", agendamentoSelecionado.id),
-    {
-      status: "nao_realizado"
-    }
-  );
+        opcao.value =
+          barbeiro.nome;
 
-  fecharModal("modal-detalhes");
-  await atualizarAgenda();
-});
+        opcao.textContent =
+          barbeiro.nome;
 
-function abrirTelaRelatorio() {
-  telaDashboard.classList.add("escondida");
-  telaBarbeiros.classList.add("escondida");
-  telaClientes.classList.add("escondida");
-  telaConfiguracoes.classList.add("escondida");
-  telaRelatorio.classList.remove("escondida");
-
-  marcarBotaoAtivo("Relatório");
-
-  filtroRelatorioBarbeiro.innerHTML = "";
-
-  if (tipoUsuario === "administrador") {
-    filtroRelatorioBarbeiro.innerHTML =
-      '<option value="todos">Barbearia inteira</option>';
-
-    barbeiros.forEach((barbeiro) => {
-      const opcao = document.createElement("option");
-      opcao.value = barbeiro.nome;
-      opcao.textContent = barbeiro.nome;
-      filtroRelatorioBarbeiro.appendChild(opcao);
-    });
+        filtroRelatorioBarbeiro.appendChild(
+          opcao
+        );
+      }
+    );
   } else {
-    const opcao = document.createElement("option");
-    opcao.value = nomeUsuario;
-    opcao.textContent = nomeUsuario;
-    filtroRelatorioBarbeiro.appendChild(opcao);
+    const opcao =
+      document.createElement(
+        "option"
+      );
+
+    opcao.value =
+      nomeUsuario;
+
+    opcao.textContent =
+      nomeUsuario;
+
+    filtroRelatorioBarbeiro.appendChild(
+      opcao
+    );
   }
 
-  atualizarRelatorio();
+  if (
+    usuarioPodeVisualizarFinanceiro()
+  ) {
+    abaRelatorioFinanceiro?.classList.remove(
+      "escondida"
+    );
+
+    abaRelatorioHistorico?.classList.remove(
+      "escondida"
+    );
+
+    preencherFiltroFinanceiroBarbeiros();
+
+    preencherFiltroHistoricoBarbeiros();
+
+    preencherBarbeirosSaida();
+  } else {
+    abaRelatorioFinanceiro?.classList.add(
+      "escondida"
+    );
+
+    abaRelatorioHistorico?.classList.add(
+      "escondida"
+    );
+  }
+
+  await atualizarRelatorio();
+
+  abrirRelatorioDesempenho();
 }
+
+/* =========================================================
+   RELATÓRIO DE DESEMPENHO
+========================================================= */
 
 function obterPeriodoRelatorio() {
-  const inicio = new Date(
-    mesRelatorio.getFullYear(),
-    mesRelatorio.getMonth(),
-    1
-  );
-  const fim = new Date(
-    mesRelatorio.getFullYear(),
-    mesRelatorio.getMonth() + 1,
-    0
-  );
+  const inicio =
+    new Date(
+      mesRelatorio.getFullYear(),
+      mesRelatorio.getMonth(),
+      1
+    );
+
+  const fim =
+    new Date(
+      mesRelatorio.getFullYear(),
+      mesRelatorio.getMonth() +
+        1,
+      0
+    );
 
   return {
-    inicio: formatarDataParaSalvar(inicio),
-    fim: formatarDataParaSalvar(fim)
+    inicio:
+      formatarDataParaSalvar(
+        inicio
+      ),
+
+    fim:
+      formatarDataParaSalvar(
+        fim
+      )
   };
 }
 
-function mostrarCalendario(concluidos) {
-  const ano = mesRelatorio.getFullYear();
-  const mes = mesRelatorio.getMonth();
-  const hoje = formatarDataParaSalvar(new Date());
-  const quantidadePorData = contarPorData(concluidos, "concluido");
-  const primeiroDia = new Date(ano, mes, 1);
-  const quantidadeDeDias = new Date(ano, mes + 1, 0).getDate();
-  const espacosAntesDoPrimeiroDia = (primeiroDia.getDay() + 6) % 7;
-
-  tituloCalendario.textContent = primeiroDia.toLocaleDateString("pt-BR", {
-    month: "long",
-    year: "numeric"
-  });
-
-  calendarioRelatorio.innerHTML = "";
-
-  for (let numero = 0; numero < espacosAntesDoPrimeiroDia; numero++) {
-    const vazio = document.createElement("div");
-    vazio.className = "dia-calendario-vazio";
-    calendarioRelatorio.appendChild(vazio);
-  }
-
-  for (let dia = 1; dia <= quantidadeDeDias; dia++) {
-    const data = formatarDataParaSalvar(new Date(ano, mes, dia));
-    const quantidade = quantidadePorData[data] || 0;
-    const cartaoDia = document.createElement("div");
-    const numeroDia = document.createElement("span");
-    const totalDia = document.createElement("span");
-
-    cartaoDia.className = "dia-calendario";
-    if (data === hoje) {
-      cartaoDia.classList.add("hoje");
-    }
-    if (quantidade > 0) {
-      cartaoDia.classList.add("com-atendimentos");
-    }
-
-    numeroDia.className = "numero-dia";
-    numeroDia.textContent = dia;
-    totalDia.className = "quantidade-dia";
-    totalDia.textContent = `${quantidade} atendimento${quantidade === 1 ? "" : "s"}`;
-
-    cartaoDia.append(numeroDia, totalDia);
-    calendarioRelatorio.appendChild(cartaoDia);
-  }
-}
-
-function contarPorData(lista, status) {
+function contarPorData(
+  lista
+) {
   const resultado = {};
 
-  lista.forEach((agendamento) => {
-    if (!status || agendamento.status === status) {
-      resultado[agendamento.data] = (resultado[agendamento.data] || 0) + 1;
+  lista.forEach(
+    (agendamento) => {
+      resultado[
+        agendamento.data
+      ] =
+        (
+          resultado[
+            agendamento.data
+          ] || 0
+        ) + 1;
     }
-  });
+  );
 
   return resultado;
 }
 
-function maiorInformacao(lista, campo) {
+function mostrarCalendario(
+  concluidos
+) {
+  const ano =
+    mesRelatorio.getFullYear();
+
+  const mes =
+    mesRelatorio.getMonth();
+
+  const hoje =
+    formatarDataParaSalvar(
+      new Date()
+    );
+
+  const quantidadePorData =
+    contarPorData(
+      concluidos
+    );
+
+  const primeiroDia =
+    new Date(
+      ano,
+      mes,
+      1
+    );
+
+  const quantidadeDias =
+    new Date(
+      ano,
+      mes + 1,
+      0
+    ).getDate();
+
+  const espacos =
+    (
+      primeiroDia.getDay() +
+      6
+    ) % 7;
+
+  tituloCalendario.textContent =
+    primeiroDia.toLocaleDateString(
+      "pt-BR",
+      {
+        month: "long",
+        year: "numeric"
+      }
+    );
+
+  calendarioRelatorio.innerHTML =
+    "";
+
+  for (
+    let numero = 0;
+    numero < espacos;
+    numero++
+  ) {
+    const vazio =
+      document.createElement(
+        "div"
+      );
+
+    vazio.className =
+      "dia-calendario-vazio";
+
+    calendarioRelatorio.appendChild(
+      vazio
+    );
+  }
+
+  for (
+    let dia = 1;
+    dia <= quantidadeDias;
+    dia++
+  ) {
+    const data =
+      formatarDataParaSalvar(
+        new Date(
+          ano,
+          mes,
+          dia
+        )
+      );
+
+    const quantidade =
+      quantidadePorData[
+        data
+      ] || 0;
+
+    const cartao =
+      document.createElement(
+        "div"
+      );
+
+    cartao.className =
+      "dia-calendario";
+
+    if (data === hoje) {
+      cartao.classList.add(
+        "hoje"
+      );
+    }
+
+    if (quantidade > 0) {
+      cartao.classList.add(
+        "com-atendimentos"
+      );
+    }
+
+    cartao.innerHTML = `
+      <span class="numero-dia">
+        ${dia}
+      </span>
+
+      <span class="quantidade-dia">
+        ${quantidade} atendimento${quantidade === 1 ? "" : "s"}
+      </span>
+    `;
+
+    calendarioRelatorio.appendChild(
+      cartao
+    );
+  }
+}
+
+function maiorInformacao(
+  lista,
+  campo
+) {
   const contagem = {};
 
-  lista.forEach((agendamento) => {
-    contagem[agendamento[campo]] = (contagem[agendamento[campo]] || 0) + 1;
-  });
+  lista.forEach(
+    (agendamento) => {
+      const valor =
+        agendamento[
+          campo
+        ];
 
-  const maior = Object.keys(contagem).sort((a, b) => {
-    return contagem[b] - contagem[a];
-  })[0];
+      if (!valor) {
+        return;
+      }
+
+      contagem[valor] =
+        (
+          contagem[
+            valor
+          ] || 0
+        ) + 1;
+    }
+  );
+
+  const maior =
+    Object.keys(
+      contagem
+    ).sort(
+      (a, b) =>
+        contagem[b] -
+        contagem[a]
+    )[0];
 
   return maior || "—";
 }
 
 async function atualizarRelatorio() {
-  const resposta = await getDocs(collection(db, "agendamentos"));
-  const periodo = obterPeriodoRelatorio();
-  const barbeiro = filtroRelatorioBarbeiro.value;
-  const corTextoGrafico = document.body.classList.contains("tema-claro")
-    ? "#2d2d2d"
-    : "#ffffff";
-  const corGradeGrafico = document.body.classList.contains("tema-claro")
-    ? "#d4c7ad"
-    : "#444444";
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "agendamentos"
+      )
+    );
 
-  const lista = resposta.docs
-    .map((documento) => documento.data())
-    .filter((agendamento) => {
-      const estaNoPeriodo =
-        agendamento.data >= periodo.inicio &&
-        agendamento.data <= periodo.fim;
+  const periodo =
+    obterPeriodoRelatorio();
 
-      const estaNoBarbeiro =
-        barbeiro === "todos" || agendamento.barbeiro === barbeiro;
+  const barbeiro =
+    filtroRelatorioBarbeiro.value;
 
-      return estaNoPeriodo && estaNoBarbeiro;
-    });
+  const lista =
+    resposta.docs
+      .map(
+        (documento) =>
+          documento.data()
+      )
+      .filter(
+        (agendamento) => {
+          const estaNoPeriodo =
+            agendamento.data >=
+              periodo.inicio &&
+            agendamento.data <=
+              periodo.fim;
 
-  const concluidos = lista.filter((agendamento) => {
-    return agendamento.status === "concluido";
-  });
+          const estaNoBarbeiro =
+            barbeiro ===
+              "todos" ||
+            agendamento.barbeiro ===
+              barbeiro;
 
-  document.querySelector("#total-concluido").textContent =
+          return (
+            estaNoPeriodo &&
+            estaNoBarbeiro
+          );
+        }
+      );
+
+  const concluidos =
+    lista.filter(
+      (agendamento) =>
+        agendamento.status ===
+        "concluido"
+    );
+
+  document.querySelector(
+    "#total-concluido"
+  ).textContent =
     concluidos.length;
 
-  document.querySelector("#horario-mais-atendido").textContent =
-    maiorInformacao(concluidos, "hora");
+  document.querySelector(
+    "#horario-mais-atendido"
+  ).textContent =
+    maiorInformacao(
+      concluidos,
+      "hora"
+    );
 
-  const diasSemana = concluidos.map((agendamento) => {
-    return dataPorTexto(agendamento.data).toLocaleDateString("pt-BR", {
-      weekday: "long"
-    });
-  });
+  const diasSemana =
+    concluidos.map(
+      (agendamento) =>
+        dataPorTexto(
+          agendamento.data
+        ).toLocaleDateString(
+          "pt-BR",
+          {
+            weekday:
+              "long"
+          }
+        )
+    );
 
-  const contagemDias = {};
+  const contagemDias =
+    {};
 
-  diasSemana.forEach((dia) => {
-    contagemDias[dia] = (contagemDias[dia] || 0) + 1;
-  });
+  diasSemana.forEach(
+    (dia) => {
+      contagemDias[dia] =
+        (
+          contagemDias[
+            dia
+          ] || 0
+        ) + 1;
+    }
+  );
 
-  const diaMaisAtendido = Object.keys(contagemDias).sort((a, b) => {
-    return contagemDias[b] - contagemDias[a];
-  })[0];
+  const diaMaisAtendido =
+    Object.keys(
+      contagemDias
+    ).sort(
+      (a, b) =>
+        contagemDias[b] -
+        contagemDias[a]
+    )[0];
 
-  document.querySelector("#dia-mais-atendido").textContent =
-    diaMaisAtendido || "—";
+  document.querySelector(
+    "#dia-mais-atendido"
+  ).textContent =
+    diaMaisAtendido ||
+    "—";
 
-  mostrarCalendario(concluidos);
+  mostrarCalendario(
+    concluidos
+  );
 
   if (graficoStatus) {
     graficoStatus.destroy();
   }
 
-  let labelsSegundoGrafico = [];
-  let dadosSegundoGrafico = [];
+  let labels = [];
+  let dados = [];
 
-  if (filtroSegundoGrafico.value === "horario") {
-    const porHorario = {};
+  if (
+    filtroSegundoGrafico.value ===
+    "horario"
+  ) {
+    const porHorario =
+      {};
 
-    concluidos.forEach((agendamento) => {
-      porHorario[agendamento.hora] =
-        (porHorario[agendamento.hora] || 0) + 1;
-    });
+    concluidos.forEach(
+      (agendamento) => {
+        porHorario[
+          agendamento.hora
+        ] =
+          (
+            porHorario[
+              agendamento.hora
+            ] || 0
+          ) + 1;
+      }
+    );
 
-    labelsSegundoGrafico = Object.keys(porHorario).sort();
-    dadosSegundoGrafico = labelsSegundoGrafico.map((horario) => {
-      return porHorario[horario];
-    });
+    labels =
+      Object.keys(
+        porHorario
+      ).sort();
 
-    tituloSegundoGrafico.textContent = "Horário que mais atende";
+    dados =
+      labels.map(
+        (horario) =>
+          porHorario[
+            horario
+          ]
+      );
+
+    tituloSegundoGrafico.textContent =
+      "Horário que mais atende";
   } else {
     const ordemDias = [
       "segunda-feira",
@@ -1531,252 +6214,4131 @@ async function atualizarRelatorio() {
       "domingo"
     ];
 
-    const porDiaSemana = {};
+    const porDia = {};
 
-    concluidos.forEach((agendamento) => {
-      const dia = dataPorTexto(agendamento.data).toLocaleDateString(
-        "pt-BR",
-        { weekday: "long" }
+    concluidos.forEach(
+      (agendamento) => {
+        const dia =
+          dataPorTexto(
+            agendamento.data
+          ).toLocaleDateString(
+            "pt-BR",
+            {
+              weekday:
+                "long"
+            }
+          );
+
+        porDia[dia] =
+          (
+            porDia[
+              dia
+            ] || 0
+          ) + 1;
+      }
+    );
+
+    labels =
+      ordemDias.filter(
+        (dia) =>
+          porDia[dia]
       );
 
-      porDiaSemana[dia] = (porDiaSemana[dia] || 0) + 1;
-    });
-
-    labelsSegundoGrafico = ordemDias.filter((dia) => {
-      return porDiaSemana[dia];
-    });
-
-    dadosSegundoGrafico = labelsSegundoGrafico.map((dia) => {
-      return porDiaSemana[dia];
-    });
+    dados =
+      labels.map(
+        (dia) =>
+          porDia[dia]
+      );
 
     tituloSegundoGrafico.textContent =
       "Dia da semana que mais atende";
   }
 
-  graficoStatus = new Chart(
-    document.querySelector("#grafico-status"),
-    {
-      type: "bar",
-      data: {
-        labels: labelsSegundoGrafico,
-        datasets: [{
-          label: "Atendimentos concluídos",
-          data: dadosSegundoGrafico,
-          backgroundColor: "#d8ad5b",
-          borderColor: "#e7c77f",
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { color: corTextoGrafico, stepSize: 1 },
-            grid: { color: corGradeGrafico }
-          },
-          x: {
-            ticks: { color: corTextoGrafico },
-            grid: { color: corGradeGrafico }
+  const temaClaro =
+    document.body.classList.contains(
+      "tema-claro"
+    );
+
+  graficoStatus =
+    new Chart(
+      document.querySelector(
+        "#grafico-status"
+      ),
+      {
+        type: "bar",
+
+        data: {
+          labels,
+
+          datasets: [
+            {
+              label:
+                "Atendimentos concluídos",
+
+              data:
+                dados,
+
+              backgroundColor:
+                "#d8ad5b",
+
+              borderColor:
+                "#e7c77f",
+
+              borderWidth:
+                1
+            }
+          ]
+        },
+
+        options: {
+          responsive:
+            true,
+
+          scales: {
+            y: {
+              beginAtZero:
+                true,
+
+              ticks: {
+                stepSize:
+                  1,
+
+                color:
+                  temaClaro
+                    ? "#2d2d2d"
+                    : "#ffffff"
+              },
+
+              grid: {
+                color:
+                  temaClaro
+                    ? "#d4c7ad"
+                    : "#444444"
+              }
+            },
+
+            x: {
+              ticks: {
+                color:
+                  temaClaro
+                    ? "#2d2d2d"
+                    : "#ffffff"
+              },
+
+              grid: {
+                color:
+                  temaClaro
+                    ? "#d4c7ad"
+                    : "#444444"
+              }
+            }
           }
         }
       }
+    );
+}
+
+/* =========================================================
+   PERÍODO FINANCEIRO
+========================================================= */
+
+function obterPeriodoGenerico(
+  tipoPeriodo,
+  dataReferencia
+) {
+  let inicio;
+  let fim;
+  let titulo;
+
+  if (
+    tipoPeriodo ===
+      "diario" ||
+    tipoPeriodo ===
+      "dia"
+  ) {
+    inicio =
+      new Date(
+        dataReferencia
+      );
+
+    fim =
+      new Date(
+        dataReferencia
+      );
+
+    inicio.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    fim.setHours(
+      23,
+      59,
+      59,
+      999
+    );
+
+    titulo =
+      dataReferencia.toLocaleDateString(
+        "pt-BR",
+        {
+          weekday:
+            "long",
+
+          day:
+            "2-digit",
+
+          month:
+            "long",
+
+          year:
+            "numeric"
+        }
+      );
+  } else if (
+    tipoPeriodo ===
+      "semanal" ||
+    tipoPeriodo ===
+      "semana"
+  ) {
+    inicio =
+      obterInicioDaSemana(
+        dataReferencia
+      );
+
+    fim =
+      obterFimDaSemana(
+        dataReferencia
+      );
+
+    titulo =
+      `${inicio.toLocaleDateString("pt-BR")} até ${fim.toLocaleDateString("pt-BR")}`;
+  } else {
+    inicio =
+      new Date(
+        dataReferencia.getFullYear(),
+        dataReferencia.getMonth(),
+        1
+      );
+
+    fim =
+      new Date(
+        dataReferencia.getFullYear(),
+        dataReferencia.getMonth() +
+          1,
+        0
+      );
+
+    fim.setHours(
+      23,
+      59,
+      59,
+      999
+    );
+
+    titulo =
+      dataReferencia.toLocaleDateString(
+        "pt-BR",
+        {
+          month:
+            "long",
+
+          year:
+            "numeric"
+        }
+      );
+  }
+
+  return {
+    tipoPeriodo,
+
+    inicio,
+
+    fim,
+
+    titulo,
+
+    inicioTexto:
+      formatarDataParaSalvar(
+        inicio
+      ),
+
+    fimTexto:
+      formatarDataParaSalvar(
+        fim
+      )
+  };
+}
+
+function obterPeriodoFinanceiro() {
+  return obterPeriodoGenerico(
+    periodoRelatorioFinanceiro.value,
+    dataFinanceiro
+  );
+}
+
+function preencherFiltroFinanceiroBarbeiros() {
+  if (
+    !filtroFinanceiroBarbeiro
+  ) {
+    return;
+  }
+
+  filtroFinanceiroBarbeiro.innerHTML = `
+    <option value="todos">
+      Barbearia inteira
+    </option>
+  `;
+
+  barbeiros.forEach(
+    (barbeiro) => {
+      const opcao =
+        document.createElement(
+          "option"
+        );
+
+      opcao.value =
+        barbeiro.nome;
+
+      opcao.textContent =
+        barbeiro.nome;
+
+      filtroFinanceiroBarbeiro.appendChild(
+        opcao
+      );
     }
   );
 }
 
-function gerarDiasDoPeriodo(inicio, fim) {
-  const dias = [];
-  const dataAtual = dataPorTexto(inicio);
-  const dataFinal = dataPorTexto(fim);
+/* =========================================================
+   GRÁFICO FINANCEIRO
+========================================================= */
 
-  while (dataAtual <= dataFinal) {
-    dias.push(formatarDataParaSalvar(dataAtual));
+function criarDadosGraficoFinanceiro(
+  lista,
+  periodo
+) {
+  let labels = [];
+  let dados = [];
 
-    dataAtual.setDate(dataAtual.getDate() + 1);
-  }
+  const valores = {};
 
-  return dias;
-}
+  if (
+    periodo.tipoPeriodo ===
+      "diario" ||
+    periodo.tipoPeriodo ===
+      "dia"
+  ) {
+    labels =
+      horarios;
 
-botaoMesAnterior.addEventListener("click", () => {
-  mesRelatorio.setMonth(mesRelatorio.getMonth() - 1);
-  atualizarRelatorio();
-});
+    labels.forEach(
+      (hora) => {
+        valores[hora] =
+          0;
+      }
+    );
 
-botaoProximoMes.addEventListener("click", () => {
-  mesRelatorio.setMonth(mesRelatorio.getMonth() + 1);
-  atualizarRelatorio();
-});
+    lista.forEach(
+      (agendamento) => {
+        if (
+          valores[
+            agendamento.hora
+          ] !== undefined
+        ) {
+          valores[
+            agendamento.hora
+          ] +=
+            Number(
+              agendamento.valorTotal
+            ) || 0;
+        }
+      }
+    );
 
-filtroRelatorioBarbeiro.addEventListener("change", () => {
-  atualizarRelatorio();
-});
-
-filtroSegundoGrafico.addEventListener("change", () => {
-  atualizarRelatorio();
-});
-
-opcoesTema.forEach((opcao) => {
-  opcao.addEventListener("change", async () => {
-    try {
-      await setDoc(
-        configuracaoGeral,
-        { tema: opcao.value },
-        { merge: true }
+    dados =
+      labels.map(
+        (hora) =>
+          valores[hora]
       );
 
-      mensagemTema.textContent = "Tema atualizado com sucesso.";
-    } catch (erro) {
-      mensagemTema.textContent = "Não foi possível salvar o tema.";
-      console.log(erro);
+    tituloGraficoFinanceiro.textContent =
+      "Faturamento por horário";
+  } else if (
+    periodo.tipoPeriodo ===
+      "semanal" ||
+    periodo.tipoPeriodo ===
+      "semana"
+  ) {
+    const nomesDias = [
+      "Seg",
+      "Ter",
+      "Qua",
+      "Qui",
+      "Sex",
+      "Sáb",
+      "Dom"
+    ];
+
+    labels =
+      nomesDias;
+
+    labels.forEach(
+      (dia) => {
+        valores[dia] =
+          0;
+      }
+    );
+
+    lista.forEach(
+      (agendamento) => {
+        const data =
+          dataPorTexto(
+            agendamento.data
+          );
+
+        const indice =
+          (
+            data.getDay() +
+            6
+          ) % 7;
+
+        const nomeDia =
+          nomesDias[
+            indice
+          ];
+
+        valores[nomeDia] +=
+          Number(
+            agendamento.valorTotal
+          ) || 0;
+      }
+    );
+
+    dados =
+      labels.map(
+        (dia) =>
+          valores[dia]
+      );
+
+    tituloGraficoFinanceiro.textContent =
+      "Faturamento semanal";
+  } else {
+    const quantidadeDias =
+      new Date(
+        dataFinanceiro.getFullYear(),
+        dataFinanceiro.getMonth() +
+          1,
+        0
+      ).getDate();
+
+    labels =
+      Array.from(
+        {
+          length:
+            quantidadeDias
+        },
+        (_, indice) =>
+          String(
+            indice + 1
+          )
+      );
+
+    labels.forEach(
+      (dia) => {
+        valores[dia] =
+          0;
+      }
+    );
+
+    lista.forEach(
+      (agendamento) => {
+        const dia =
+          String(
+            Number(
+              agendamento.data.split(
+                "-"
+              )[2]
+            )
+          );
+
+        if (
+          valores[
+            dia
+          ] !== undefined
+        ) {
+          valores[dia] +=
+            Number(
+              agendamento.valorTotal
+            ) || 0;
+        }
+      }
+    );
+
+    dados =
+      labels.map(
+        (dia) =>
+          valores[dia]
+      );
+
+    tituloGraficoFinanceiro.textContent =
+      "Faturamento mensal";
+  }
+
+  return {
+    labels,
+    dados
+  };
+}
+
+/* =========================================================
+   RANKINGS
+========================================================= */
+
+function mostrarRankingFinanceiro(
+  elemento,
+  dados,
+  mensagemVazia,
+  mostrarValor
+) {
+  if (!elemento) {
+    return;
+  }
+
+  elemento.innerHTML =
+    "";
+
+  const itens =
+    Object.entries(
+      dados
+    )
+      .sort(
+        (a, b) =>
+          b[1].valor -
+          a[1].valor
+      )
+      .slice(
+        0,
+        10
+      );
+
+  if (
+    itens.length === 0
+  ) {
+    elemento.innerHTML = `
+      <p class="lista-vazia">
+        ${mensagemVazia}
+      </p>
+    `;
+
+    return;
+  }
+
+  itens.forEach(
+    (
+      [
+        nome,
+        informacoes
+      ],
+      indice
+    ) => {
+      const linha =
+        document.createElement(
+          "div"
+        );
+
+      linha.className =
+        "item-ranking-financeiro";
+
+      const nomeElemento =
+        document.createElement(
+          "strong"
+        );
+
+      nomeElemento.textContent =
+        `${indice + 1}. ${nome}`;
+
+      const resultado =
+        document.createElement(
+          "span"
+        );
+
+      resultado.textContent =
+        mostrarValor
+          ? `${formatarValorEmReal(informacoes.valor)} · ${informacoes.quantidade}`
+          : `${informacoes.quantidade} vez${informacoes.quantidade === 1 ? "" : "es"}`;
+
+      linha.append(
+        nomeElemento,
+        resultado
+      );
+
+      elemento.appendChild(
+        linha
+      );
     }
+  );
+}
+
+/* =========================================================
+   ATUALIZAR FINANCEIRO
+========================================================= */
+
+async function atualizarFinanceiro() {
+  if (
+    !usuarioPodeVisualizarFinanceiro()
+  ) {
+    return;
+  }
+
+  const resposta =
+    await getDocs(
+      collection(
+        db,
+        "agendamentos"
+      )
+    );
+
+  const periodo =
+    obterPeriodoFinanceiro();
+
+  const barbeiroSelecionado =
+    filtroFinanceiroBarbeiro?.value ||
+    "todos";
+
+  tituloPeriodoFinanceiro.textContent =
+    periodo.titulo;
+
+  const concluidos =
+    resposta.docs
+      .map(
+        (documento) => ({
+          id: documento.id,
+          ...documento.data()
+        })
+      )
+      .filter(
+        (agendamento) =>
+          agendamento.status ===
+            "concluido" &&
+          agendamento.data >=
+            periodo.inicioTexto &&
+          agendamento.data <=
+            periodo.fimTexto &&
+          (
+            barbeiroSelecionado ===
+              "todos" ||
+            agendamento.barbeiro ===
+              barbeiroSelecionado
+          )
+      );
+
+  let faturamentoTotal = 0;
+  let totalServicos = 0;
+  let totalProdutos = 0;
+
+  let pix = 0;
+  let dinheiro = 0;
+  let cartao = 0;
+
+  let quantidadePix = 0;
+  let quantidadeDinheiro = 0;
+  let quantidadeCartao = 0;
+  
+  let quantidadeServicos = 0;
+  let quantidadeProdutos = 0;
+
+  const rankingBarbeiros = {};
+  const rankingServicos = {};
+  const rankingProdutos = {};
+
+concluidos.forEach(
+  (agendamento) => {
+
+    /* =========================================
+       SERVIÇOS DO ATENDIMENTO
+    ========================================= */
+
+    let servicosDoAtendimento = [];
+
+    if (
+      Array.isArray(agendamento.servicos) &&
+      agendamento.servicos.length > 0
+    ) {
+      servicosDoAtendimento =
+        agendamento.servicos;
+    } else if (agendamento.servico) {
+
+      /*
+        Compatibilidade com atendimentos antigos
+        que possuem apenas um serviço.
+      */
+
+      servicosDoAtendimento = [
+        {
+          id:
+            agendamento.servicoId ||
+            "",
+
+          nome:
+            agendamento.servico,
+
+          valor:
+            Number(
+              agendamento.valorServico
+            ) || 0
+        }
+      ];
+    }
+
+
+    /* =========================================
+       PRODUTOS DO ATENDIMENTO
+    ========================================= */
+
+    let produtosDoAtendimento = [];
+
+    if (
+      Array.isArray(agendamento.produtos) &&
+      agendamento.produtos.length > 0
+    ) {
+      produtosDoAtendimento =
+        agendamento.produtos;
+    } else if (agendamento.produto) {
+
+      /*
+        Compatibilidade com atendimentos antigos.
+      */
+
+      produtosDoAtendimento = [
+        {
+          id:
+            agendamento.produtoId ||
+            "",
+
+          nome:
+            agendamento.produto,
+
+          valor:
+            Number(
+              agendamento.valorProduto
+            ) || 0
+        }
+      ];
+    }
+
+
+    /* =========================================
+       VALORES
+    ========================================= */
+
+    const valorServico =
+      servicosDoAtendimento.reduce(
+        (total, servico) => {
+          return (
+            total +
+            (
+              Number(servico.valor) ||
+              0
+            )
+          );
+        },
+        0
+      );
+
+
+    const valorProduto =
+      produtosDoAtendimento.reduce(
+        (total, produto) => {
+          return (
+            total +
+            (
+              Number(produto.valor) ||
+              0
+            )
+          );
+        },
+        0
+      );
+
+
+    const valorTotal =
+      Number(
+        agendamento.valorTotal
+      ) ||
+      valorServico +
+      valorProduto;
+
+
+    faturamentoTotal +=
+      valorTotal;
+
+    totalServicos +=
+      valorServico;
+
+    totalProdutos +=
+      valorProduto;
+
+
+    /* =========================================
+       QUANTIDADES
+    ========================================= */
+
+    quantidadeServicos +=
+      servicosDoAtendimento.length;
+
+    quantidadeProdutos +=
+      produtosDoAtendimento.length;
+
+
+    /* =========================================
+       FORMA DE PAGAMENTO
+    ========================================= */
+
+    if (
+      agendamento.formaPagamento ===
+      "Pix"
+    ) {
+      pix += valorTotal;
+      quantidadePix++;
+    }
+
+
+    if (
+      agendamento.formaPagamento ===
+      "Dinheiro"
+    ) {
+      dinheiro += valorTotal;
+      quantidadeDinheiro++;
+    }
+
+
+    if (
+      agendamento.formaPagamento ===
+      "Cartão"
+    ) {
+      cartao += valorTotal;
+      quantidadeCartao++;
+    }
+
+
+    /* =========================================
+       RANKING DOS BARBEIROS
+    ========================================= */
+
+    const nomeBarbeiro =
+      agendamento.barbeiro ||
+      "Não informado";
+
+
+    if (
+      !rankingBarbeiros[
+        nomeBarbeiro
+      ]
+    ) {
+      rankingBarbeiros[
+        nomeBarbeiro
+      ] = {
+        valor: 0,
+        quantidade: 0
+      };
+    }
+
+
+    rankingBarbeiros[
+      nomeBarbeiro
+    ].valor +=
+      valorTotal;
+
+
+    rankingBarbeiros[
+      nomeBarbeiro
+    ].quantidade++;
+
+
+    /* =========================================
+       RANKING DOS SERVIÇOS
+    ========================================= */
+
+    servicosDoAtendimento.forEach(
+      (servico) => {
+
+        const nomeServico =
+          servico.nome ||
+          "Não informado";
+
+
+        if (
+          !rankingServicos[
+            nomeServico
+          ]
+        ) {
+          rankingServicos[
+            nomeServico
+          ] = {
+            valor: 0,
+            quantidade: 0
+          };
+        }
+
+
+        rankingServicos[
+          nomeServico
+        ].valor +=
+          Number(
+            servico.valor
+          ) || 0;
+
+
+        rankingServicos[
+          nomeServico
+        ].quantidade++;
+      }
+    );
+
+
+    /* =========================================
+       RANKING DOS PRODUTOS
+    ========================================= */
+
+    produtosDoAtendimento.forEach(
+      (produto) => {
+
+        const nomeProduto =
+          produto.nome ||
+          "Não informado";
+
+
+        if (
+          !rankingProdutos[
+            nomeProduto
+          ]
+        ) {
+          rankingProdutos[
+            nomeProduto
+          ] = {
+            valor: 0,
+            quantidade: 0
+          };
+        }
+
+
+        rankingProdutos[
+          nomeProduto
+        ].valor +=
+          Number(
+            produto.valor
+          ) || 0;
+
+
+        rankingProdutos[
+          nomeProduto
+        ].quantidade++;
+      }
+    );
+  }
+);
+
+  document.querySelector(
+    "#financeiro-faturamento-total"
+  ).textContent =
+    formatarValorEmReal(
+      faturamentoTotal
+    );
+
+  document.querySelector(
+    "#financeiro-total-servicos"
+  ).textContent =
+    formatarValorEmReal(
+      totalServicos
+    );
+
+  document.querySelector(
+    "#financeiro-total-produtos"
+  ).textContent =
+    formatarValorEmReal(
+      totalProdutos
+    );
+
+  const numeroAtendimentos =
+    document.querySelector(
+      "#financeiro-total-atendimentos-numero"
+    );
+
+  if (numeroAtendimentos) {
+    numeroAtendimentos.textContent =
+      concluidos.length;
+  }
+
+  document.querySelector(
+    "#financeiro-total-atendimentos"
+  ).textContent =
+    `${concluidos.length} atendimento${concluidos.length === 1 ? "" : "s"} no período`;
+
+  document.querySelector(
+  "#financeiro-quantidade-servicos"
+  ).textContent =
+  `${quantidadeServicos} serviço${quantidadeServicos === 1 ? "" : "s"} realizado${quantidadeServicos === 1 ? "" : "s"}`;
+
+  document.querySelector(
+    "#financeiro-quantidade-produtos"
+  ).textContent =
+    `${quantidadeProdutos} produto${quantidadeProdutos === 1 ? "" : "s"} vendido${quantidadeProdutos === 1 ? "" : "s"}`;
+
+  document.querySelector(
+    "#financeiro-total-pix"
+  ).textContent =
+    formatarValorEmReal(
+      pix
+    );
+
+  document.querySelector(
+    "#financeiro-total-dinheiro"
+  ).textContent =
+    formatarValorEmReal(
+      dinheiro
+    );
+
+  document.querySelector(
+    "#financeiro-total-cartao"
+  ).textContent =
+    formatarValorEmReal(
+      cartao
+    );
+
+  document.querySelector(
+    "#financeiro-quantidade-pix"
+  ).textContent =
+    `${quantidadePix} pagamento${quantidadePix === 1 ? "" : "s"}`;
+
+  document.querySelector(
+    "#financeiro-quantidade-dinheiro"
+  ).textContent =
+    `${quantidadeDinheiro} pagamento${quantidadeDinheiro === 1 ? "" : "s"}`;
+
+  document.querySelector(
+    "#financeiro-quantidade-cartao"
+  ).textContent =
+    `${quantidadeCartao} pagamento${quantidadeCartao === 1 ? "" : "s"}`;
+
+  totalGraficoFinanceiro.textContent =
+    formatarValorEmReal(
+      faturamentoTotal
+    );
+
+  mostrarRankingFinanceiro(
+    rankingFinanceiroBarbeiros,
+    rankingBarbeiros,
+    "Nenhum atendimento concluído no período.",
+    true
+  );
+
+  mostrarRankingFinanceiro(
+    rankingFinanceiroServicos,
+    rankingServicos,
+    "Nenhum serviço registrado no período.",
+    false
+  );
+
+  mostrarRankingFinanceiro(
+    rankingFinanceiroProdutos,
+    rankingProdutos,
+    "Nenhum produto vendido no período.",
+    false
+  );
+
+  const dadosGrafico =
+    criarDadosGraficoFinanceiro(
+      concluidos,
+      periodo
+    );
+
+  if (
+    graficoFinanceiro
+  ) {
+    graficoFinanceiro.destroy();
+  }
+
+  const temaClaro =
+    document.body.classList.contains(
+      "tema-claro"
+    );
+
+  graficoFinanceiro =
+    new Chart(
+      document.querySelector(
+        "#grafico-financeiro"
+      ),
+      {
+        type: "line",
+
+        data: {
+          labels:
+            dadosGrafico.labels,
+
+          datasets: [
+            {
+              label:
+                "Faturamento",
+
+              data:
+                dadosGrafico.dados,
+
+              fill:
+                true,
+
+              tension:
+                0.35,
+
+              borderWidth:
+                3,
+
+              borderColor:
+                "#d4af37",
+
+              backgroundColor:
+                "rgba(212, 175, 55, 0.16)",
+
+              pointBackgroundColor:
+                "#d4af37",
+
+              pointBorderColor:
+                "#f3d98f",
+
+              pointRadius:
+                3,
+
+              pointHoverRadius:
+                6
+            }
+          ]
+        },
+
+        options: {
+          responsive:
+            true,
+
+          maintainAspectRatio:
+            false,
+
+          interaction: {
+            intersect:
+              false,
+
+            mode:
+              "index"
+          },
+
+          plugins: {
+            legend: {
+              display:
+                false
+            },
+
+            tooltip: {
+              callbacks: {
+                label(contexto) {
+                  return formatarValorEmReal(
+                    contexto.parsed.y
+                  );
+                }
+              }
+            }
+          },
+
+          scales: {
+            y: {
+              beginAtZero:
+                true,
+
+              ticks: {
+                color:
+                  temaClaro
+                    ? "#3b3327"
+                    : "#bdbdbd",
+
+                callback(valor) {
+                  return formatarValorEmReal(
+                    valor
+                  );
+                }
+              },
+
+              grid: {
+                color:
+                  temaClaro
+                    ? "#ded4c0"
+                    : "#303030"
+              }
+            },
+
+            x: {
+              ticks: {
+                color:
+                  temaClaro
+                    ? "#3b3327"
+                    : "#bdbdbd"
+              },
+
+              grid: {
+                display:
+                  false
+              }
+            }
+          }
+        }
+      }
+    );
+}
+
+/* =========================================================
+   CARREGAR BIBLIOTECAS DO PDF
+========================================================= */
+
+function carregarScriptPdf(src) {
+  return new Promise((resolve, reject) => {
+    const existente =
+      document.querySelector(
+        `script[src="${src}"]`
+      );
+
+    if (existente) {
+      if (
+        window.jspdf ||
+        src.includes("autotable")
+      ) {
+        resolve();
+        return;
+      }
+
+      existente.addEventListener(
+        "load",
+        resolve,
+        { once: true }
+      );
+
+      existente.addEventListener(
+        "error",
+        reject,
+        { once: true }
+      );
+
+      return;
+    }
+
+    const script =
+      document.createElement(
+        "script"
+      );
+
+    script.src = src;
+
+    script.onload = resolve;
+    script.onerror = reject;
+
+    document.head.appendChild(
+      script
+    );
   });
-});
+}
 
-formAlterarSenha.addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function garantirBibliotecasPdf() {
+  if (!window.jspdf) {
+    await carregarScriptPdf(
+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+    );
+  }
 
-  mensagemSenha.textContent = "";
+  const {
+    jsPDF
+  } = window.jspdf;
 
-  if (tipoUsuario !== "administrador") {
-    mensagemSenha.textContent =
-      "Somente o administrador pode alterar senhas.";
+  /*
+    Só carrega AutoTable se ainda
+    não estiver disponível.
+  */
+  const documentoTeste =
+    new jsPDF();
+
+  if (
+    typeof documentoTeste.autoTable !==
+    "function"
+  ) {
+    await carregarScriptPdf(
+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"
+    );
+  }
+}
+
+/* =========================================================
+   DADOS DO PDF FINANCEIRO
+========================================================= */
+
+async function obterDadosPdfFinanceiro() {
+  const periodo =
+    obterPeriodoFinanceiro();
+
+  const barbeiroSelecionado =
+    filtroFinanceiroBarbeiro?.value ||
+    "todos";
+
+  const [
+    respostaAgendamentos,
+    respostaMovimentacoes
+  ] = await Promise.all([
+    getDocs(
+      collection(
+        db,
+        "agendamentos"
+      )
+    ),
+
+    getDocs(
+      collection(
+        db,
+        "movimentacoesFinanceiras"
+      )
+    )
+  ]);
+
+  const atendimentos =
+    respostaAgendamentos.docs
+      .map((documento) => ({
+        id: documento.id,
+        ...documento.data()
+      }))
+      .filter((agendamento) => {
+        const concluido =
+          agendamento.status ===
+          "concluido";
+
+        const dentroPeriodo =
+          agendamento.data >=
+            periodo.inicioTexto &&
+          agendamento.data <=
+            periodo.fimTexto;
+
+        const barbeiroCorreto =
+          barbeiroSelecionado ===
+            "todos" ||
+          agendamento.barbeiro ===
+            barbeiroSelecionado;
+
+        return (
+          concluido &&
+          dentroPeriodo &&
+          barbeiroCorreto
+        );
+      })
+      .sort((a, b) => {
+        return (
+          criarDataHora(
+            a.data,
+            a.hora || "00:00"
+          ) -
+          criarDataHora(
+            b.data,
+            b.hora || "00:00"
+          )
+        );
+      });
+
+  const descontos =
+    respostaMovimentacoes.docs
+      .map((documento) => ({
+        id: documento.id,
+        ...documento.data()
+      }))
+      .filter((movimentacao) => {
+        const desconto =
+          movimentacao.tipo ===
+            "saida" &&
+          movimentacao.origem ===
+            "desconto";
+
+        const dentroPeriodo =
+          movimentacao.data >=
+            periodo.inicioTexto &&
+          movimentacao.data <=
+            periodo.fimTexto;
+
+        const barbeiroCorreto =
+          barbeiroSelecionado ===
+            "todos" ||
+          movimentacao.barbeiro ===
+            barbeiroSelecionado;
+
+        return (
+          desconto &&
+          dentroPeriodo &&
+          barbeiroCorreto
+        );
+      });
+
+  let faturamentoBruto = 0;
+  let totalServicos = 0;
+  let totalProdutos = 0;
+
+  let totalPix = 0;
+  let totalDinheiro = 0;
+  let totalCartao = 0;
+
+  let quantidadePix = 0;
+  let quantidadeDinheiro = 0;
+  let quantidadeCartao = 0;
+  let quantidadeProdutos = 0;
+
+  const rankingBarbeiros = {};
+  const rankingServicos = {};
+  const rankingProdutos = {};
+
+  atendimentos.forEach(
+    (agendamento) => {
+      const valorServico =
+        Number(
+          agendamento.valorServico
+        ) || 0;
+
+      const valorProduto =
+        Number(
+          agendamento.valorProduto
+        ) || 0;
+
+      const valorTotal =
+        Number(
+          agendamento.valorTotalBruto
+        ) ||
+        Number(
+          agendamento.valorTotal
+        ) ||
+        valorServico +
+          valorProduto;
+
+      faturamentoBruto +=
+        valorTotal;
+
+      totalServicos +=
+        valorServico;
+
+      totalProdutos +=
+        valorProduto;
+
+      if (agendamento.produto) {
+        quantidadeProdutos++;
+      }
+
+      if (
+        agendamento.formaPagamento ===
+        "Pix"
+      ) {
+        totalPix += valorTotal;
+        quantidadePix++;
+      }
+
+      if (
+        agendamento.formaPagamento ===
+        "Dinheiro"
+      ) {
+        totalDinheiro +=
+          valorTotal;
+
+        quantidadeDinheiro++;
+      }
+
+      if (
+        agendamento.formaPagamento ===
+        "Cartão"
+      ) {
+        totalCartao +=
+          valorTotal;
+
+        quantidadeCartao++;
+      }
+
+      const barbeiro =
+        agendamento.barbeiro ||
+        "Não informado";
+
+      if (!rankingBarbeiros[barbeiro]) {
+        rankingBarbeiros[barbeiro] = {
+          valor: 0,
+          quantidade: 0
+        };
+      }
+
+      rankingBarbeiros[
+        barbeiro
+      ].valor += valorTotal;
+
+      rankingBarbeiros[
+        barbeiro
+      ].quantidade++;
+
+      if (agendamento.servico) {
+        if (
+          !rankingServicos[
+            agendamento.servico
+          ]
+        ) {
+          rankingServicos[
+            agendamento.servico
+          ] = {
+            valor: 0,
+            quantidade: 0
+          };
+        }
+
+        rankingServicos[
+          agendamento.servico
+        ].valor += valorServico;
+
+        rankingServicos[
+          agendamento.servico
+        ].quantidade++;
+      }
+
+      if (agendamento.produto) {
+        if (
+          !rankingProdutos[
+            agendamento.produto
+          ]
+        ) {
+          rankingProdutos[
+            agendamento.produto
+          ] = {
+            valor: 0,
+            quantidade: 0
+          };
+        }
+
+        rankingProdutos[
+          agendamento.produto
+        ].valor += valorProduto;
+
+        rankingProdutos[
+          agendamento.produto
+        ].quantidade++;
+      }
+    }
+  );
+
+  const totalDescontos =
+    descontos.reduce(
+      (total, desconto) => {
+        return (
+          total +
+          (
+            Number(
+              desconto.valor
+            ) || 0
+          )
+        );
+      },
+      0
+    );
+
+  const faturamentoLiquido =
+    faturamentoBruto -
+    totalDescontos;
+
+  return {
+    periodo,
+    barbeiroSelecionado,
+    atendimentos,
+    descontos,
+
+    faturamentoBruto,
+    faturamentoLiquido,
+    totalDescontos,
+
+    totalServicos,
+    totalProdutos,
+
+    totalPix,
+    totalDinheiro,
+    totalCartao,
+
+    quantidadePix,
+    quantidadeDinheiro,
+    quantidadeCartao,
+    quantidadeProdutos,
+
+    rankingBarbeiros,
+    rankingServicos,
+    rankingProdutos
+  };
+}
+
+/* =========================================================
+   RANKING PARA PDF
+========================================================= */
+
+function transformarRankingParaPdf(
+  ranking
+) {
+  return Object.entries(
+    ranking
+  )
+    .sort(
+      (a, b) =>
+        b[1].valor -
+        a[1].valor
+    )
+    .map(
+      (
+        [
+          nome,
+          dados
+        ],
+        indice
+      ) => [
+        indice + 1,
+        nome,
+        dados.quantidade,
+        formatarValorEmReal(
+          dados.valor
+        )
+      ]
+    );
+}
+
+/* =========================================================
+   GERAR PDF FINANCEIRO
+========================================================= */
+
+async function gerarPdfFinanceiro() {
+  if (
+    !usuarioPodeVisualizarFinanceiro()
+  ) {
+    alert(
+      "Você não tem permissão para gerar este relatório."
+    );
 
     return;
   }
 
-  const usuarioSelecionado = usuarioAlterarSenha.value;
-  const senha = novaSenha.value.trim();
-  const confirmacao = confirmarNovaSenha.value.trim();
+  if (botaoGerarPdfFinanceiro) {
+    botaoGerarPdfFinanceiro.disabled =
+      true;
 
-  if (usuarioSelecionado === "") {
-    mensagemSenha.textContent =
-      "Selecione o usuário que terá a senha alterada.";
-
-    usuarioAlterarSenha.focus();
-    return;
-  }
-
-  if (senha.length < 4) {
-    mensagemSenha.textContent =
-      "A senha precisa ter pelo menos 4 caracteres.";
-
-    novaSenha.focus();
-    return;
-  }
-
-  if (senha !== confirmacao) {
-    mensagemSenha.textContent =
-      "As duas senhas não são iguais.";
-
-    confirmarNovaSenha.value = "";
-    confirmarNovaSenha.focus();
-
-    return;
+    botaoGerarPdfFinanceiro.textContent =
+      "Gerando PDF...";
   }
 
   try {
-    if (usuarioSelecionado === "administrador") {
-      await setDoc(
-        configuracaoGeral,
-        {
-          senhaAdministrador: senha
-        },
-        {
-          merge: true
+    await garantirBibliotecasPdf();
+
+    const {
+      jsPDF
+    } = window.jspdf;
+
+    const dados =
+      await obterDadosPdfFinanceiro();
+
+    const pdf =
+      new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4"
+      });
+
+    const larguraPagina =
+      pdf.internal.pageSize.getWidth();
+
+    const margem = 14;
+
+    /*
+      ========================================================
+      CABEÇALHO
+      ========================================================
+    */
+
+    pdf.setFillColor(
+      18,
+      18,
+      18
+    );
+
+    pdf.rect(
+      0,
+      0,
+      larguraPagina,
+      37,
+      "F"
+    );
+
+    pdf.setTextColor(
+      212,
+      175,
+      55
+    );
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.setFontSize(18);
+
+    pdf.text(
+      "TRADIÇÃO BARBEARIA",
+      margem,
+      15
+    );
+
+    pdf.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    pdf.setFontSize(12);
+
+    pdf.text(
+      "Relatório Financeiro",
+      margem,
+      24
+    );
+
+    pdf.setFont(
+      "helvetica",
+      "normal"
+    );
+
+    pdf.setFontSize(9);
+
+    const barbeiroTexto =
+      dados.barbeiroSelecionado ===
+      "todos"
+        ? "Barbearia inteira"
+        : dados.barbeiroSelecionado;
+
+    pdf.text(
+      `${dados.periodo.titulo} | ${barbeiroTexto}`,
+      margem,
+      31
+    );
+
+    /*
+      ========================================================
+      RESUMO
+      ========================================================
+    */
+
+    let y = 48;
+
+    pdf.setTextColor(
+      30,
+      30,
+      30
+    );
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.setFontSize(13);
+
+    pdf.text(
+      "Resumo financeiro",
+      margem,
+      y
+    );
+
+    y += 5;
+
+    pdf.autoTable({
+      startY: y,
+
+      head: [[
+        "Faturamento bruto",
+        "Descontos",
+        "Faturamento líquido",
+        "Atendimentos"
+      ]],
+
+      body: [[
+        formatarValorEmReal(
+          dados.faturamentoBruto
+        ),
+
+        formatarValorEmReal(
+          dados.totalDescontos
+        ),
+
+        formatarValorEmReal(
+          dados.faturamentoLiquido
+        ),
+
+        String(
+          dados.atendimentos.length
+        )
+      ]],
+
+      theme: "grid",
+
+      headStyles: {
+        fillColor: [
+          35,
+          35,
+          35
+        ],
+
+        textColor: [
+          240,
+          210,
+          130
+        ]
+      },
+
+      styles: {
+        fontSize: 8,
+        cellPadding: 3
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    y =
+      pdf.lastAutoTable.finalY +
+      8;
+
+    /*
+      ========================================================
+      SERVIÇOS / PRODUTOS
+      ========================================================
+    */
+
+    pdf.setFontSize(12);
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.text(
+      "Origem do faturamento",
+      margem,
+      y
+    );
+
+    y += 4;
+
+    pdf.autoTable({
+      startY: y,
+
+      head: [[
+        "Descrição",
+        "Quantidade",
+        "Valor"
+      ]],
+
+      body: [
+        [
+          "Serviços",
+          dados.atendimentos.length,
+          formatarValorEmReal(
+            dados.totalServicos
+          )
+        ],
+
+        [
+          "Produtos",
+          dados.quantidadeProdutos,
+          formatarValorEmReal(
+            dados.totalProdutos
+          )
+        ]
+      ],
+
+      theme: "striped",
+
+      headStyles: {
+        fillColor: [
+          212,
+          175,
+          55
+        ],
+
+        textColor: [
+          25,
+          25,
+          25
+        ]
+      },
+
+      styles: {
+        fontSize: 9
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    y =
+      pdf.lastAutoTable.finalY +
+      8;
+
+    /*
+      ========================================================
+      FORMAS DE PAGAMENTO
+      ========================================================
+    */
+
+    pdf.setFontSize(12);
+
+    pdf.text(
+      "Formas de pagamento",
+      margem,
+      y
+    );
+
+    y += 4;
+
+    pdf.autoTable({
+      startY: y,
+
+      head: [[
+        "Forma",
+        "Pagamentos",
+        "Valor bruto"
+      ]],
+
+      body: [
+        [
+          "Pix",
+          dados.quantidadePix,
+          formatarValorEmReal(
+            dados.totalPix
+          )
+        ],
+
+        [
+          "Dinheiro",
+          dados.quantidadeDinheiro,
+          formatarValorEmReal(
+            dados.totalDinheiro
+          )
+        ],
+
+        [
+          "Cartão",
+          dados.quantidadeCartao,
+          formatarValorEmReal(
+            dados.totalCartao
+          )
+        ]
+      ],
+
+      theme: "striped",
+
+      headStyles: {
+        fillColor: [
+          212,
+          175,
+          55
+        ],
+
+        textColor: [
+          25,
+          25,
+          25
+        ]
+      },
+
+      styles: {
+        fontSize: 9
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    /*
+      ========================================================
+      NOVA PÁGINA — ATENDIMENTOS
+      ========================================================
+    */
+
+    pdf.addPage();
+
+    pdf.setTextColor(
+      30,
+      30,
+      30
+    );
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.setFontSize(14);
+
+    pdf.text(
+      "Atendimentos concluídos",
+      margem,
+      18
+    );
+
+    const linhasAtendimentos =
+      dados.atendimentos.map(
+        (agendamento) => {
+          const data =
+            dataPorTexto(
+              agendamento.data
+            ).toLocaleDateString(
+              "pt-BR"
+            );
+
+          const valorBruto =
+            Number(
+              agendamento.valorTotalBruto
+            ) ||
+            Number(
+              agendamento.valorTotal
+            ) ||
+            0;
+
+          const desconto =
+            Number(
+              agendamento.valorDesconto
+            ) || 0;
+
+          const liquido =
+            valorBruto -
+            desconto;
+
+          let servico =
+            agendamento.servico ||
+            "Atendimento";
+
+          if (
+            agendamento.produto
+          ) {
+            servico +=
+              ` + ${agendamento.produto}`;
+          }
+
+          return [
+            `${data} ${agendamento.hora || ""}`,
+
+            agendamento.barbeiro ||
+              "—",
+
+            servico,
+
+            agendamento.formaPagamento ||
+              "—",
+
+            formatarValorEmReal(
+              valorBruto
+            ),
+
+            desconto > 0
+              ? formatarValorEmReal(
+                  desconto
+                )
+              : "—",
+
+            formatarValorEmReal(
+              liquido
+            )
+          ];
         }
       );
 
-      mensagemSenha.textContent =
-        "Senha do administrador alterada com sucesso.";
-    } else {
-      const barbeiroSelecionado = barbeiros.find(
-        (barbeiro) => barbeiro.id === usuarioSelecionado
+    if (
+      linhasAtendimentos.length ===
+      0
+    ) {
+      linhasAtendimentos.push([
+        "—",
+        "—",
+        "Nenhum atendimento",
+        "—",
+        "—",
+        "—",
+        "—"
+      ]);
+    }
+
+    pdf.autoTable({
+      startY: 24,
+
+      head: [[
+        "Data",
+        "Barbeiro",
+        "Serviço",
+        "Pagamento",
+        "Bruto",
+        "Desconto",
+        "Líquido"
+      ]],
+
+      body:
+        linhasAtendimentos,
+
+      theme: "grid",
+
+      headStyles: {
+        fillColor: [
+          35,
+          35,
+          35
+        ],
+
+        textColor: [
+          240,
+          210,
+          130
+        ]
+      },
+
+      styles: {
+        fontSize: 7,
+        cellPadding: 2
+      },
+
+      columnStyles: {
+        0: {
+          cellWidth: 25
+        },
+
+        1: {
+          cellWidth: 23
+        },
+
+        2: {
+          cellWidth: 42
+        },
+
+        3: {
+          cellWidth: 23
+        },
+
+        4: {
+          cellWidth: 22
+        },
+
+        5: {
+          cellWidth: 22
+        },
+
+        6: {
+          cellWidth: 22
+        }
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    /*
+      ========================================================
+      RANKINGS
+      ========================================================
+    */
+
+    pdf.addPage();
+
+    pdf.setFontSize(14);
+
+    pdf.text(
+      "Rankings do período",
+      margem,
+      18
+    );
+
+    const rankingBarbeiros =
+      transformarRankingParaPdf(
+        dados.rankingBarbeiros
       );
 
-      if (!barbeiroSelecionado) {
-        mensagemSenha.textContent =
-          "Barbeiro não encontrado.";
+    pdf.autoTable({
+      startY: 24,
+
+      head: [[
+        "#",
+        "Barbeiro",
+        "Atendimentos",
+        "Faturamento"
+      ]],
+
+      body:
+        rankingBarbeiros.length
+          ? rankingBarbeiros
+          : [[
+              "—",
+              "Nenhum registro",
+              "0",
+              "R$ 0,00"
+            ]],
+
+      theme: "striped",
+
+      headStyles: {
+        fillColor: [
+          212,
+          175,
+          55
+        ],
+
+        textColor: [
+          25,
+          25,
+          25
+        ]
+      },
+
+      styles: {
+        fontSize: 9
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    y =
+      pdf.lastAutoTable.finalY +
+      8;
+
+    const rankingServicos =
+      transformarRankingParaPdf(
+        dados.rankingServicos
+      );
+
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    pdf.setFontSize(12);
+
+    pdf.text(
+      "Serviços mais realizados",
+      margem,
+      y
+    );
+
+    pdf.autoTable({
+      startY: y + 4,
+
+      head: [[
+        "#",
+        "Serviço",
+        "Quantidade",
+        "Valor"
+      ]],
+
+      body:
+        rankingServicos.length
+          ? rankingServicos
+          : [[
+              "—",
+              "Nenhum registro",
+              "0",
+              "R$ 0,00"
+            ]],
+
+      theme: "striped",
+
+      headStyles: {
+        fillColor: [
+          35,
+          35,
+          35
+        ],
+
+        textColor: [
+          240,
+          210,
+          130
+        ]
+      },
+
+      styles: {
+        fontSize: 9
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    y =
+      pdf.lastAutoTable.finalY +
+      8;
+
+    const rankingProdutos =
+      transformarRankingParaPdf(
+        dados.rankingProdutos
+      );
+
+    if (y > 240) {
+      pdf.addPage();
+      y = 18;
+    }
+
+    pdf.setFontSize(12);
+
+    pdf.text(
+      "Produtos mais vendidos",
+      margem,
+      y
+    );
+
+    pdf.autoTable({
+      startY: y + 4,
+
+      head: [[
+        "#",
+        "Produto",
+        "Quantidade",
+        "Valor"
+      ]],
+
+      body:
+        rankingProdutos.length
+          ? rankingProdutos
+          : [[
+              "—",
+              "Nenhum registro",
+              "0",
+              "R$ 0,00"
+            ]],
+
+      theme: "striped",
+
+      headStyles: {
+        fillColor: [
+          35,
+          35,
+          35
+        ],
+
+        textColor: [
+          240,
+          210,
+          130
+        ]
+      },
+
+      styles: {
+        fontSize: 9
+      },
+
+      margin: {
+        left: margem,
+        right: margem
+      }
+    });
+
+    /*
+      ========================================================
+      RODAPÉ EM TODAS AS PÁGINAS
+      ========================================================
+    */
+
+    const totalPaginas =
+      pdf.getNumberOfPages();
+
+    for (
+      let pagina = 1;
+      pagina <= totalPaginas;
+      pagina++
+    ) {
+      pdf.setPage(pagina);
+
+      const alturaPagina =
+        pdf.internal.pageSize.getHeight();
+
+      pdf.setDrawColor(
+        210,
+        210,
+        210
+      );
+
+      pdf.line(
+        margem,
+        alturaPagina - 13,
+        larguraPagina - margem,
+        alturaPagina - 13
+      );
+
+      pdf.setTextColor(
+        110,
+        110,
+        110
+      );
+
+      pdf.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      pdf.setFontSize(7);
+
+      pdf.text(
+        `Tradição Barbearia | Gerado em ${new Date().toLocaleString("pt-BR")}`,
+        margem,
+        alturaPagina - 7
+      );
+
+      pdf.text(
+        `Página ${pagina} de ${totalPaginas}`,
+        larguraPagina - margem,
+        alturaPagina - 7,
+        {
+          align: "right"
+        }
+      );
+    }
+
+    /*
+      ========================================================
+      NOME DO ARQUIVO
+      ========================================================
+    */
+
+    const periodoArquivo =
+      dados.periodo.inicioTexto ===
+      dados.periodo.fimTexto
+        ? dados.periodo.inicioTexto
+        : `${dados.periodo.inicioTexto}_${dados.periodo.fimTexto}`;
+
+    const barbeiroArquivo =
+      barbeiroTexto
+        .normalize("NFD")
+        .replace(
+          /[\u0300-\u036f]/g,
+          ""
+        )
+        .replace(
+          /[^a-zA-Z0-9]+/g,
+          "_"
+        )
+        .replace(
+          /^_|_$/g,
+          ""
+        );
+
+    pdf.save(
+      `relatorio_financeiro_${barbeiroArquivo}_${periodoArquivo}.pdf`
+    );
+  } catch (erro) {
+    console.log(
+      "Erro ao gerar PDF financeiro:",
+      erro
+    );
+
+    alert(
+      "Não foi possível gerar o PDF financeiro."
+    );
+  } finally {
+    if (botaoGerarPdfFinanceiro) {
+      botaoGerarPdfFinanceiro.disabled =
+        false;
+
+      botaoGerarPdfFinanceiro.textContent =
+        "Gerar PDF";
+    }
+  }
+}
+
+/* =========================================================
+   HISTÓRICO — FILTROS
+========================================================= */
+
+function preencherFiltroHistoricoBarbeiros() {
+  if (
+    !filtroHistoricoBarbeiro
+  ) {
+    return;
+  }
+
+  filtroHistoricoBarbeiro.innerHTML = `
+    <option value="todos">
+      Barbearia inteira
+    </option>
+  `;
+
+  barbeiros.forEach(
+    (barbeiro) => {
+      const opcao =
+        document.createElement(
+          "option"
+        );
+
+      opcao.value =
+        barbeiro.nome;
+
+      opcao.textContent =
+        barbeiro.nome;
+
+      filtroHistoricoBarbeiro.appendChild(
+        opcao
+      );
+    }
+  );
+}
+
+function preencherBarbeirosSaida() {
+  if (!barbeiroSaida) {
+    return;
+  }
+
+  barbeiroSaida.innerHTML = `
+    <option value="Barbearia">
+      Barbearia
+    </option>
+  `;
+
+  barbeiros.forEach(
+    (barbeiro) => {
+      const opcao =
+        document.createElement(
+          "option"
+        );
+
+      opcao.value =
+        barbeiro.nome;
+
+      opcao.textContent =
+        barbeiro.nome;
+
+      barbeiroSaida.appendChild(
+        opcao
+      );
+    }
+  );
+}
+
+function obterPeriodoHistorico() {
+  const tipo =
+    periodoRelatorioHistorico?.value ||
+    "mensal";
+
+  return obterPeriodoGenerico(
+    tipo,
+    dataHistorico
+  );
+}
+
+/* =========================================================
+   HISTÓRICO — MONTAR ENTRADAS
+========================================================= */
+
+function transformarAtendimentoEmEntrada(
+  agendamento
+) {
+  const valorServico =
+    Number(
+      agendamento.valorServico
+    ) || 0;
+
+  const valorProduto =
+    Number(
+      agendamento.valorProduto
+    ) || 0;
+
+  /*
+    A entrada mostra o valor cheio,
+    ANTES do desconto.
+  */
+  const valor =
+    Number(
+      agendamento.valorTotalBruto
+    ) ||
+    Number(
+      agendamento.valorTotal
+    ) ||
+    valorServico +
+      valorProduto;
+
+  let descricao =
+    agendamento.servico ||
+    "Atendimento";
+
+  if (
+    agendamento.produto
+  ) {
+    descricao +=
+      ` + ${agendamento.produto}`;
+  }
+
+  return {
+    id:
+      agendamento.id,
+
+    origem:
+      "atendimento",
+
+    tipo:
+      "entrada",
+
+    descricao,
+
+    valor,
+
+    data:
+      agendamento.data,
+
+    hora:
+      agendamento.hora ||
+      "00:00",
+
+    barbeiro:
+      agendamento.barbeiro ||
+      "",
+
+    cliente:
+      agendamento.cliente ||
+      "",
+
+    formaPagamento:
+      agendamento.formaPagamento ||
+      "",
+
+    prioridadeHistorico:
+      1
+  };
+}
+
+/* =========================================================
+   HISTÓRICO — ATUALIZAR
+========================================================= */
+
+async function atualizarHistoricoFinanceiro() {
+  if (
+    !usuarioPodeVisualizarFinanceiro() ||
+    !listaHistoricoFinanceiro
+  ) {
+    return;
+  }
+
+  const periodo =
+    obterPeriodoHistorico();
+
+  if (tituloPeriodoHistorico) {
+    tituloPeriodoHistorico.textContent =
+      periodo.titulo;
+  }
+
+  try {
+    const [
+      respostaAgendamentos,
+      respostaMovimentacoes
+    ] = await Promise.all([
+      getDocs(
+        collection(
+          db,
+          "agendamentos"
+        )
+      ),
+
+      getDocs(
+        collection(
+          db,
+          "movimentacoesFinanceiras"
+        )
+      )
+    ]);
+
+    /* ===============================
+       ENTRADAS
+    =============================== */
+
+    const entradas =
+      respostaAgendamentos.docs
+        .map((documento) => ({
+          id: documento.id,
+          ...documento.data()
+        }))
+        .filter((agendamento) => {
+          return (
+            agendamento.status ===
+            "concluido"
+          );
+        })
+        .map(
+          transformarAtendimentoEmEntrada
+        );
+
+    /* ===============================
+       SAÍDAS
+    =============================== */
+
+    const saidas =
+      respostaMovimentacoes.docs
+        .map((documento) => ({
+          id: documento.id,
+          origem: "manual",
+          ...documento.data()
+        }))
+        .filter((movimentacao) => {
+          return (
+            movimentacao.tipo ===
+            "saida"
+          );
+        });
+
+    const todasMovimentacoes = [
+      ...entradas,
+      ...saidas
+    ];
+
+    const barbeiroSelecionado =
+      filtroHistoricoBarbeiro?.value ||
+      "todos";
+
+    const tipoSelecionado =
+      filtroHistoricoTipo?.value ||
+      "todos";
+
+    /* ===============================
+       MOVIMENTAÇÕES DO PERÍODO
+       usado nos cards
+    =============================== */
+
+    const movimentacoesPeriodo =
+      todasMovimentacoes.filter(
+        (movimentacao) => {
+          const dentroPeriodo =
+            movimentacao.data >=
+              periodo.inicioTexto &&
+            movimentacao.data <=
+              periodo.fimTexto;
+
+          const barbeiroCorreto =
+            barbeiroSelecionado ===
+              "todos" ||
+            movimentacao.barbeiro ===
+              barbeiroSelecionado;
+
+          return (
+            dentroPeriodo &&
+            barbeiroCorreto
+          );
+        }
+      );
+
+    /* ===============================
+       FILTRO DA LISTA
+    =============================== */
+
+    const movimentacoes =
+      movimentacoesPeriodo
+        .filter((movimentacao) => {
+          const tipoCorreto =
+            tipoSelecionado ===
+              "todos" ||
+            tipoSelecionado ===
+              "todas" ||
+            movimentacao.tipo ===
+              tipoSelecionado;
+
+          return tipoCorreto;
+        })
+        .sort((a, b) => {
+          const diferencaData =
+            criarDataHora(
+              b.data,
+              b.hora || "00:00"
+            ) -
+            criarDataHora(
+              a.data,
+              a.hora || "00:00"
+            );
+
+          if (diferencaData !== 0) {
+            return diferencaData;
+          }
+
+          /*
+            Se a entrada e o desconto forem
+            do mesmo horário, o desconto fica
+            imediatamente acima.
+          */
+          return (
+            Number(
+              b.prioridadeHistorico
+            ) || 0
+          ) - (
+            Number(
+              a.prioridadeHistorico
+            ) || 0
+          );
+        });
+
+    /* ===============================
+       TOTAIS
+    =============================== */
+
+    const entradasPeriodo =
+      movimentacoesPeriodo.filter(
+        (movimentacao) => {
+          return (
+            movimentacao.tipo ===
+            "entrada"
+          );
+        }
+      );
+
+    const saidasPeriodo =
+      movimentacoesPeriodo.filter(
+        (movimentacao) => {
+          return (
+            movimentacao.tipo ===
+            "saida"
+          );
+        }
+      );
+
+    const totalEntradas =
+      entradasPeriodo.reduce(
+        (total, movimentacao) => {
+          return (
+            total +
+            (
+              Number(
+                movimentacao.valor
+              ) || 0
+            )
+          );
+        },
+        0
+      );
+
+    const totalSaidas =
+      saidasPeriodo.reduce(
+        (total, movimentacao) => {
+          return (
+            total +
+            (
+              Number(
+                movimentacao.valor
+              ) || 0
+            )
+          );
+        },
+        0
+      );
+
+    const saldo =
+      totalEntradas -
+      totalSaidas;
+
+    if (historicoTotalEntradas) {
+      historicoTotalEntradas.textContent =
+        formatarValorEmReal(
+          totalEntradas
+        );
+    }
+
+    if (historicoTotalSaidas) {
+      historicoTotalSaidas.textContent =
+        formatarValorEmReal(
+          totalSaidas
+        );
+    }
+
+    if (historicoSaldo) {
+      historicoSaldo.textContent =
+        formatarValorEmReal(
+          saldo
+        );
+    }
+
+    if (historicoQuantidadeEntradas) {
+      historicoQuantidadeEntradas.textContent =
+        `${entradasPeriodo.length} movimentação${
+          entradasPeriodo.length === 1
+            ? ""
+            : "ões"
+        }`;
+    }
+
+    if (historicoQuantidadeSaidas) {
+      historicoQuantidadeSaidas.textContent =
+        `${saidasPeriodo.length} movimentação${
+          saidasPeriodo.length === 1
+            ? ""
+            : "ões"
+        }`;
+    }
+
+    if (
+      quantidadeMovimentacoesHistorico
+    ) {
+      quantidadeMovimentacoesHistorico.textContent =
+        `${movimentacoes.length} movimentação${
+          movimentacoes.length === 1
+            ? ""
+            : "ões"
+        }`;
+    }
+
+    /* ===============================
+       CRIAR LISTA
+    =============================== */
+
+    listaHistoricoFinanceiro.innerHTML =
+      "";
+
+    if (
+      movimentacoes.length === 0
+    ) {
+      listaHistoricoFinanceiro.innerHTML = `
+        <div class="historico-vazio">
+          Nenhuma movimentação encontrada neste período.
+        </div>
+      `;
+
+      return;
+    }
+
+    /* ===============================
+       CABEÇALHO DA TABELA
+    =============================== */
+
+    const cabecalho =
+      document.createElement(
+        "div"
+      );
+
+    cabecalho.className =
+      "cabecalho-tabela-historico";
+
+    cabecalho.innerHTML = `
+      <div>Data e hora</div>
+      <div>Movimentação</div>
+      <div>Barbeiro</div>
+      <div>Pagamento</div>
+      <div>Valor</div>
+      <div>Tipo</div>
+    `;
+
+    listaHistoricoFinanceiro.appendChild(
+      cabecalho
+    );
+
+    /* ===============================
+       LINHAS
+    =============================== */
+
+    movimentacoes.forEach(
+      (movimentacao) => {
+        const linha =
+          document.createElement(
+            "div"
+          );
+
+        linha.className =
+          `linha-historico ${movimentacao.tipo}`;
+
+        const dataFormatada =
+          dataPorTexto(
+            movimentacao.data
+          ).toLocaleDateString(
+            "pt-BR"
+          );
+
+        const hora =
+          movimentacao.hora ||
+          "00:00";
+
+        const descricao =
+          movimentacao.descricao ||
+          (
+            movimentacao.tipo ===
+            "entrada"
+              ? "Atendimento"
+              : "Saída"
+          );
+
+        const barbeiro =
+          movimentacao.barbeiro ||
+          "Barbearia";
+
+        const pagamento =
+          movimentacao.formaPagamento ||
+          "—";
+
+        const valor =
+          Number(
+            movimentacao.valor
+          ) || 0;
+
+        const sinal =
+          movimentacao.tipo ===
+          "saida"
+            ? "-"
+            : "+";
+
+        const textoTipo =
+          movimentacao.tipo ===
+          "saida"
+            ? "Saída"
+            : "Entrada";
+
+        linha.innerHTML = `
+          <div class="coluna-historico coluna-data-historico">
+            <strong>
+              ${dataFormatada}
+            </strong>
+
+            <span>
+              ${hora}
+            </span>
+          </div>
+
+          <div class="coluna-historico coluna-movimentacao-historico">
+            <strong>
+              ${descricao}
+            </strong>
+          </div>
+
+          <div class="coluna-historico">
+            <span>
+              ${barbeiro}
+            </span>
+          </div>
+
+          <div class="coluna-historico">
+            <span>
+              ${pagamento}
+            </span>
+          </div>
+
+          <div class="coluna-historico coluna-valor-historico">
+            <strong>
+              ${sinal}
+              ${formatarValorEmReal(valor)}
+            </strong>
+          </div>
+
+          <div class="coluna-historico coluna-tipo-historico">
+            <span class="indicador-movimento ${movimentacao.tipo}">
+              <i></i>
+              ${textoTipo}
+            </span>
+          </div>
+        `;
+
+        listaHistoricoFinanceiro.appendChild(
+          linha
+        );
+      }
+    );
+  } catch (erro) {
+    console.log(
+      "Erro ao carregar histórico financeiro:",
+      erro
+    );
+
+    listaHistoricoFinanceiro.innerHTML = `
+      <div class="historico-vazio">
+        Não foi possível carregar o histórico financeiro.
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   REGISTRAR SAÍDA
+========================================================= */
+
+function abrirModalRegistrarSaida() {
+  if (
+    !usuarioPodeVisualizarFinanceiro() ||
+    !modalRegistrarSaida
+  ) {
+    return;
+  }
+
+  formRegistrarSaida?.reset();
+
+  if (mensagemSaida) {
+    mensagemSaida.textContent =
+      "";
+  }
+
+  const agora =
+    new Date();
+
+  if (dataSaida) {
+    dataSaida.value =
+      formatarDataParaSalvar(
+        agora
+      );
+  }
+
+  if (horaSaida) {
+    horaSaida.value =
+      `${String(agora.getHours()).padStart(2, "0")}:${String(agora.getMinutes()).padStart(2, "0")}`;
+  }
+
+  preencherBarbeirosSaida();
+
+  modalRegistrarSaida.classList.remove(
+    "escondido"
+  );
+}
+
+if (valorSaida) {
+  valorSaida.addEventListener(
+    "input",
+    () => {
+      formatarCampoValor(
+        valorSaida
+      );
+    }
+  );
+}
+
+if (
+  botaoRegistrarSaida
+) {
+  botaoRegistrarSaida.addEventListener(
+    "click",
+    abrirModalRegistrarSaida
+  );
+}
+
+if (
+  formRegistrarSaida
+) {
+  formRegistrarSaida.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      if (
+        !usuarioPodeVisualizarFinanceiro()
+      ) {
+        return;
+      }
+
+      if (mensagemSaida) {
+        mensagemSaida.textContent =
+          "";
+      }
+
+      const descricao =
+        descricaoSaida?.value
+          .trim() || "";
+
+      const valor =
+        converterValorParaNumero(
+          valorSaida?.value ||
+          ""
+        );
+
+      const data =
+        dataSaida?.value ||
+        formatarDataParaSalvar(
+          new Date()
+        );
+
+      const hora =
+        horaSaida?.value ||
+        "00:00";
+
+      const barbeiro =
+        barbeiroSaida?.value ||
+        "Barbearia";
+
+      if (!descricao) {
+        if (mensagemSaida) {
+          mensagemSaida.textContent =
+            "Digite uma descrição para a saída.";
+        }
+
+        descricaoSaida?.focus();
 
         return;
       }
 
-      await updateDoc(
-        doc(db, "barbeiros", usuarioSelecionado),
-        {
-          senha: senha
+      if (valor <= 0) {
+        if (mensagemSaida) {
+          mensagemSaida.textContent =
+            "Digite um valor válido para a saída.";
         }
+
+        valorSaida?.focus();
+
+        return;
+      }
+
+      try {
+        await addDoc(
+          collection(
+            db,
+            "movimentacoesFinanceiras"
+          ),
+          {
+            tipo:
+              "saida",
+
+            descricao,
+
+            valor,
+
+            data,
+
+            hora,
+
+            barbeiro,
+
+            criadoPor:
+              nomeUsuario,
+
+            usuarioId,
+
+            dataCadastro:
+              Date.now()
+          }
+        );
+
+        if (
+          modalRegistrarSaida
+        ) {
+          modalRegistrarSaida.classList.add(
+            "escondido"
+          );
+        }
+
+        formRegistrarSaida.reset();
+
+        await atualizarHistoricoFinanceiro();
+      } catch (erro) {
+        console.log(
+          "Erro ao registrar saída:",
+          erro
+        );
+
+        if (mensagemSaida) {
+          mensagemSaida.textContent =
+            "Não foi possível registrar a saída.";
+        }
+      }
+    }
+  );
+}
+
+/* =========================================================
+   NAVEGAÇÃO DO DESEMPENHO
+========================================================= */
+
+botaoMesAnterior.addEventListener(
+  "click",
+  () => {
+    mesRelatorio.setMonth(
+      mesRelatorio.getMonth() -
+        1
+    );
+
+    atualizarRelatorio();
+  }
+);
+
+botaoProximoMes.addEventListener(
+  "click",
+  () => {
+    mesRelatorio.setMonth(
+      mesRelatorio.getMonth() +
+        1
+    );
+
+    atualizarRelatorio();
+  }
+);
+
+filtroRelatorioBarbeiro.addEventListener(
+  "change",
+  atualizarRelatorio
+);
+
+filtroSegundoGrafico.addEventListener(
+  "change",
+  atualizarRelatorio
+);
+
+/* =========================================================
+   NAVEGAÇÃO FINANCEIRA
+========================================================= */
+
+if (
+  periodoRelatorioFinanceiro
+) {
+  periodoRelatorioFinanceiro.addEventListener(
+    "change",
+    async () => {
+      dataFinanceiro =
+        new Date();
+
+      await atualizarFinanceiro();
+    }
+  );
+}
+
+if (
+  filtroFinanceiroBarbeiro
+) {
+  filtroFinanceiroBarbeiro.addEventListener(
+    "change",
+    atualizarFinanceiro
+  );
+}
+
+if (
+  botaoPeriodoFinanceiroAnterior
+) {
+  botaoPeriodoFinanceiroAnterior.addEventListener(
+    "click",
+    async () => {
+      const periodo =
+        periodoRelatorioFinanceiro.value;
+
+      if (
+        periodo === "diario"
+      ) {
+        dataFinanceiro.setDate(
+          dataFinanceiro.getDate() -
+            1
+        );
+      } else if (
+        periodo === "semanal"
+      ) {
+        dataFinanceiro.setDate(
+          dataFinanceiro.getDate() -
+            7
+        );
+      } else {
+        dataFinanceiro.setMonth(
+          dataFinanceiro.getMonth() -
+            1
+        );
+      }
+
+      await atualizarFinanceiro();
+    }
+  );
+}
+
+if (
+  botaoPeriodoFinanceiroProximo
+) {
+  botaoPeriodoFinanceiroProximo.addEventListener(
+    "click",
+    async () => {
+      const periodo =
+        periodoRelatorioFinanceiro.value;
+
+      if (
+        periodo === "diario"
+      ) {
+        dataFinanceiro.setDate(
+          dataFinanceiro.getDate() +
+            1
+        );
+      } else if (
+        periodo === "semanal"
+      ) {
+        dataFinanceiro.setDate(
+          dataFinanceiro.getDate() +
+            7
+        );
+      } else {
+        dataFinanceiro.setMonth(
+          dataFinanceiro.getMonth() +
+            1
+        );
+      }
+
+      await atualizarFinanceiro();
+    }
+  );
+}
+
+/* =========================================================
+   NAVEGAÇÃO DO HISTÓRICO
+========================================================= */
+
+if (
+  periodoRelatorioHistorico
+) {
+  periodoRelatorioHistorico.addEventListener(
+    "change",
+    async () => {
+      dataHistorico =
+        new Date();
+
+      await atualizarHistoricoFinanceiro();
+    }
+  );
+}
+
+if (
+  filtroHistoricoBarbeiro
+) {
+  filtroHistoricoBarbeiro.addEventListener(
+    "change",
+    atualizarHistoricoFinanceiro
+  );
+}
+
+if (
+  filtroHistoricoTipo
+) {
+  filtroHistoricoTipo.addEventListener(
+    "change",
+    atualizarHistoricoFinanceiro
+  );
+}
+
+if (
+  botaoPeriodoHistoricoAnterior
+) {
+  botaoPeriodoHistoricoAnterior.addEventListener(
+    "click",
+    async () => {
+      const periodo =
+        periodoRelatorioHistorico?.value ||
+        "mensal";
+
+      if (
+        periodo === "diario" ||
+        periodo === "dia"
+      ) {
+        dataHistorico.setDate(
+          dataHistorico.getDate() -
+            1
+        );
+      } else if (
+        periodo === "semanal" ||
+        periodo === "semana"
+      ) {
+        dataHistorico.setDate(
+          dataHistorico.getDate() -
+            7
+        );
+      } else {
+        dataHistorico.setMonth(
+          dataHistorico.getMonth() -
+            1
+        );
+      }
+
+      await atualizarHistoricoFinanceiro();
+    }
+  );
+}
+
+if (
+  botaoPeriodoHistoricoProximo
+) {
+  botaoPeriodoHistoricoProximo.addEventListener(
+    "click",
+    async () => {
+      const periodo =
+        periodoRelatorioHistorico?.value ||
+        "mensal";
+
+      if (
+        periodo === "diario" ||
+        periodo === "dia"
+      ) {
+        dataHistorico.setDate(
+          dataHistorico.getDate() +
+            1
+        );
+      } else if (
+        periodo === "semanal" ||
+        periodo === "semana"
+      ) {
+        dataHistorico.setDate(
+          dataHistorico.getDate() +
+            7
+        );
+      } else {
+        dataHistorico.setMonth(
+          dataHistorico.getMonth() +
+            1
+        );
+      }
+
+      await atualizarHistoricoFinanceiro();
+    }
+  );
+}
+
+/* =========================================================
+   BOTÕES DAS ABAS
+========================================================= */
+
+abaRelatorioDesempenho?.addEventListener(
+  "click",
+  abrirRelatorioDesempenho
+);
+
+abaRelatorioFinanceiro?.addEventListener(
+  "click",
+  abrirRelatorioFinanceiro
+);
+
+abaRelatorioHistorico?.addEventListener(
+  "click",
+  abrirRelatorioHistorico
+);
+
+/* =========================================================
+   TEMA
+========================================================= */
+
+opcoesTema.forEach(
+  (opcao) => {
+    opcao.addEventListener(
+      "change",
+      async () => {
+        try {
+          await setDoc(
+            configuracaoGeral,
+            {
+              tema:
+                opcao.value
+            },
+            {
+              merge:
+                true
+            }
+          );
+
+          mensagemTema.textContent =
+            "Tema atualizado com sucesso.";
+        } catch (erro) {
+          console.log(
+            erro
+          );
+
+          mensagemTema.textContent =
+            "Não foi possível salvar o tema.";
+        }
+      }
+    );
+  }
+);
+
+/* =========================================================
+   ALTERAR SENHA
+========================================================= */
+
+formAlterarSenha.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    mensagemSenha.textContent =
+      "";
+
+    const selecionado =
+      usuarioAlterarSenha.value;
+
+    const senha =
+      novaSenha.value.trim();
+
+    const confirmacao =
+      confirmarNovaSenha.value.trim();
+
+    if (!selecionado) {
+      mensagemSenha.textContent =
+        "Selecione o usuário.";
+
+      return;
+    }
+
+    if (
+      senha.length < 4
+    ) {
+      mensagemSenha.textContent =
+        "A senha precisa ter pelo menos 4 caracteres.";
+
+      return;
+    }
+
+    if (
+      senha !== confirmacao
+    ) {
+      mensagemSenha.textContent =
+        "As duas senhas não são iguais.";
+
+      return;
+    }
+
+    if (
+      tipoUsuario !==
+        "administrador" &&
+      selecionado !==
+        usuarioId
+    ) {
+      mensagemSenha.textContent =
+        "Você só pode alterar a sua própria senha.";
+
+      return;
+    }
+
+    try {
+      if (
+        selecionado ===
+        "administrador"
+      ) {
+        if (
+          tipoUsuario !==
+          "administrador"
+        ) {
+          return;
+        }
+
+        await setDoc(
+          configuracaoGeral,
+          {
+            senhaAdministrador:
+              senha
+          },
+          {
+            merge:
+              true
+          }
+        );
+
+        mensagemSenha.textContent =
+          "Senha do administrador alterada com sucesso.";
+      } else if (
+        selecionado ===
+        "recepcionista"
+      ) {
+        if (
+          tipoUsuario !==
+            "administrador" &&
+          tipoUsuario !==
+            "recepcionista"
+        ) {
+          return;
+        }
+
+        await setDoc(
+          configuracaoGeral,
+          {
+            senhaRecepcionista:
+              senha
+          },
+          {
+            merge:
+              true
+          }
+        );
+
+        mensagemSenha.textContent =
+          "Senha da recepcionista alterada com sucesso.";
+      } else {
+        const barbeiro =
+          barbeiros.find(
+            (item) =>
+              item.id ===
+              selecionado
+          );
+
+        if (!barbeiro) {
+          mensagemSenha.textContent =
+            "Barbeiro não encontrado.";
+
+          return;
+        }
+
+        if (
+          tipoUsuario !==
+            "administrador" &&
+          usuarioId !==
+            barbeiro.id
+        ) {
+          mensagemSenha.textContent =
+            "Você só pode alterar a sua própria senha.";
+
+          return;
+        }
+
+        await updateDoc(
+          doc(
+            db,
+            "barbeiros",
+            barbeiro.id
+          ),
+          {
+            senha
+          }
+        );
+
+        mensagemSenha.textContent =
+          `Senha de ${barbeiro.nome} alterada com sucesso.`;
+      }
+
+      novaSenha.value =
+        "";
+
+      confirmarNovaSenha.value =
+        "";
+
+      if (
+        tipoUsuario ===
+        "administrador"
+      ) {
+        usuarioAlterarSenha.value =
+          "";
+      }
+    } catch (erro) {
+      console.log(
+        erro
       );
 
       mensagemSenha.textContent =
-        `Senha de ${barbeiroSelecionado.nome} alterada com sucesso.`;
+        "Não foi possível alterar a senha.";
     }
-
-    formAlterarSenha.reset();
-
-    usuarioAlterarSenha.value = "";
-  } catch (erro) {
-    console.log("Erro ao alterar senha:", erro);
-
-    mensagemSenha.textContent =
-      "Não foi possível alterar a senha.";
   }
-});
+);
 
-onSnapshot(configuracaoGeral, (documento) => {
-  const configuracoes = documento.exists() ? documento.data() : {};
-  aplicarTema(configuracoes.tema || "escuro");
+/* =========================================================
+   SINCRONIZAÇÃO DO TEMA
+========================================================= */
 
-  if (!telaRelatorio.classList.contains("escondida")) {
-    atualizarRelatorio();
+onSnapshot(
+  configuracaoGeral,
+
+  (documento) => {
+    const configuracoes =
+      documento.exists()
+        ? documento.data()
+        : {};
+
+    aplicarTema(
+      configuracoes.tema ||
+      "escuro"
+    );
+
+    if (
+      !telaRelatorio.classList.contains(
+        "escondida"
+      )
+    ) {
+      if (
+        conteudoRelatorioFinanceiro &&
+        !conteudoRelatorioFinanceiro.classList.contains(
+          "escondida"
+        )
+      ) {
+        atualizarFinanceiro();
+      } else if (
+        conteudoRelatorioHistorico &&
+        !conteudoRelatorioHistorico.classList.contains(
+          "escondida"
+        )
+      ) {
+        atualizarHistoricoFinanceiro();
+      } else {
+        atualizarRelatorio();
+      }
+    }
+  },
+
+  (erro) => {
+    console.log(
+      "Erro ao carregar configurações:",
+      erro
+    );
+
+    aplicarTema(
+      "escuro"
+    );
   }
-});
+);
+
+/* =========================================================
+   ZOOM
+========================================================= */
 
 function atualizarBotoesZoom() {
-  botaoDiminuirZoom.disabled = zoomAgenda <= ZOOM_MINIMO;
-  botaoAumentarZoom.disabled = zoomAgenda >= ZOOM_MAXIMO;
+  botaoDiminuirZoom.disabled =
+    zoomAgenda <=
+    ZOOM_MINIMO;
+
+  botaoAumentarZoom.disabled =
+    zoomAgenda >=
+    ZOOM_MAXIMO;
 }
 
 function alterarZoom(valor) {
-  const novoZoom = Math.min(
-    ZOOM_MAXIMO,
-    Math.max(ZOOM_MINIMO, zoomAgenda + valor)
-  );
+  const novoZoom =
+    Math.min(
+      ZOOM_MAXIMO,
+      Math.max(
+        ZOOM_MINIMO,
+        zoomAgenda +
+          valor
+      )
+    );
 
-  if (novoZoom === zoomAgenda) {
+  if (
+    novoZoom ===
+    zoomAgenda
+  ) {
     return;
   }
 
-  const posicaoHorizontal = agendaScroll.scrollLeft;
-  const posicaoVertical = agendaScroll.scrollTop;
+  const horizontal =
+    agendaScroll.scrollLeft;
 
-  zoomAgenda = Number(novoZoom.toFixed(2));
+  const vertical =
+    agendaScroll.scrollTop;
+
+  zoomAgenda =
+    Number(
+      novoZoom.toFixed(
+        2
+      )
+    );
 
   mostrarAgenda();
 
-  agendaScroll.scrollLeft = posicaoHorizontal;
-  agendaScroll.scrollTop = posicaoVertical;
+  agendaScroll.scrollLeft =
+    horizontal;
+
+  agendaScroll.scrollTop =
+    vertical;
 
   atualizarBotoesZoom();
 }
 
-botaoDiminuirZoom.addEventListener("click", () => {
-  alterarZoom(-PASSO_ZOOM);
-});
+botaoDiminuirZoom.addEventListener(
+  "click",
+  () => {
+    alterarZoom(
+      -PASSO_ZOOM
+    );
+  }
+);
 
-botaoAumentarZoom.addEventListener("click", () => {
-  alterarZoom(PASSO_ZOOM);
-});
+botaoAumentarZoom.addEventListener(
+  "click",
+  () => {
+    alterarZoom(
+      PASSO_ZOOM
+    );
+  }
+);
 
-if (botaoConfirmarSair) {
-  botaoConfirmarSair.addEventListener("click", () => {
-    sessionStorage.clear();
-    window.location.href = "index.html";
-  });
+/* =========================================================
+   FECHAR MODAIS
+========================================================= */
+
+document
+  .querySelectorAll(
+    "[data-fechar]"
+  )
+  .forEach(
+    (botao) => {
+      botao.addEventListener(
+        "click",
+        () => {
+          fecharModal(
+            botao.dataset.fechar
+          );
+        }
+      );
+    }
+  );
+
+/* =========================================================
+   SAIR
+========================================================= */
+
+if (
+  botaoConfirmarSair
+) {
+  botaoConfirmarSair.addEventListener(
+    "click",
+    () => {
+      sessionStorage.clear();
+
+      window.location.href =
+        "index.html";
+    }
+  );
 }
 
-atualizarBotoesZoom();
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
 
+async function iniciarDashboard() {
+  montarMenu();
+
+  criarPrimeirosDias();
+
+  atualizarBotoesZoom();
+
+  boasVindas.textContent =
+    `Boas-vindas, ${nomeUsuario}!`;
+
+  try {
+    await carregarBarbeiros();
+
+    if (
+      usuarioPodeVisualizarTodasAgendas()
+    ) {
+      escolherBarbeiro.classList.add(
+        "ativo"
+      );
+
+      preencherSelectDeBarbeiros();
+
+      textoAgenda.textContent =
+        "Escolha um barbeiro para ver a agenda.";
+
+      barbeiroAtual =
+        "";
+
+      agendamentos =
+        [];
+
+      mostrarAgenda();
+    } else {
+      escolherBarbeiro.classList.remove(
+        "ativo"
+      );
+
+      barbeiroAtual =
+        nomeUsuario;
+
+      textoAgenda.textContent =
+        `Sua agenda: ${barbeiroAtual}.`;
+
+      await atualizarAgenda();
+    }
+  } catch (erro) {
+    textoAgenda.textContent =
+      "Não foi possível conectar ao Firebase.";
+
+    console.log(
+      "Erro ao iniciar o dashboard:",
+      erro
+    );
+  }
+}
+
+function adicionarCampoServico() {
+
+  const container =
+    document.querySelector(
+      "#container-servicos-atendimento"
+    );
+
+  const linha =
+    document.createElement("div");
+
+  linha.className =
+    "linha-selecao-atendimento";
+
+
+  const select =
+    document.createElement("select");
+
+  select.className =
+    "select-servico-atendimento";
+
+
+  select.innerHTML = `
+    <option value="">
+      Selecione outro serviço
+    </option>
+  `;
+
+
+  servicos.forEach((servico) => {
+
+    const opcao =
+      document.createElement("option");
+
+    opcao.value =
+      servico.id;
+
+    opcao.textContent =
+      `${servico.nome} — ${formatarValorEmReal(servico.valor)}`;
+
+    select.appendChild(
+      opcao
+    );
+  });
+
+
+  const remover =
+    document.createElement("button");
+
+  remover.type =
+    "button";
+
+  remover.className =
+    "botao-remover-item-atendimento";
+
+  remover.textContent =
+    "×";
+
+
+  select.addEventListener(
+    "change",
+    atualizarValoresConclusao
+  );
+
+
+  remover.addEventListener(
+    "click",
+    () => {
+
+      linha.remove();
+
+      atualizarValoresConclusao();
+    }
+  );
+
+
+  linha.append(
+    select,
+    remover
+  );
+
+
+  container.appendChild(
+    linha
+  );
+}
+
+function adicionarCampoProduto() {
+
+  const container =
+    document.querySelector(
+      "#container-produtos-atendimento"
+    );
+
+  const linha =
+    document.createElement("div");
+
+  linha.className =
+    "linha-selecao-atendimento";
+
+
+  const select =
+    document.createElement("select");
+
+  select.className =
+    "select-produto-atendimento";
+
+
+  select.innerHTML = `
+    <option value="">
+      Selecione outro produto
+    </option>
+  `;
+
+
+  produtos.forEach((produto) => {
+
+    const opcao =
+      document.createElement("option");
+
+    opcao.value =
+      produto.id;
+
+    opcao.textContent =
+      `${produto.nome} — ${formatarValorEmReal(produto.valor)}`;
+
+    select.appendChild(
+      opcao
+    );
+  });
+
+
+  const remover =
+    document.createElement("button");
+
+  remover.type =
+    "button";
+
+  remover.className =
+    "botao-remover-item-atendimento";
+
+  remover.textContent =
+    "×";
+
+
+  select.addEventListener(
+    "change",
+    atualizarValoresConclusao
+  );
+
+
+  remover.addEventListener(
+    "click",
+    () => {
+
+      linha.remove();
+
+      atualizarValoresConclusao();
+    }
+  );
+
+
+  linha.append(
+    select,
+    remover
+  );
+
+
+  container.appendChild(
+    linha
+  );
+}
+
+document
+  .querySelector(
+    "#adicionar-servico-atendimento"
+  )
+  .addEventListener(
+    "click",
+    adicionarCampoServico
+  );
+
+
+document
+  .querySelector(
+    "#adicionar-produto-atendimento"
+  )
+  .addEventListener(
+    "click",
+    adicionarCampoProduto
+  );
 
 iniciarDashboard();

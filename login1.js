@@ -17,6 +17,10 @@ const botaoTipoAdministrador = document.querySelector(
   "#botao-tipo-administrador"
 );
 
+const botaoTipoRecepcionista = document.querySelector(
+  "#botao-tipo-recepcionista"
+);
+
 const botaoTipoBarbeiro = document.querySelector(
   "#botao-tipo-barbeiro"
 );
@@ -43,10 +47,13 @@ const formMessage = document.querySelector("#form-message");
 /* DADOS DO USUÁRIO SELECIONADO */
 
 let usuarioSelecionado = null;
+
 let senhaAdministrador = "tradicao123";
+let senhaRecepcionista = "recepcao123";
+
 let barbeiros = [];
 
-/* TEMA */
+/* TEMA E CONFIGURAÇÕES */
 
 function aplicarTema(tema) {
   document.body.classList.toggle(
@@ -70,6 +77,10 @@ onSnapshot(
       configuracoes.senhaAdministrador ||
       configuracoes.senha ||
       "tradicao123";
+
+    senhaRecepcionista =
+      configuracoes.senhaRecepcionista ||
+      "recepcao123";
 
     aplicarTema(configuracoes.tema || "escuro");
   },
@@ -123,6 +134,9 @@ function abrirEtapaSenha(usuario) {
   if (usuario.tipo === "administrador") {
     tipoUsuarioSelecionado.textContent =
       "Acesso de administrador";
+  } else if (usuario.tipo === "recepcionista") {
+    tipoUsuarioSelecionado.textContent =
+      "Acesso de recepcionista";
   } else {
     tipoUsuarioSelecionado.textContent =
       "Acesso de barbeiro";
@@ -240,6 +254,15 @@ botaoTipoAdministrador.addEventListener("click", () => {
     nome: "Administrador",
     tipo: "administrador",
     senha: senhaAdministrador
+  });
+});
+
+botaoTipoRecepcionista.addEventListener("click", () => {
+  abrirEtapaSenha({
+    id: "recepcionista",
+    nome: "Recepcionista",
+    tipo: "recepcionista",
+    senha: senhaRecepcionista
   });
 });
 
