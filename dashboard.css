@@ -3322,3 +3322,198 @@ body.tema-claro
 #modal-concluir-atendimento .janela::-webkit-scrollbar-thumb:hover {
     background: #e5c04b;
 }
+
+/* =========================================================
+   MAIS DE UM CLIENTE NO MESMO HORÁRIO
+========================================================= */
+
+.celula-horario {
+    position: relative;
+    overflow: hidden;
+}
+
+.clientes-mesmo-horario {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+}
+
+.cliente-horario-agenda {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    width: 100%;
+
+    padding: 5px 8px;
+
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+    background: transparent;
+    color: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    overflow: hidden;
+}
+
+.cliente-horario-agenda:last-child {
+    border-bottom: none;
+}
+
+.cliente-horario-agenda:hover {
+    background: rgba(212, 175, 55, 0.12);
+}
+
+.cliente-horario-agenda .nome-agendamento {
+    width: 100%;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cliente-horario-agenda .tipo-agendamento-grade {
+    width: 100%;
+
+    margin-top: 2px;
+
+    font-size: 0.82em;
+
+    opacity: 0.75;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cliente-horario-agenda.concluido {
+    background: rgba(40, 160, 90, 0.12);
+}
+
+.cliente-horario-agenda.nao-realizado {
+    opacity: 0.55;
+}
+
+/* =========================================================
+   BOTÃO + NA CÉLULA DA AGENDA
+========================================================= */
+
+.botao-adicionar-cliente-horario {
+    position: absolute;
+
+    right: 5px;
+    bottom: 5px;
+
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 25px;
+    height: 25px;
+
+    padding: 0;
+
+    border: 1px solid #d4af37;
+    border-radius: 6px;
+
+    background: #171717;
+    color: #d4af37;
+
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1;
+
+    cursor: pointer;
+
+    opacity: 0.75;
+
+    transition:
+        opacity 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.botao-adicionar-cliente-horario:hover {
+    opacity: 1;
+
+    background: #d4af37;
+    color: #111;
+
+    transform: scale(1.08);
+}
+
+.celula-horario {
+    position: relative;
+}
+
+/* =========================================================
+   STATUS DOS CLIENTES NA GRADE
+========================================================= */
+
+/* Cliente com atendimento concluído */
+.cliente-horario-agenda.concluido {
+    background: #1f7a45 !important;
+    color: #ffffff !important;
+
+    border-left: 4px solid #38d878;
+}
+
+.cliente-horario-agenda.concluido .nome-agendamento,
+.cliente-horario-agenda.concluido .tipo-agendamento-grade {
+    color: #ffffff !important;
+}
+
+
+/* Cliente cancelado / não realizado */
+.cliente-horario-agenda.nao-realizado {
+    background: #8f2d2d !important;
+    color: #ffffff !important;
+
+    border-left: 4px solid #ff5a5a;
+
+    opacity: 1 !important;
+}
+
+.cliente-horario-agenda.nao-realizado .nome-agendamento,
+.cliente-horario-agenda.nao-realizado .tipo-agendamento-grade {
+    color: #ffffff !important;
+}
+
+
+/* Horário normal / ainda marcado */
+.cliente-horario-agenda:not(.concluido):not(.nao-realizado) {
+    background: #d5b25a;
+    color: #171717;
+}
+
+
+/* Separação entre vários clientes */
+.cliente-horario-agenda + .cliente-horario-agenda {
+    border-top: 2px solid rgba(0, 0, 0, 0.25);
+}
+
+
+/* Hover do concluído */
+.cliente-horario-agenda.concluido:hover {
+    background: #269653 !important;
+}
+
+
+/* Hover do não realizado */
+.cliente-horario-agenda.nao-realizado:hover {
+    background: #aa3434 !important;
+}

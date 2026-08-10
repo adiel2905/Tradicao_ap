@@ -2593,11 +2593,11 @@ async function carregarAgendamentos() {
       );
 }
 
-function encontrarAgendamento(
+function encontrarAgendamentos(
   data,
   hora
-) {
-  return agendamentos.find(
+ ) {
+  return agendamentos.filter(
     (agendamento) =>
       agendamento.data === data &&
       agendamento.hora === hora
@@ -2750,6 +2750,11 @@ function mostrarAgenda() {
   grade.className =
     "grade-agenda";
 
+
+  /* =========================================
+     TAMANHOS DA GRADE
+  ========================================= */
+
   const larguraHorario =
     Math.round(
       82 * zoomAgenda
@@ -2775,8 +2780,10 @@ function mostrarAgenda() {
       13 * zoomAgenda
     );
 
+
   grade.style.gridTemplateColumns =
     `${larguraHorario}px repeat(${dias.length}, ${larguraColuna}px)`;
+
 
   grade.style.setProperty(
     "--largura-coluna",
@@ -2798,6 +2805,11 @@ function mostrarAgenda() {
     `${tamanhoTexto}px`
   );
 
+
+  /* =========================================
+     CANTO SUPERIOR
+  ========================================= */
+
   const canto =
     document.createElement(
       "div"
@@ -2806,29 +2818,45 @@ function mostrarAgenda() {
   canto.className =
     "canto-horario";
 
-  grade.appendChild(canto);
+  grade.appendChild(
+    canto
+  );
 
-  dias.forEach((dia) => {
-    const cabecalho =
-      document.createElement(
-        "div"
+
+  /* =========================================
+     CABEÇALHO DOS DIAS
+  ========================================= */
+
+  dias.forEach(
+    (dia) => {
+
+      const cabecalho =
+        document.createElement(
+          "div"
+        );
+
+      cabecalho.className =
+        "dia-cabecalho";
+
+      cabecalho.textContent =
+        formatarDataParaMostrar(
+          dia
+        );
+
+      grade.appendChild(
+        cabecalho
       );
+    }
+  );
 
-    cabecalho.className =
-      "dia-cabecalho";
 
-    cabecalho.textContent =
-      formatarDataParaMostrar(
-        dia
-      );
-
-    grade.appendChild(
-      cabecalho
-    );
-  });
+  /* =========================================
+     HORÁRIOS
+  ========================================= */
 
   horarios.forEach(
     (hora) => {
+
       const horario =
         document.createElement(
           "div"
@@ -2844,18 +2872,31 @@ function mostrarAgenda() {
         horario
       );
 
+
+      /* =========================================
+         DIAS DE CADA HORÁRIO
+      ========================================= */
+
       dias.forEach(
         (dia) => {
+
           const data =
             formatarDataParaSalvar(
               dia
             );
 
-          const agendamento =
-            encontrarAgendamento(
+
+          /*
+            Aqui pegamos TODOS os clientes
+            daquele mesmo horário.
+          */
+
+          const agendamentosHorario =
+            encontrarAgendamentos(
               data,
               hora
             );
+
 
           const celula =
             document.createElement(
@@ -2865,78 +2906,29 @@ function mostrarAgenda() {
           celula.className =
             "celula-horario";
 
-          if (agendamento) {
-            celula.classList.add(
-              "ocupado"
-            );
 
-            if (
-              agendamento.status ===
-              "concluido"
-            ) {
-              celula.classList.add(
-                "concluido"
-              );
-            }
+          /* =========================================
+             HORÁRIO VAZIO
+          ========================================= */
 
-            if (
-              agendamento.status ===
-                "cancelado" ||
-              agendamento.status ===
-                "nao_realizado"
-            ) {
-              celula.classList.add(
-                "nao-realizado"
-              );
-            }
+          if (
+            agendamentosHorario.length ===
+            0
+          ) {
 
-            const nome =
-              document.createElement(
-                "span"
-              );
+            /*
+              Horário vazio continua funcionando
+              como antes.
 
-            nome.className =
-              "nome-agendamento";
+              Clicou na célula = novo agendamento.
+            */
 
-            nome.textContent =
-              agendamento.cliente;
-
-            const tipo =
-              document.createElement(
-                "span"
-              );
-
-            tipo.className =
-              "tipo-agendamento-grade";
-
-            tipo.textContent =
-              agendamento.servico ||
-              agendamento.tipo ||
-              "Horário marcado";
-
-            celula.appendChild(
-              nome
-            );
-
-            celula.appendChild(
-              tipo
-            );
-
-            celula.addEventListener(
-              "click",
-              () => {
-                abrirDetalhes(
-                  agendamento
-                );
-              }
-            );
-          } else {
             celula.addEventListener(
               "click",
               async () => {
-                if (
-                  !barbeiroAtual
-                ) {
+
+                if (!barbeiroAtual) {
+
                   alert(
                     "Escolha um barbeiro antes de criar um agendamento."
                   );
@@ -2950,7 +2942,204 @@ function mostrarAgenda() {
                 );
               }
             );
+
+          } else {
+
+            /* =========================================
+               HORÁRIO COM CLIENTES
+            ========================================= */
+
+            celula.classList.add(
+              "ocupado"
+            );
+
+
+            const containerClientes =
+              document.createElement(
+                "div"
+              );
+
+            containerClientes.className =
+              "clientes-mesmo-horario";
+
+
+            /* =========================================
+               MOSTRAR TODOS OS CLIENTES
+            ========================================= */
+
+            agendamentosHorario.forEach(
+              (agendamento) => {
+
+                const item =
+                  document.createElement(
+                    "button"
+                  );
+
+                item.type =
+                  "button";
+
+                item.className =
+                  "cliente-horario-agenda";
+
+
+                /* ===============================
+                   STATUS
+                =============================== */
+
+                if (
+                  agendamento.status ===
+                  "concluido"
+                ) {
+
+                  item.classList.add(
+                    "concluido"
+                  );
+                }
+
+
+                if (
+                  agendamento.status ===
+                    "cancelado" ||
+                  agendamento.status ===
+                    "nao_realizado"
+                ) {
+
+                  item.classList.add(
+                    "nao-realizado"
+                  );
+                }
+
+
+                /* ===============================
+                   NOME
+                =============================== */
+
+                const nome =
+                  document.createElement(
+                    "span"
+                  );
+
+                nome.className =
+                  "nome-agendamento";
+
+                nome.textContent =
+                  agendamento.cliente;
+
+
+                /* ===============================
+                   TIPO / SERVIÇO
+                =============================== */
+
+                const tipo =
+                  document.createElement(
+                    "span"
+                  );
+
+                tipo.className =
+                  "tipo-agendamento-grade";
+
+                tipo.textContent =
+                  agendamento.servico ||
+                  agendamento.tipo ||
+                  "Horário marcado";
+
+
+                item.appendChild(
+                  nome
+                );
+
+                item.appendChild(
+                  tipo
+                );
+
+
+                /* ===============================
+                   ABRIR CLIENTE
+                =============================== */
+
+                item.addEventListener(
+                  "click",
+                  (event) => {
+
+                    event.stopPropagation();
+
+                    abrirDetalhes(
+                      agendamento
+                    );
+                  }
+                );
+
+
+                containerClientes.appendChild(
+                  item
+                );
+              }
+            );
+
+
+            celula.appendChild(
+              containerClientes
+            );
+
+
+            /* =========================================
+               BOTÃO + NOVO CLIENTE
+            ========================================= */
+
+            const botaoAdicionar =
+              document.createElement(
+                "button"
+              );
+
+            botaoAdicionar.type =
+              "button";
+
+            botaoAdicionar.className =
+              "botao-adicionar-cliente-horario";
+
+            botaoAdicionar.textContent =
+              "+";
+
+            botaoAdicionar.title =
+              "Adicionar outro cliente neste horário";
+
+
+            botaoAdicionar.addEventListener(
+              "click",
+              async (event) => {
+
+                event.stopPropagation();
+
+                if (!barbeiroAtual) {
+
+                  alert(
+                    "Escolha um barbeiro antes de criar um agendamento."
+                  );
+
+                  return;
+                }
+
+
+                await abrirNovoAgendamento(
+                  data,
+                  hora
+                );
+              }
+            );
+
+
+            /*
+              IMPORTANTE:
+              agora o botão é colocado aqui,
+              dentro do mesmo bloco em que
+              ele foi criado.
+            */
+
+            celula.appendChild(
+              botaoAdicionar
+            );
           }
+
 
           grade.appendChild(
             celula
@@ -2960,11 +3149,18 @@ function mostrarAgenda() {
     }
   );
 
-  agenda.innerHTML = "";
+
+  /* =========================================
+     MOSTRAR GRADE
+  ========================================= */
+
+  agenda.innerHTML =
+    "";
 
   agenda.appendChild(
     grade
   );
+
 
   mostrarProximosAgendamentos();
 }
