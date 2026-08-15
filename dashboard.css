@@ -843,6 +843,60 @@ select {
   margin-top: 18px;
 }
 
+.cartao-configuracao-perigo {
+  border-color: #8e3d3d;
+}
+
+.cartao-configuracao-perigo h4 {
+  color: #ff8585;
+}
+
+.aviso-apagar-dados {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-left: 4px solid #d9534f;
+  border-radius: 4px;
+  color: #f0caca;
+  background-color: rgba(217, 83, 79, 0.12);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cartao-configuracao-perigo label {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.cartao-configuracao-perigo input {
+  width: 100%;
+  max-width: 390px;
+  display: block;
+  margin-bottom: 12px;
+  padding: 11px;
+  border: 1px solid #8e5a5a;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #171717;
+}
+
+.cartao-configuracao-perigo .botao-perigo {
+  padding: 11px 15px;
+}
+
+.tema-claro .cartao-configuracao-perigo {
+  border-color: #d18c8c;
+}
+
+.tema-claro .aviso-apagar-dados {
+  color: #7d2828;
+  background-color: #fdeaea;
+}
+
+.tema-claro .cartao-configuracao-perigo input {
+  color: #222;
+  background-color: #fff;
+}
+
 body.tema-claro {
   color: #242424;
   background-color: #f5f1e8;
@@ -2665,11 +2719,12 @@ body.tema-claro
     minmax(150px, 1.1fr)
     minmax(220px, 2fr)
     minmax(140px, 1fr)
+    minmax(160px, 1.2fr)
     minmax(130px, 1fr)
     minmax(150px, 1fr)
     minmax(120px, 0.8fr);
 
-  min-width: 950px;
+  min-width: 1110px;
 
   padding: 16px 22px;
 
@@ -2698,11 +2753,12 @@ body.tema-claro
     minmax(150px, 1.1fr)
     minmax(220px, 2fr)
     minmax(140px, 1fr)
+    minmax(160px, 1.2fr)
     minmax(130px, 1fr)
     minmax(150px, 1fr)
     minmax(120px, 0.8fr);
 
-  min-width: 950px;
+  min-width: 1110px;
 
   align-items: center;
 
@@ -2956,7 +3012,7 @@ body.tema-claro
 
   .cabecalho-tabela-historico,
   .linha-historico {
-    min-width: 950px;
+    min-width: 1110px;
   }
 
 }
@@ -3516,4 +3572,478 @@ body.tema-claro
 /* Hover do não realizado */
 .cliente-horario-agenda.nao-realizado:hover {
     background: #aa3434 !important;
+}
+
+/* =========================================================
+   PLANOS
+========================================================= */
+
+.linha-planos {
+  align-items: center;
+}
+
+.form-plano {
+  max-width: 760px;
+  margin-bottom: 22px;
+}
+
+.form-plano select,
+.area-adicionar-cliente-plano select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #5a5a5a;
+  border-radius: 5px;
+  outline: none;
+  color: white;
+  background-color: #1b1b1b;
+}
+
+.form-plano select:focus,
+.area-adicionar-cliente-plano select:focus {
+  border-color: #c99b42;
+}
+
+.botoes-form-plano {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.lista-planos {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 4px 16px;
+  scroll-behavior: smooth;
+}
+
+.lista-planos::-webkit-scrollbar {
+  height: 9px;
+}
+
+.lista-planos::-webkit-scrollbar-thumb {
+  background: #6f5630;
+  border-radius: 10px;
+}
+
+.lista-planos::-webkit-scrollbar-track {
+  background: #181818;
+  border-radius: 10px;
+}
+
+.cartao-plano {
+  width: 310px;
+  min-width: 310px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border: 1px solid #4b4b4b;
+  border-radius: 8px;
+  background-color: #1b1b1b;
+}
+
+.cartao-plano-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cartao-plano h4 {
+  margin: 0 0 5px;
+  color: #e1b763;
+  font-size: 18px;
+}
+
+.cartao-plano p,
+.cartao-plano small {
+  color: #c8c8c8;
+}
+
+.valor-plano {
+  color: #f0d191;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.dados-plano {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.clientes-resumo-plano {
+  margin: 2px 0 8px;
+  color: #d7d7d7;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.janela-clientes-card-plano {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px;
+  border: 1px solid #444;
+  border-radius: 7px;
+  background-color: #141414;
+}
+
+.janela-clientes-card-plano::-webkit-scrollbar,
+.lista-clientes-disponiveis-plano::-webkit-scrollbar {
+  width: 7px;
+}
+
+.janela-clientes-card-plano::-webkit-scrollbar-thumb,
+.lista-clientes-disponiveis-plano::-webkit-scrollbar-thumb {
+  background: #6f5630;
+  border-radius: 10px;
+}
+
+.janela-clientes-card-plano::-webkit-scrollbar-track,
+.lista-clientes-disponiveis-plano::-webkit-scrollbar-track {
+  background: #1b1b1b;
+}
+
+.cliente-card-plano {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid #3e3e3e;
+  border-radius: 6px;
+  background-color: #1c1c1c;
+}
+
+.cliente-card-plano.pago {
+  border-color: #2f9e59;
+  background-color: rgba(47, 158, 89, 0.2);
+}
+
+.cliente-card-plano.pago strong {
+  color: #8ee0aa;
+}
+
+.cliente-card-plano.pendente {
+  border-color: #c84f4f;
+  background-color: rgba(200, 79, 79, 0.2);
+}
+
+.cliente-card-plano.pendente strong {
+  color: #ff9b9b;
+}
+
+.cliente-card-plano strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #eeeeee;
+  font-size: 13px;
+}
+
+.informacoes-cliente-plano {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cliente-card-plano .status-pagamento-plano {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cliente-card-plano .status-pagamento-plano.pago {
+  color: #8ee0aa;
+}
+
+.cliente-card-plano .status-pagamento-plano.pendente {
+  color: #ff9b9b;
+}
+
+.cliente-card-plano .status-pagamento-plano.futuro {
+  color: #aaaaaa;
+}
+
+.cliente-card-plano .contador-usos-plano {
+  flex-shrink: 0;
+  color: #e1b763;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.remover-cliente-plano {
+  flex-shrink: 0;
+  padding: 5px 8px;
+  border: 1px solid #c84f4f;
+  border-radius: 5px;
+  color: #ffaaaa;
+  background-color: transparent;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.remover-cliente-plano:hover {
+  color: #ffffff;
+  background-color: #a93636;
+}
+
+.cliente-card-plano.vazio {
+  justify-content: center;
+  color: #999;
+  font-size: 12px;
+  text-align: center;
+}
+
+.acoes-plano {
+  display: grid;
+  grid-template-columns: 1.25fr 0.8fr 0.8fr;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.acoes-plano button {
+  min-height: 38px;
+  padding: 8px 7px;
+  font-size: 12px;
+}
+
+.janela-plano {
+  width: min(92vw, 560px);
+}
+
+.texto-ajuda-plano {
+  margin: 8px 0 14px;
+  color: #bdbdbd;
+  font-size: 13px;
+}
+
+.form-vinculo-cliente-plano {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 15px;
+  border: 1px solid #4c4c4c;
+  border-radius: 7px;
+  background-color: #181818;
+}
+
+.form-vinculo-cliente-plano select,
+.form-vinculo-cliente-plano input[type="text"],
+.form-vinculo-cliente-plano input[type="date"] {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #5a5a5a;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #1b1b1b;
+}
+
+.cliente-selecionado-plano strong,
+.inicio-ciclo-plano legend {
+  color: #e1b763;
+}
+
+.inicio-ciclo-plano {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  padding: 10px 12px;
+  border: 1px solid #4c4c4c;
+  border-radius: 6px;
+}
+
+.inicio-ciclo-plano label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.botoes-vinculo-plano {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 4px;
+}
+
+.lista-clientes-disponiveis-plano {
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.cliente-disponivel-plano {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 13px;
+  border: 1px solid #4c4c4c;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #f0f0f0;
+  background-color: #181818;
+  text-align: left;
+}
+
+.cliente-disponivel-plano:hover {
+  border-color: #c99b42;
+  background-color: #242018;
+}
+
+.cliente-disponivel-plano span {
+  color: #e1b763;
+  font-weight: bold;
+}
+
+.janela-plano-atendimento {
+  width: min(92vw, 520px);
+}
+
+.conteudo-verificar-plano {
+  margin: 18px 0;
+  padding: 15px;
+  border: 1px solid #4f4f4f;
+  border-radius: 7px;
+  background-color: #181818;
+}
+
+.conteudo-verificar-plano strong {
+  color: #e1b763;
+}
+
+.seletor-plano-atendimento {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid #c99b42;
+  border-radius: 5px;
+  color: white;
+  background-color: #151515;
+}
+
+.pergunta-extras-plano {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid rgba(201, 155, 66, 0.55);
+  border-radius: 7px;
+  text-align: center;
+  background-color: rgba(201, 155, 66, 0.08);
+}
+
+.aviso-limite-plano {
+  color: #e8c77d;
+}
+
+.atendimento-plano-info {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-left: 3px solid #c99b42;
+  background-color: rgba(201, 155, 66, 0.08);
+}
+
+body.tema-claro .cartao-plano,
+body.tema-claro .janela-clientes-card-plano,
+body.tema-claro .cliente-card-plano,
+body.tema-claro .cliente-disponivel-plano,
+body.tema-claro .conteudo-verificar-plano {
+  background-color: #ffffff;
+  border-color: #d8d0c2;
+}
+
+body.tema-claro .form-vinculo-cliente-plano {
+  background-color: #fff;
+  border-color: #d8d0c2;
+}
+
+body.tema-claro .form-vinculo-cliente-plano select,
+body.tema-claro .form-vinculo-cliente-plano input[type="text"],
+body.tema-claro .form-vinculo-cliente-plano input[type="date"] {
+  color: #222;
+  background-color: #fff;
+  border-color: #cfc6b7;
+}
+
+body.tema-claro .cartao-plano p,
+body.tema-claro .cartao-plano small,
+body.tema-claro .texto-ajuda-plano,
+body.tema-claro .clientes-resumo-plano {
+  color: #5d5d5d;
+}
+
+body.tema-claro .cliente-card-plano strong,
+body.tema-claro .cliente-disponivel-plano {
+  color: #222;
+}
+
+body.tema-claro .cliente-card-plano.pago {
+  border-color: #43a766;
+  background-color: #e5f6eb;
+}
+
+body.tema-claro .cliente-card-plano.pago strong {
+  color: #176b36;
+}
+
+body.tema-claro .cliente-card-plano.pendente {
+  border-color: #d15b5b;
+  background-color: #fde8e8;
+}
+
+body.tema-claro .cliente-card-plano.pendente strong {
+  color: #9c2525;
+}
+
+body.tema-claro .cliente-card-plano .status-pagamento-plano.pago {
+  color: #176b36;
+}
+
+body.tema-claro .cliente-card-plano .status-pagamento-plano.pendente {
+  color: #9c2525;
+}
+
+body.tema-claro .remover-cliente-plano {
+  color: #a12d2d;
+  border-color: #d15b5b;
+}
+
+body.tema-claro .remover-cliente-plano:hover {
+  color: #ffffff;
+  background-color: #b53b3b;
+}
+
+body.tema-claro .cliente-disponivel-plano:hover {
+  background-color: #f8f1e5;
+}
+
+body.tema-claro .form-plano select,
+body.tema-claro .seletor-plano-atendimento {
+  color: #222;
+  background-color: #fff;
+}
+
+@media (max-width: 650px) {
+  .botoes-form-plano {
+    flex-direction: column;
+  }
+
+  .cartao-plano {
+    width: 285px;
+    min-width: 285px;
+  }
 }

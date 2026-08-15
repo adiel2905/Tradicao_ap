@@ -3,12 +3,16 @@ import { db } from "./firebase.js";
 import {
   collection,
   getDocs,
+  getDoc,
   addDoc,
   deleteDoc,
   updateDoc,
   doc,
   setDoc,
-  onSnapshot
+  onSnapshot,
+  query,
+  limit,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 /* =========================================================
@@ -76,6 +80,10 @@ const telaConfiguracoes = document.querySelector(
 
 const telaRelatorio = document.querySelector(
   "#tela-relatorio"
+);
+
+const telaPlanos = document.querySelector(
+  "#tela-planos"
 );
 
 /* =========================================================
@@ -788,6 +796,21 @@ async function gerarPdfHistorico() {
           transformarAtendimentoEmEntrada
         );
 
+    const entradasPlanos = respostaMovimentacoes.docs
+      .map((documento) => ({
+        id: documento.id,
+        ...documento.data()
+      }))
+      .filter((movimentacao) =>
+        movimentacao.tipo === "entrada" &&
+        movimentacao.origem === "plano"
+      )
+      .map((movimentacao) => ({
+        ...movimentacao,
+        barbeiro: movimentacao.barbeiro || "",
+        prioridadeHistorico: 1
+      }));
+
     /* =========================================
        SAÍDAS
     ========================================= */
@@ -810,6 +833,7 @@ async function gerarPdfHistorico() {
 
     const todasMovimentacoes = [
       ...entradas,
+      ...entradasPlanos,
       ...saidas
     ];
 
@@ -1545,6 +1569,22 @@ const mensagemTema =
     "#mensagem-tema"
   );
 
+const configuracaoApagarDados = document.querySelector(
+  "#configuracao-apagar-dados"
+);
+const confirmacaoApagarDados = document.querySelector(
+  "#confirmacao-apagar-dados"
+);
+const botaoApagarDados = document.querySelector(
+  "#botao-apagar-dados"
+);
+const senhaAdministradorApagarDados = document.querySelector(
+  "#senha-administrador-apagar-dados"
+);
+const mensagemApagarDados = document.querySelector(
+  "#mensagem-apagar-dados"
+);
+
 const opcoesTema =
   document.querySelectorAll(
     'input[name="tema"]'
@@ -1570,6 +1610,110 @@ const quantidadeMovimentacoesHistorico =
   document.querySelector(
     "#quantidade-movimentacoes-historico"
   );
+
+/* =========================================================
+   PLANOS
+========================================================= */
+
+const botaoMostrarCadastroPlano = document.querySelector(
+  "#botao-mostrar-cadastro-plano"
+);
+const formCadastroPlano = document.querySelector(
+  "#form-cadastro-plano"
+);
+const planoIdEdicao = document.querySelector(
+  "#plano-id-edicao"
+);
+const nomeNovoPlano = document.querySelector(
+  "#nome-novo-plano"
+);
+const valorNovoPlano = document.querySelector(
+  "#valor-novo-plano"
+);
+const servicoNovoPlano = document.querySelector(
+  "#servico-novo-plano"
+);
+const usosNovoPlano = document.querySelector(
+  "#usos-novo-plano"
+);
+const cancelarEdicaoPlano = document.querySelector(
+  "#cancelar-edicao-plano"
+);
+const pesquisaPlano = document.querySelector(
+  "#pesquisa-plano"
+);
+const mensagemPlano = document.querySelector(
+  "#mensagem-plano"
+);
+const listaPlanos = document.querySelector(
+  "#lista-planos"
+);
+
+const modalClientesPlano = document.querySelector(
+  "#modal-clientes-plano"
+);
+const tituloClientesPlano = document.querySelector(
+  "#titulo-clientes-plano"
+);
+const resumoClientesPlano = document.querySelector(
+  "#resumo-clientes-plano"
+);
+const mensagemClientesPlano = document.querySelector(
+  "#mensagem-clientes-plano"
+);
+const listaClientesDisponiveisPlano = document.querySelector(
+  "#lista-clientes-disponiveis-plano"
+);
+const formVinculoClientePlano = document.querySelector("#form-vinculo-cliente-plano");
+const clienteIdVinculoPlano = document.querySelector("#cliente-id-vinculo-plano");
+const nomeClienteVinculoPlano = document.querySelector("#nome-cliente-vinculo-plano");
+const pagamentoVinculoPlano = document.querySelector("#pagamento-vinculo-plano");
+const valorVinculoPlano = document.querySelector("#valor-vinculo-plano");
+const campoDataInicioCicloPlano = document.querySelector("#campo-data-inicio-ciclo-plano");
+const dataInicioCicloPlano = document.querySelector("#data-inicio-ciclo-plano");
+const cancelarVinculoClientePlano = document.querySelector("#cancelar-vinculo-cliente-plano");
+
+const modalVerificarPlano = document.querySelector(
+  "#modal-verificar-plano"
+);
+const tituloVerificarPlano = document.querySelector(
+  "#titulo-verificar-plano"
+);
+const conteudoVerificarPlano = document.querySelector(
+  "#conteudo-verificar-plano"
+);
+const mensagemVerificarPlano = document.querySelector(
+  "#mensagem-verificar-plano"
+);
+const botoesVerificarPlano = document.querySelector(
+  "#botoes-verificar-plano"
+);
+
+const modalExtrasPlano = document.querySelector(
+  "#modal-extras-plano"
+);
+const textoExtrasPlano = document.querySelector(
+  "#texto-extras-plano"
+);
+const botaoPlanoSemExtras = document.querySelector(
+  "#plano-sem-extras"
+);
+const botaoPlanoComExtras = document.querySelector(
+  "#plano-com-extras"
+);
+const mensagemExtrasPlano = document.querySelector(
+  "#mensagem-extras-plano"
+);
+
+const tituloConclusaoAtendimento = document.querySelector(
+  "#titulo-conclusao-atendimento"
+);
+const descricaoConclusaoAtendimento = document.querySelector(
+  "#descricao-conclusao-atendimento"
+);
+const labelServicoAtendimento = document.querySelector(
+  "#label-servico-atendimento"
+);
 
 /* =========================================================
    SAIR
@@ -1605,6 +1749,13 @@ let produtos = [];
 let servicos = [];
 let agendamentos = [];
 let dias = [];
+let planos = [];
+let usosPlanos = [];
+
+let planoSelecionadoParaClientes = null;
+let planoAtendimentoSelecionado = null;
+let atendimentoPeloPlano = false;
+let atendimentoPlanoComExtras = false;
 
 let agendamentoSelecionado = null;
 let clienteSelecionado = null;
@@ -1631,6 +1782,13 @@ function usuarioPodeGerenciarBarbeiros() {
 }
 
 function usuarioPodeGerenciarCatalogo() {
+  return (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  );
+}
+
+function usuarioPodeGerenciarPlanos() {
   return (
     tipoUsuario === "administrador" ||
     tipoUsuario === "recepcionista"
@@ -1901,6 +2059,10 @@ function esconderTodasAsTelas() {
     "escondida"
   );
 
+  telaPlanos?.classList.add(
+    "escondida"
+  );
+
   telaRelatorio?.classList.add(
     "escondida"
   );
@@ -2037,6 +2199,620 @@ async function abrirTelaProdutosServicos() {
 }
 
 /* =========================================================
+   PLANOS - TELA E DADOS
+========================================================= */
+
+function chaveMes(dataTexto = "") {
+  const data = dataTexto
+    ? dataPorTexto(dataTexto)
+    : new Date();
+
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+
+  return `${ano}-${mes}`;
+}
+
+function vinculosDoPlano(plano) {
+  return Array.isArray(plano?.clientesPlano) ? plano.clientesPlano : [];
+}
+
+function vinculoDoCliente(plano, clienteId) {
+  const vinculo = vinculosDoPlano(plano).find(
+    (item) => item.clienteId === clienteId && item.ativo !== false
+  );
+  if (vinculo) return vinculo;
+
+  const clientesIds = Array.isArray(plano?.clientesIds) ? plano.clientesIds : [];
+  if (!clientesIds.includes(clienteId)) return null;
+
+  const dataBase = plano?.dataCadastro ? new Date(plano.dataCadastro) : new Date();
+  return {
+    clienteId,
+    ativo: true,
+    legado: true,
+    valorPlano: Number(plano?.valor) || 0,
+    formaPagamento: "Não informado",
+    inicioCiclo: formatarDataParaSalvar(dataBase)
+  };
+}
+
+function adicionarMesComDiaBase(dataInicial, quantidade) {
+  const ano = dataInicial.getFullYear();
+  const mes = dataInicial.getMonth() + quantidade;
+  const dia = dataInicial.getDate();
+  const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+  return new Date(ano, mes, Math.min(dia, ultimoDia));
+}
+
+function cicloIndividualDoCliente(plano, clienteId, dataReferenciaTexto = "") {
+  const vinculo = vinculoDoCliente(plano, clienteId);
+  if (!vinculo?.inicioCiclo) return null;
+
+  const inicioBase = dataPorTexto(vinculo.inicioCiclo);
+  const referencia = dataReferenciaTexto ? dataPorTexto(dataReferenciaTexto) : new Date();
+  referencia.setHours(0, 0, 0, 0);
+  inicioBase.setHours(0, 0, 0, 0);
+  if (referencia < inicioBase) return null;
+
+  let meses = (referencia.getFullYear() - inicioBase.getFullYear()) * 12
+    + referencia.getMonth() - inicioBase.getMonth();
+  let inicio = adicionarMesComDiaBase(inicioBase, meses);
+  if (inicio > referencia) {
+    meses -= 1;
+    inicio = adicionarMesComDiaBase(inicioBase, meses);
+  }
+
+  const proximoInicio = adicionarMesComDiaBase(inicioBase, meses + 1);
+  const fim = new Date(proximoInicio);
+  fim.setDate(fim.getDate() - 1);
+  const inicioTexto = formatarDataParaSalvar(inicio);
+
+  return {
+    inicio: inicioTexto,
+    fim: formatarDataParaSalvar(fim),
+    chave: inicioTexto,
+    vinculo
+  };
+}
+
+function cicloDoClienteEstaPago(ciclo) {
+  if (!ciclo) return false;
+
+  const vinculo = ciclo.vinculo;
+  const ciclosPagos = Array.isArray(vinculo?.ciclosPagos)
+    ? vinculo.ciclosPagos
+    : [];
+
+  if (ciclosPagos.includes(ciclo.chave)) return true;
+
+  const pagamentoInicialRegistrado =
+    Number(vinculo?.valorPlano) > 0 &&
+    Boolean(vinculo?.formaPagamento) &&
+    vinculo.formaPagamento !== "Não informado";
+
+  return pagamentoInicialRegistrado && ciclo.chave === vinculo.inicioCiclo;
+}
+
+async function carregarPlanos() {
+  const resposta = await getDocs(
+    collection(db, "planos")
+  );
+
+  planos = resposta.docs
+    .map((documento) => ({
+      id: documento.id,
+      ...documento.data()
+    }))
+    .sort((a, b) =>
+      String(a.nome || "").localeCompare(
+        String(b.nome || ""),
+        "pt-BR"
+      )
+    );
+}
+
+async function carregarUsosPlanos() {
+  const resposta = await getDocs(
+    collection(db, "usosPlanos")
+  );
+
+  usosPlanos = resposta.docs.map(
+    (documento) => ({
+      id: documento.id,
+      ...documento.data()
+    })
+  );
+}
+
+function usosDoClienteNoPlano(planoId, clienteId, ciclo = chaveMes()) {
+  return usosPlanos.filter((uso) =>
+    uso.planoId === planoId &&
+    uso.clienteId === clienteId &&
+    uso.ciclo === ciclo &&
+    uso.cancelado !== true
+  ).length;
+}
+
+function usosDoClienteNoCicloIndividual(plano, clienteId, dataReferenciaTexto = "") {
+  const ciclo = cicloIndividualDoCliente(plano, clienteId, dataReferenciaTexto);
+  if (!ciclo) return 0;
+
+  return usosPlanos.filter((uso) =>
+    uso.planoId === plano.id &&
+    uso.clienteId === clienteId &&
+    uso.cancelado !== true &&
+    (uso.cicloInicio === ciclo.inicio ||
+      (!uso.cicloInicio && uso.data >= ciclo.inicio && uso.data <= ciclo.fim))
+  ).length;
+}
+
+function preencherServicosDoPlano(servicoSelecionado = "") {
+  servicoNovoPlano.innerHTML = `
+    <option value="">Selecione o serviço</option>
+  `;
+
+  servicos.forEach((servico) => {
+    const opcao = document.createElement("option");
+    opcao.value = servico.id;
+    opcao.textContent = servico.nome;
+    opcao.selected = servico.id === servicoSelecionado;
+    servicoNovoPlano.appendChild(opcao);
+  });
+}
+
+function limparFormularioPlano() {
+  planoIdEdicao.value = "";
+  formCadastroPlano.reset();
+  preencherServicosDoPlano();
+  mensagemPlano.textContent = "";
+}
+
+function mostrarListaDePlanos() {
+  const pesquisa = (pesquisaPlano?.value || "")
+    .trim()
+    .toLowerCase();
+
+  const filtrados = planos.filter((plano) =>
+    String(plano.nome || "").toLowerCase().includes(pesquisa) ||
+    String(plano.servicoNome || "").toLowerCase().includes(pesquisa)
+  );
+
+  listaPlanos.innerHTML = "";
+
+  if (filtrados.length === 0) {
+    listaPlanos.innerHTML = `
+      <p class="lista-vazia">Nenhum plano encontrado.</p>
+    `;
+    return;
+  }
+
+  filtrados.forEach((plano) => {
+    const clientesIdsLegados = Array.isArray(plano.clientesIds)
+      ? plano.clientesIds
+      : [];
+    const clientesIds = [...new Set([
+      ...clientesIdsLegados,
+      ...vinculosDoPlano(plano)
+        .filter((vinculo) => vinculo.ativo !== false)
+        .map((vinculo) => vinculo.clienteId)
+    ])];
+
+    const clientesVinculados = clientes
+      .filter((cliente) => clientesIds.includes(cliente.id))
+      .sort((a, b) =>
+        String(a.nome || "").localeCompare(
+          String(b.nome || ""),
+          "pt-BR"
+        )
+      );
+
+    const limite = Number(plano.usosMensais) || 0;
+    const cartao = document.createElement("article");
+    cartao.className = "cartao-plano";
+
+    cartao.innerHTML = `
+      <div class="cartao-plano-topo">
+        <div>
+          <h4></h4>
+          <small>Plano mensal</small>
+        </div>
+        <span class="valor-plano"></span>
+      </div>
+
+      <div class="dados-plano">
+        <span><strong>Serviço:</strong> <span class="plano-servico"></span></span>
+        <span><strong>Limite por mês:</strong> <span class="plano-limite"></span></span>
+      </div>
+
+      <div class="clientes-resumo-plano"></div>
+      <div class="janela-clientes-card-plano"></div>
+      <div class="acoes-plano"></div>
+    `;
+
+    cartao.querySelector("h4").textContent = plano.nome || "Plano";
+    cartao.querySelector(".valor-plano").textContent =
+      formatarValorEmReal(plano.valor);
+    cartao.querySelector(".plano-servico").textContent =
+      plano.servicoNome || "Serviço não definido";
+    cartao.querySelector(".plano-limite").textContent =
+      `${limite} uso(s)`;
+    cartao.querySelector(".clientes-resumo-plano").textContent =
+      `Clientes do plano (${clientesVinculados.length})`;
+
+    const janelaClientes = cartao.querySelector(
+      ".janela-clientes-card-plano"
+    );
+
+    if (clientesVinculados.length === 0) {
+      janelaClientes.innerHTML = `
+        <div class="cliente-card-plano vazio">
+          Nenhum cliente adicionado.
+        </div>
+      `;
+    } else {
+      clientesVinculados.forEach((cliente) => {
+        const ciclo = cicloIndividualDoCliente(plano, cliente.id);
+        const usos = usosDoClienteNoCicloIndividual(plano, cliente.id);
+        const cicloPago = cicloDoClienteEstaPago(ciclo);
+
+        const itemCliente = document.createElement("div");
+        itemCliente.className = "cliente-card-plano";
+        if (cicloPago) itemCliente.classList.add("pago");
+        else if (ciclo) itemCliente.classList.add("pendente");
+
+        const informacoesCliente = document.createElement("div");
+        informacoesCliente.className = "informacoes-cliente-plano";
+
+        const nomeCliente = document.createElement("strong");
+        nomeCliente.textContent = cliente.nome;
+        nomeCliente.title = cliente.nome;
+
+        const statusPagamento = document.createElement("span");
+        statusPagamento.className = "status-pagamento-plano";
+        if (cicloPago) {
+          statusPagamento.classList.add("pago");
+          statusPagamento.textContent = "Plano pago";
+        } else if (ciclo) {
+          statusPagamento.classList.add("pendente");
+          statusPagamento.textContent = "Plano não pago";
+        } else {
+          statusPagamento.classList.add("futuro");
+          statusPagamento.textContent = "Plano ainda não iniciado";
+        }
+
+        informacoesCliente.append(nomeCliente, statusPagamento);
+
+        const contador = document.createElement("span");
+        contador.className = "contador-usos-plano";
+        contador.textContent = `${usos}/${limite}`;
+        contador.title = ciclo
+          ? `Ciclo: ${ciclo.inicio.split("-").reverse().join("/")} a ${ciclo.fim.split("-").reverse().join("/")} — ${cicloPago ? "pago" : "pagamento pendente"}`
+          : "O ciclo deste cliente ainda não começou";
+
+        itemCliente.append(informacoesCliente, contador);
+
+        if (usuarioPodeGerenciarPlanos()) {
+          const botaoRemoverCliente = document.createElement("button");
+          botaoRemoverCliente.type = "button";
+          botaoRemoverCliente.className = "remover-cliente-plano";
+          botaoRemoverCliente.textContent = "Apagar";
+          botaoRemoverCliente.title = `Remover ${cliente.nome} deste plano`;
+          botaoRemoverCliente.addEventListener("click", async () => {
+            if (!confirm(`Remover "${cliente.nome}" do plano "${plano.nome}"?`)) {
+              return;
+            }
+
+            const clientesIdsAtualizados = clientesIds.filter(
+              (clienteId) => clienteId !== cliente.id
+            );
+            const vinculosAtualizados = vinculosDoPlano(plano).filter(
+              (vinculo) => vinculo.clienteId !== cliente.id
+            );
+
+            try {
+              await updateDoc(doc(db, "planos", plano.id), {
+                clientesIds: clientesIdsAtualizados,
+                clientesPlano: vinculosAtualizados,
+                atualizadoEm: Date.now()
+              });
+              await carregarPlanos();
+              mostrarListaDePlanos();
+            } catch (erro) {
+              console.log("Erro ao remover cliente do plano:", erro);
+              mensagemPlano.textContent = "Não foi possível remover o cliente do plano.";
+            }
+          });
+          itemCliente.appendChild(botaoRemoverCliente);
+        }
+
+        janelaClientes.appendChild(itemCliente);
+      });
+    }
+
+    const acoes = cartao.querySelector(".acoes-plano");
+
+    const botaoAdicionarCliente = document.createElement("button");
+    botaoAdicionarCliente.type = "button";
+    botaoAdicionarCliente.className = "botao-principal";
+    botaoAdicionarCliente.textContent = "Adicionar cliente";
+    botaoAdicionarCliente.addEventListener("click", () =>
+      abrirClientesDoPlano(plano)
+    );
+    acoes.appendChild(botaoAdicionarCliente);
+
+    if (usuarioPodeGerenciarPlanos()) {
+      const botaoEditar = document.createElement("button");
+      botaoEditar.type = "button";
+      botaoEditar.className = "botao-secundario";
+      botaoEditar.textContent = "Editar";
+      botaoEditar.addEventListener("click", () => {
+        planoIdEdicao.value = plano.id;
+        nomeNovoPlano.value = plano.nome || "";
+        valorNovoPlano.value = formatarValorEmReal(plano.valor || 0);
+        usosNovoPlano.value = Number(plano.usosMensais) || 1;
+        preencherServicosDoPlano(plano.servicoId || "");
+        formCadastroPlano.classList.remove("escondida");
+        formCadastroPlano.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      acoes.appendChild(botaoEditar);
+
+      const botaoExcluir = document.createElement("button");
+      botaoExcluir.type = "button";
+      botaoExcluir.className = "botao-perigo";
+      botaoExcluir.textContent = "Excluir";
+      botaoExcluir.addEventListener("click", async () => {
+        if (!confirm(`Excluir o plano "${plano.nome}"? O histórico de usos será mantido.`)) {
+          return;
+        }
+
+        try {
+          await deleteDoc(doc(db, "planos", plano.id));
+          await carregarPlanos();
+          mostrarListaDePlanos();
+        } catch (erro) {
+          console.log("Erro ao excluir plano:", erro);
+          mensagemPlano.textContent = "Não foi possível excluir o plano.";
+        }
+      });
+      acoes.appendChild(botaoExcluir);
+    }
+
+    listaPlanos.appendChild(cartao);
+  });
+}
+
+async function abrirTelaPlanos() {
+  esconderTodasAsTelas();
+  telaPlanos.classList.remove("escondida");
+  marcarBotaoAtivo("Planos");
+
+  mensagemPlano.textContent = "";
+  pesquisaPlano.value = "";
+  formCadastroPlano.classList.add("escondida");
+
+  const podeGerenciar = usuarioPodeGerenciarPlanos();
+  botaoMostrarCadastroPlano.style.display = podeGerenciar ? "" : "none";
+
+  try {
+    await Promise.all([
+      carregarPlanos(),
+      carregarClientes(),
+      carregarServicos(),
+      carregarUsosPlanos()
+    ]);
+
+    preencherServicosDoPlano();
+    mostrarListaDePlanos();
+  } catch (erro) {
+    console.log("Erro ao carregar planos:", erro);
+    mensagemPlano.textContent = "Não foi possível carregar os planos.";
+  }
+}
+
+async function abrirClientesDoPlano(plano) {
+  planoSelecionadoParaClientes = plano;
+  mensagemClientesPlano.textContent = "";
+  tituloClientesPlano.textContent = "Adicionar cliente";
+  resumoClientesPlano.textContent =
+    `${plano.nome || "Plano"} • ${plano.servicoNome || "Serviço"} • ${Number(plano.usosMensais) || 0} uso(s) por mês`;
+  formVinculoClientePlano?.classList.add("escondida");
+  listaClientesDisponiveisPlano?.classList.remove("escondida");
+  formVinculoClientePlano?.reset();
+
+  try {
+    await carregarClientes();
+  } catch (erro) {
+    console.log("Erro ao carregar clientes:", erro);
+    mensagemClientesPlano.textContent =
+      "Não foi possível carregar os clientes.";
+  }
+
+  mostrarClientesDisponiveisParaPlano();
+  modalClientesPlano.classList.remove("escondido");
+}
+
+function mostrarClientesDisponiveisParaPlano() {
+  if (!planoSelecionadoParaClientes || !listaClientesDisponiveisPlano) {
+    return;
+  }
+
+  const clientesIdsLegados = Array.isArray(
+    planoSelecionadoParaClientes.clientesIds
+  )
+    ? planoSelecionadoParaClientes.clientesIds
+    : [];
+  const clientesIds = [...new Set([
+    ...clientesIdsLegados,
+    ...vinculosDoPlano(planoSelecionadoParaClientes)
+      .filter((vinculo) => vinculo.ativo !== false)
+      .map((vinculo) => vinculo.clienteId)
+  ])];
+
+  const disponiveis = clientes
+    .filter((cliente) => !clientesIds.includes(cliente.id))
+    .sort((a, b) =>
+      String(a.nome || "").localeCompare(
+        String(b.nome || ""),
+        "pt-BR"
+      )
+    );
+
+  listaClientesDisponiveisPlano.innerHTML = "";
+
+  if (disponiveis.length === 0) {
+    listaClientesDisponiveisPlano.innerHTML = `
+      <p class="lista-vazia">
+        Todos os clientes cadastrados já estão neste plano.
+      </p>
+    `;
+    return;
+  }
+
+  disponiveis.forEach((cliente) => {
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "cliente-disponivel-plano";
+
+    const nome = document.createElement("strong");
+    nome.textContent = cliente.nome;
+
+    const acao = document.createElement("span");
+    acao.textContent = "Adicionar";
+
+    botao.append(nome, acao);
+
+    botao.addEventListener("click", async () => {
+      if (!usuarioPodeGerenciarPlanos()) {
+        mensagemClientesPlano.textContent =
+          "Você não tem permissão para alterar planos.";
+        return;
+      }
+
+      const hoje = formatarDataParaSalvar(new Date());
+      clienteIdVinculoPlano.value = cliente.id;
+      nomeClienteVinculoPlano.textContent = cliente.nome;
+      pagamentoVinculoPlano.value = "";
+      valorVinculoPlano.value = formatarValorEmReal(planoSelecionadoParaClientes.valor || 0);
+      dataInicioCicloPlano.value = hoje;
+      campoDataInicioCicloPlano.classList.add("escondida");
+      formVinculoClientePlano.querySelector('input[name="inicio-ciclo-plano"][value="hoje"]').checked = true;
+      listaClientesDisponiveisPlano.classList.add("escondida");
+      formVinculoClientePlano.classList.remove("escondida");
+    });
+
+    listaClientesDisponiveisPlano.appendChild(botao);
+  });
+}
+
+document.querySelectorAll('input[name="inicio-ciclo-plano"]').forEach((radio) => {
+  radio.addEventListener("change", () => {
+    const escolherData = radio.checked && radio.value === "data";
+    campoDataInicioCicloPlano.classList.toggle("escondida", !escolherData);
+    dataInicioCicloPlano.required = escolherData;
+  });
+});
+
+cancelarVinculoClientePlano?.addEventListener("click", () => {
+  formVinculoClientePlano.classList.add("escondida");
+  listaClientesDisponiveisPlano.classList.remove("escondida");
+  mensagemClientesPlano.textContent = "";
+});
+
+valorVinculoPlano?.addEventListener("input", () => {
+  formatarCampoValor(valorVinculoPlano);
+});
+
+formVinculoClientePlano?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  mensagemClientesPlano.textContent = "";
+
+  if (!usuarioPodeGerenciarPlanos() || !planoSelecionadoParaClientes) {
+    mensagemClientesPlano.textContent = "Você não tem permissão para alterar planos.";
+    return;
+  }
+
+  const clienteId = clienteIdVinculoPlano.value;
+  const cliente = clientes.find((item) => item.id === clienteId);
+  const formaPagamento = pagamentoVinculoPlano.value;
+  const valorPlano = converterValorParaNumero(valorVinculoPlano.value);
+  const modoInicio = formVinculoClientePlano.querySelector(
+    'input[name="inicio-ciclo-plano"]:checked'
+  )?.value;
+  const inicioCiclo = modoInicio === "data"
+    ? dataInicioCicloPlano.value
+    : formatarDataParaSalvar(new Date());
+
+  if (!cliente || !["Dinheiro", "Pix", "Cartão"].includes(formaPagamento)
+    || valorPlano <= 0 || !inicioCiclo) {
+    mensagemClientesPlano.textContent = "Preencha a forma de pagamento, o valor e o início do ciclo.";
+    return;
+  }
+
+  const atuaisIds = Array.isArray(planoSelecionadoParaClientes.clientesIds)
+    ? planoSelecionadoParaClientes.clientesIds
+    : [];
+  const vinculosAtuais = vinculosDoPlano(planoSelecionadoParaClientes)
+    .filter((vinculo) => vinculo.clienteId !== clienteId);
+  const novoVinculo = {
+    clienteId,
+    clienteNome: cliente.nome,
+    formaPagamento,
+    valorPlano,
+    inicioCiclo,
+    ciclosPagos: [inicioCiclo],
+    ativo: true,
+    registradoEm: Date.now(),
+    registradoPor: nomeUsuario
+  };
+
+  try {
+    await updateDoc(doc(db, "planos", planoSelecionadoParaClientes.id), {
+      clientesIds: [...new Set([...atuaisIds, clienteId])],
+      clientesPlano: [...vinculosAtuais, novoVinculo],
+      atualizadoEm: Date.now()
+    });
+
+    const agora = new Date();
+    const dataPagamento = formatarDataParaSalvar(agora);
+    const horaPagamento = `${String(agora.getHours()).padStart(2, "0")}:${String(agora.getMinutes()).padStart(2, "0")}`;
+    const idMovimentacao = `assinatura_plano_${planoSelecionadoParaClientes.id}_${clienteId}_${inicioCiclo}`;
+
+    await setDoc(doc(db, "movimentacoesFinanceiras", idMovimentacao), {
+      tipo: "entrada",
+      origem: "plano",
+      categoria: "plano",
+      descricao: `Assinatura do plano ${planoSelecionadoParaClientes.nome}`,
+      valor: valorPlano,
+      data: dataPagamento,
+      hora: horaPagamento,
+      formaPagamento,
+      planoId: planoSelecionadoParaClientes.id,
+      planoNome: planoSelecionadoParaClientes.nome,
+      cliente: cliente.nome,
+      clienteId,
+      inicioCiclo,
+      criadoPor: nomeUsuario,
+      usuarioId,
+      dataCadastro: Date.now()
+    });
+
+    mensagemClientesPlano.textContent = `${cliente.nome} foi adicionado ao plano.`;
+    await carregarPlanos();
+    planoSelecionadoParaClientes = planos.find(
+      (item) => item.id === planoSelecionadoParaClientes.id
+    ) || planoSelecionadoParaClientes;
+    mostrarListaDePlanos();
+    formVinculoClientePlano.classList.add("escondida");
+    listaClientesDisponiveisPlano.classList.remove("escondida");
+    mostrarClientesDisponiveisParaPlano();
+  } catch (erro) {
+    console.log("Erro ao adicionar cliente ao plano:", erro);
+    mensagemClientesPlano.textContent = "Não foi possível adicionar o cliente.";
+  }
+});
+
+/* =========================================================
    TEMA
 ========================================================= */
 
@@ -2081,6 +2857,13 @@ async function abrirTelaConfiguracoes() {
   mensagemSenha.textContent = "";
 
   formAlterarSenha.reset();
+  configuracaoApagarDados?.classList.toggle(
+    "escondida",
+    tipoUsuario !== "administrador"
+  );
+  if (confirmacaoApagarDados) confirmacaoApagarDados.value = "";
+  if (senhaAdministradorApagarDados) senhaAdministradorApagarDados.value = "";
+  if (mensagemApagarDados) mensagemApagarDados.textContent = "";
 
   if (
     tipoUsuario ===
@@ -2123,6 +2906,7 @@ function montarMenu() {
     "Dashboard",
     "Clientes cadastrados",
     "Produtos e Serviços",
+    "Planos",
     "Relatório",
     "Barbeiros",
     "Configurações",
@@ -2133,6 +2917,7 @@ function montarMenu() {
     "Dashboard",
     "Clientes cadastrados",
     "Produtos e Serviços",
+    "Planos",
     "Relatório",
     "Barbeiros",
     "Configurações",
@@ -2143,6 +2928,7 @@ function montarMenu() {
     "Dashboard",
     "Clientes cadastrados",
     "Produtos e Serviços",
+    "Planos",
     "Relatório",
     "Configurações",
     "Sair"
@@ -2212,6 +2998,14 @@ function montarMenu() {
             "Produtos e Serviços"
           ) {
             await abrirTelaProdutosServicos();
+            return;
+          }
+
+          if (
+            nomeBotao ===
+            "Planos"
+          ) {
+            await abrirTelaPlanos();
             return;
           }
 
@@ -2568,13 +3362,10 @@ async function carregarAgendamentos() {
     return;
   }
 
-  const resposta =
-    await getDocs(
-      collection(
-        db,
-        "agendamentos"
-      )
-    );
+  const [resposta, respostaMovimentacoes] = await Promise.all([
+    getDocs(collection(db, "agendamentos")),
+    getDocs(collection(db, "movimentacoesFinanceiras"))
+  ]);
 
   agendamentos =
     resposta.docs
@@ -3357,12 +4148,374 @@ formAgendamento.addEventListener(
    CONCLUSÃO DO ATENDIMENTO
 ========================================================= */
 
-async function abrirConclusaoAtendimento() {
+async function obterClienteDoAgendamento() {
+  await carregarClientes();
+
+  if (agendamentoSelecionado?.clienteId) {
+    const porId = clientes.find(
+      (cliente) => cliente.id === agendamentoSelecionado.clienteId
+    );
+
+    if (porId) {
+      return porId;
+    }
+  }
+
+  return clientes.find(
+    (cliente) =>
+      String(cliente.nome || "").trim().toLowerCase() ===
+      String(agendamentoSelecionado?.cliente || "").trim().toLowerCase()
+  ) || null;
+}
+
+async function planosAtivosDoCliente(clienteId) {
+  await Promise.all([
+    carregarPlanos(),
+    carregarUsosPlanos()
+  ]);
+
+  return planos.filter((plano) => {
+    return plano.ativo !== false && Boolean(vinculoDoCliente(plano, clienteId));
+  });
+}
+
+function criarBotaoModalPlano(texto, classe, acao) {
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.className = classe;
+  botao.textContent = texto;
+  botao.addEventListener("click", acao);
+  return botao;
+}
+
+async function iniciarConclusaoComPlano() {
+  if (!agendamentoSelecionado) {
+    return;
+  }
+
+  atendimentoPeloPlano = false;
+  atendimentoPlanoComExtras = false;
+  planoAtendimentoSelecionado = null;
+  mensagemVerificarPlano.textContent = "";
+  botoesVerificarPlano.innerHTML = "";
+
+  try {
+    const cliente = await obterClienteDoAgendamento();
+
+    if (!cliente) {
+      tituloVerificarPlano.textContent = "Plano do cliente";
+      conteudoVerificarPlano.innerHTML = `
+        <p>Não foi possível localizar este cliente no cadastro.</p>
+      `;
+
+      botoesVerificarPlano.appendChild(
+        criarBotaoModalPlano(
+          "Continuar normalmente",
+          "botao-principal",
+          async () => {
+            fecharModal("modal-verificar-plano");
+            await abrirConclusaoAtendimento(false);
+          }
+        )
+      );
+
+      fecharModal("modal-detalhes");
+      modalVerificarPlano.classList.remove("escondido");
+      return;
+    }
+
+    const planosCliente = await planosAtivosDoCliente(cliente.id);
+
+    if (planosCliente.length === 0) {
+      tituloVerificarPlano.textContent = "Cliente sem plano";
+      conteudoVerificarPlano.innerHTML = `
+        <p><strong>${cliente.nome}</strong> não possui plano ativo.</p>
+        <p>O atendimento seguirá com a cobrança normal.</p>
+      `;
+
+      botoesVerificarPlano.appendChild(
+        criarBotaoModalPlano(
+          "Continuar",
+          "botao-principal",
+          async () => {
+            fecharModal("modal-verificar-plano");
+            await abrirConclusaoAtendimento(false);
+          }
+        )
+      );
+    } else {
+      tituloVerificarPlano.textContent = "Cliente possui plano";
+
+      const opcoes = planosCliente.map((plano) => {
+        const ciclo = cicloIndividualDoCliente(
+          plano,
+          cliente.id,
+          agendamentoSelecionado.data
+        );
+        const usados = usosDoClienteNoCicloIndividual(
+          plano,
+          cliente.id,
+          agendamentoSelecionado.data
+        );
+        const limite = Number(plano.usosMensais) || 0;
+        const restante = ciclo ? Math.max(0, limite - usados) : 0;
+
+        return {
+          plano,
+          ciclo,
+          usados,
+          limite,
+          restante
+        };
+      });
+
+      const primeiroDisponivel = opcoes.find((item) => item.restante > 0)
+        || opcoes[0];
+      planoAtendimentoSelecionado = primeiroDisponivel.plano;
+
+      const opcoesHtml = opcoes.map((item) => {
+        const limiteTexto = item.restante > 0
+          ? `${item.usados} de ${item.limite} usados`
+          : `limite atingido (${item.usados}/${item.limite})`;
+
+        return `<option value="${item.plano.id}">${item.plano.nome} — ${item.plano.servicoNome} — ${limiteTexto}</option>`;
+      }).join("");
+
+      conteudoVerificarPlano.innerHTML = `
+        <p><strong>${cliente.nome}</strong> possui plano.</p>
+        <p>Este atendimento foi realizado pelo plano?</p>
+        <select id="plano-atendimento-escolha" class="seletor-plano-atendimento">
+          ${opcoesHtml}
+        </select>
+        <p id="detalhe-plano-atendimento"></p>
+      `;
+
+      const selectPlano = conteudoVerificarPlano.querySelector(
+        "#plano-atendimento-escolha"
+      );
+      const detalhe = conteudoVerificarPlano.querySelector(
+        "#detalhe-plano-atendimento"
+      );
+
+      selectPlano.value = primeiroDisponivel.plano.id;
+
+      const atualizarDetalhe = () => {
+        const item = opcoes.find((opcao) => opcao.plano.id === selectPlano.value);
+        if (!item) return;
+
+        planoAtendimentoSelecionado = item.plano;
+        detalhe.innerHTML = item.restante > 0
+          ? `<strong>${item.plano.servicoNome}</strong> • restam ${item.restante} uso(s) no ciclo de ${item.ciclo.inicio.split("-").reverse().join("/")} a ${item.ciclo.fim.split("-").reverse().join("/")}.`
+          : item.ciclo
+            ? `<span class="aviso-limite-plano">O limite deste ciclo já foi atingido.</span>`
+            : `<span class="aviso-limite-plano">O ciclo deste cliente ainda não começou.</span>`;
+      };
+
+      selectPlano.addEventListener("change", atualizarDetalhe);
+      atualizarDetalhe();
+
+      botoesVerificarPlano.append(
+        criarBotaoModalPlano(
+          "Não",
+          "botao-secundario",
+          async () => {
+            atendimentoPeloPlano = false;
+            planoAtendimentoSelecionado = null;
+            fecharModal("modal-verificar-plano");
+            await abrirConclusaoAtendimento(false);
+          }
+        ),
+        criarBotaoModalPlano(
+          "Sim, usar plano",
+          "botao-principal",
+          async () => {
+            const item = opcoes.find(
+              (opcao) => opcao.plano.id === selectPlano.value
+            );
+
+            if (!item || item.restante <= 0) {
+              mensagemVerificarPlano.textContent =
+                "O limite mensal deste plano já foi atingido.";
+              return;
+            }
+
+            planoAtendimentoSelecionado = item.plano;
+            atendimentoPeloPlano = true;
+            fecharModal("modal-verificar-plano");
+
+            textoExtrasPlano.textContent =
+              `${item.plano.servicoNome} será contabilizado no plano ${item.plano.nome}.`;
+            mensagemExtrasPlano.textContent = "";
+            modalExtrasPlano.classList.remove("escondido");
+          }
+        )
+      );
+    }
+
+    fecharModal("modal-detalhes");
+    modalVerificarPlano.classList.remove("escondido");
+  } catch (erro) {
+    console.log("Erro ao verificar plano do cliente:", erro);
+    alert("Não foi possível verificar o plano do cliente.");
+  }
+}
+
+async function registrarUsoDoPlano(plano, agendamento, clienteId) {
+  if (!plano || !agendamento || !clienteId) {
+    throw new Error("Dados insuficientes para registrar o uso do plano.");
+  }
+
+  await carregarUsosPlanos();
+
+  const ciclo = cicloIndividualDoCliente(plano, clienteId, agendamento.data);
+  if (!ciclo) {
+    throw new Error("CICLO_PLANO_NAO_INICIADO");
+  }
+  const usados = usosDoClienteNoCicloIndividual(plano, clienteId, agendamento.data);
+  const limite = Number(plano.usosMensais) || 0;
+
+  const usoJaRegistrado = usosPlanos.some(
+    (uso) => uso.agendamentoId === agendamento.id && uso.cancelado !== true
+  );
+
+  if (usoJaRegistrado) {
+    return;
+  }
+
+  if (usados >= limite) {
+    throw new Error("LIMITE_PLANO_ATINGIDO");
+  }
+
+  await setDoc(
+    doc(db, "usosPlanos", `uso_${agendamento.id}`),
+    {
+      planoId: plano.id,
+      planoNome: plano.nome,
+      clienteId,
+      cliente: agendamento.cliente,
+      agendamentoId: agendamento.id,
+      servicoId: plano.servicoId,
+      servico: plano.servicoNome,
+      ciclo: ciclo.chave,
+      cicloInicio: ciclo.inicio,
+      cicloFim: ciclo.fim,
+      data: agendamento.data,
+      hora: agendamento.hora,
+      barbeiro: agendamento.barbeiro,
+      registradoPor: nomeUsuario,
+      dataCadastro: Date.now()
+    },
+    { merge: true }
+  );
+
+  await carregarUsosPlanos();
+}
+
+async function finalizarAtendimentoSomentePlano() {
+  if (!agendamentoSelecionado || !planoAtendimentoSelecionado) {
+    return;
+  }
+
+  mensagemExtrasPlano.textContent = "";
+
+  try {
+    const cliente = await obterClienteDoAgendamento();
+
+    if (!cliente) {
+      mensagemExtrasPlano.textContent = "Cliente não localizado.";
+      return;
+    }
+
+    const agendamentoAtual = { ...agendamentoSelecionado };
+    const plano = planoAtendimentoSelecionado;
+
+    await registrarUsoDoPlano(plano, agendamentoAtual, cliente.id);
+
+    await updateDoc(
+      doc(db, "agendamentos", agendamentoAtual.id),
+      {
+        status: "concluido",
+        servicosIds: [plano.servicoId],
+        servicos: [{
+          id: plano.servicoId,
+          nome: plano.servicoNome,
+          valor: 0,
+          valorOriginal: Number(
+            servicos.find((servico) => servico.id === plano.servicoId)?.valor
+          ) || 0,
+          peloPlano: true
+        }],
+        servicoId: plano.servicoId,
+        servico: plano.servicoNome,
+        valorServico: 0,
+        produtosIds: [],
+        produtos: [],
+        produtoId: "",
+        produto: "",
+        valorProduto: 0,
+        valorTotal: 0,
+        valorTotalBruto: 0,
+        teveDesconto: false,
+        valorDesconto: 0,
+        valorLiquido: 0,
+        formaPagamento: "Plano",
+        atendimentoPeloPlano: true,
+        planoId: plano.id,
+        planoNome: plano.nome,
+        servicoPlanoId: plano.servicoId,
+        servicoPlano: plano.servicoNome,
+        teveExtras: false,
+        concluidoPor: nomeUsuario,
+        tipoUsuarioConclusao: tipoUsuario,
+        dataConclusao: Date.now()
+      }
+    );
+
+    await deleteDoc(
+      doc(db, "movimentacoesFinanceiras", `desconto_${agendamentoAtual.id}`)
+    );
+
+    fecharModal("modal-extras-plano");
+    agendamentoSelecionado = null;
+    planoAtendimentoSelecionado = null;
+    atendimentoPeloPlano = false;
+    atendimentoPlanoComExtras = false;
+
+    await atualizarAgenda();
+  } catch (erro) {
+    console.log("Erro ao concluir atendimento pelo plano:", erro);
+    mensagemExtrasPlano.textContent =
+      erro?.message === "LIMITE_PLANO_ATINGIDO"
+        ? "O limite mensal deste plano já foi atingido."
+        : "Não foi possível concluir o atendimento pelo plano.";
+  }
+}
+
+async function abrirConclusaoAtendimento(modoPlano = false) {
   if (!agendamentoSelecionado) {
     return;
   }
 
   mensagemConclusaoAtendimento.textContent = "";
+  atendimentoPlanoComExtras = Boolean(modoPlano && planoAtendimentoSelecionado);
+
+  if (tituloConclusaoAtendimento) {
+    tituloConclusaoAtendimento.textContent = atendimentoPlanoComExtras
+      ? "Extras do atendimento"
+      : "Concluir atendimento";
+  }
+
+  if (descricaoConclusaoAtendimento) {
+    descricaoConclusaoAtendimento.textContent = atendimentoPlanoComExtras
+      ? `O serviço ${planoAtendimentoSelecionado?.servicoNome || "do plano"} já está incluído. Adicione somente produtos ou serviços extras.`
+      : "Informe o serviço realizado, o produto vendido e a forma de pagamento.";
+  }
+
+  if (labelServicoAtendimento) {
+    labelServicoAtendimento.textContent = atendimentoPlanoComExtras
+      ? "Serviço extra"
+      : "Serviço realizado";
+  }
 
   try {
     await Promise.all([
@@ -3403,8 +4556,34 @@ async function abrirConclusaoAtendimento() {
   conclusaoDataHora.textContent =
     `${dataFormatada} às ${agendamentoSelecionado.hora}`;
 
+  document
+    .querySelectorAll("#container-servicos-atendimento .linha-selecao-atendimento")
+    .forEach((linha, indice) => {
+      if (indice > 0) linha.remove();
+    });
+
+  document
+    .querySelectorAll("#container-produtos-atendimento .linha-selecao-atendimento")
+    .forEach((linha, indice) => {
+      if (indice > 0) linha.remove();
+    });
+
+  servicoAtendimento.innerHTML = atendimentoPlanoComExtras
+    ? `<option value="">Nenhum serviço extra</option>`
+    : `<option value="">Selecione o serviço</option>`;
+
+  produtoAtendimento.innerHTML = `
+    <option value="">Nenhum produto vendido</option>
+  `;
+
   servicos.forEach(
     (servico) => {
+      if (
+        atendimentoPlanoComExtras &&
+        servico.id === planoAtendimentoSelecionado?.servicoId
+      ) {
+        return;
+      }
       const opcao =
         document.createElement(
           "option"
@@ -3739,7 +4918,7 @@ if (valorDescontoAtendimento) {
 
 botaoConcluirAgendamento.addEventListener(
   "click",
-  abrirConclusaoAtendimento
+  iniciarConclusaoComPlano
 );
 
 formConcluirAtendimento.addEventListener(
@@ -3835,6 +5014,7 @@ formConcluirAtendimento.addEventListener(
     ========================================= */
 
     if (
+      !atendimentoPlanoComExtras &&
       servicosSelecionados.length === 0
     ) {
 
@@ -3846,6 +5026,15 @@ formConcluirAtendimento.addEventListener(
       return;
     }
 
+    if (
+      atendimentoPlanoComExtras &&
+      servicosSelecionados.length === 0 &&
+      produtosSelecionados.length === 0
+    ) {
+      mensagemConclusaoAtendimento.textContent =
+        "Adicione pelo menos um produto ou serviço extra.";
+      return;
+    }
 
     if (!formaPagamento) {
 
@@ -3920,8 +5109,12 @@ formConcluirAtendimento.addEventListener(
       );
 
 
+    const nomesServicosComPlano = atendimentoPlanoComExtras
+      ? [planoAtendimentoSelecionado.servicoNome, ...nomesServicos]
+      : nomesServicos;
+
     const textoServicos =
-      nomesServicos.join(" + ");
+      nomesServicosComPlano.join(" + ");
 
     const textoProdutos =
       nomesProdutos.join(" + ");
@@ -4000,6 +5193,41 @@ formConcluirAtendimento.addEventListener(
     const horaAtendimento =
       agendamentoSelecionado.hora;
 
+    const clientePlano = atendimentoPlanoComExtras
+      ? await obterClienteDoAgendamento()
+      : null;
+
+    if (atendimentoPlanoComExtras && !clientePlano) {
+      mensagemConclusaoAtendimento.textContent =
+        "Não foi possível localizar o cliente do plano.";
+      return;
+    }
+
+    const servicosParaSalvar = atendimentoPlanoComExtras
+      ? [
+          {
+            id: planoAtendimentoSelecionado.servicoId,
+            nome: planoAtendimentoSelecionado.servicoNome,
+            valor: 0,
+            valorOriginal: Number(
+              servicos.find((servico) =>
+                servico.id === planoAtendimentoSelecionado.servicoId
+              )?.valor
+            ) || 0,
+            peloPlano: true
+          },
+          ...servicosSelecionados.map((servico) => ({
+            id: servico.id,
+            nome: servico.nome,
+            valor: Number(servico.valor) || 0,
+            peloPlano: false
+          }))
+        ]
+      : servicosSelecionados.map((servico) => ({
+          id: servico.id,
+          nome: servico.nome,
+          valor: Number(servico.valor) || 0
+        }));
 
     try {
 
@@ -4024,28 +5252,12 @@ formConcluirAtendimento.addEventListener(
           =============================== */
 
           servicosIds:
-            servicosSelecionados.map(
-              (servico) =>
-                servico.id
+            servicosParaSalvar.map(
+              (servico) => servico.id
             ),
 
           servicos:
-            servicosSelecionados.map(
-              (servico) => ({
-
-                id:
-                  servico.id,
-
-                nome:
-                  servico.nome,
-
-                valor:
-                  Number(
-                    servico.valor
-                  ) || 0
-
-              })
-            ),
+            servicosParaSalvar,
 
 
           /*
@@ -4055,8 +5267,9 @@ formConcluirAtendimento.addEventListener(
           */
 
           servicoId:
-            servicosSelecionados[0]?.id ||
-            "",
+            atendimentoPlanoComExtras
+              ? planoAtendimentoSelecionado.servicoId
+              : (servicosSelecionados[0]?.id || ""),
 
           servico:
             textoServicos,
@@ -4123,6 +5336,32 @@ formConcluirAtendimento.addEventListener(
 
           formaPagamento,
 
+          atendimentoPeloPlano:
+            atendimentoPlanoComExtras,
+
+          planoId:
+            atendimentoPlanoComExtras
+              ? planoAtendimentoSelecionado.id
+              : "",
+
+          planoNome:
+            atendimentoPlanoComExtras
+              ? planoAtendimentoSelecionado.nome
+              : "",
+
+          servicoPlanoId:
+            atendimentoPlanoComExtras
+              ? planoAtendimentoSelecionado.servicoId
+              : "",
+
+          servicoPlano:
+            atendimentoPlanoComExtras
+              ? planoAtendimentoSelecionado.servicoNome
+              : "",
+
+          teveExtras:
+            atendimentoPlanoComExtras,
+
           concluidoPor:
             nomeUsuario,
 
@@ -4133,6 +5372,14 @@ formConcluirAtendimento.addEventListener(
             Date.now()
         }
       );
+
+      if (atendimentoPlanoComExtras) {
+        await registrarUsoDoPlano(
+          planoAtendimentoSelecionado,
+          agendamentoSelecionado,
+          clientePlano.id
+        );
+      }
 
 
       /* =========================================
@@ -4265,6 +5512,10 @@ formConcluirAtendimento.addEventListener(
 
       agendamentoSelecionado =
         null;
+
+      planoAtendimentoSelecionado = null;
+      atendimentoPeloPlano = false;
+      atendimentoPlanoComExtras = false;
 
       await atualizarAgenda();
 
@@ -6989,13 +8240,10 @@ async function atualizarFinanceiro() {
     return;
   }
 
-  const resposta =
-    await getDocs(
-      collection(
-        db,
-        "agendamentos"
-      )
-    );
+  const [resposta, respostaMovimentacoes] = await Promise.all([
+    getDocs(collection(db, "agendamentos")),
+    getDocs(collection(db, "movimentacoesFinanceiras"))
+  ]);
 
   const periodo =
     obterPeriodoFinanceiro();
@@ -7031,6 +8279,38 @@ async function atualizarFinanceiro() {
           )
       );
 
+  const assinaturasPlanos = respostaMovimentacoes.docs
+    .map((documento) => ({
+      id: documento.id,
+      ...documento.data()
+    }))
+    .filter((movimentacao) =>
+      movimentacao.tipo === "entrada" &&
+      movimentacao.origem === "plano" &&
+      movimentacao.data >= periodo.inicioTexto &&
+      movimentacao.data <= periodo.fimTexto &&
+      barbeiroSelecionado === "todos"
+    )
+    .map((movimentacao) => ({
+      id: movimentacao.id,
+      tipoRegistro: "assinatura_plano",
+      data: movimentacao.data,
+      hora: movimentacao.hora || "00:00",
+      formaPagamento: movimentacao.formaPagamento || "",
+      valorTotal: Number(movimentacao.valor) || 0,
+      servicos: [{
+        id: movimentacao.planoId || "",
+        nome: `${movimentacao.planoNome || "Plano"} (Plano)`,
+        valor: Number(movimentacao.valor) || 0
+      }],
+      produtos: []
+    }));
+
+  const registrosFinanceiros = [
+    ...concluidos,
+    ...assinaturasPlanos
+  ];
+
   let faturamentoTotal = 0;
   let totalServicos = 0;
   let totalProdutos = 0;
@@ -7050,7 +8330,7 @@ async function atualizarFinanceiro() {
   const rankingServicos = {};
   const rankingProdutos = {};
 
-concluidos.forEach(
+registrosFinanceiros.forEach(
   (agendamento) => {
 
     /* =========================================
@@ -7228,30 +8508,17 @@ concluidos.forEach(
       agendamento.barbeiro ||
       "Não informado";
 
+    if (agendamento.tipoRegistro !== "assinatura_plano") {
+      if (!rankingBarbeiros[nomeBarbeiro]) {
+        rankingBarbeiros[nomeBarbeiro] = {
+          valor: 0,
+          quantidade: 0
+        };
+      }
 
-    if (
-      !rankingBarbeiros[
-        nomeBarbeiro
-      ]
-    ) {
-      rankingBarbeiros[
-        nomeBarbeiro
-      ] = {
-        valor: 0,
-        quantidade: 0
-      };
+      rankingBarbeiros[nomeBarbeiro].valor += valorTotal;
+      rankingBarbeiros[nomeBarbeiro].quantidade++;
     }
-
-
-    rankingBarbeiros[
-      nomeBarbeiro
-    ].valor +=
-      valorTotal;
-
-
-    rankingBarbeiros[
-      nomeBarbeiro
-    ].quantidade++;
 
 
     /* =========================================
@@ -7447,7 +8714,7 @@ concluidos.forEach(
 
   const dadosGrafico =
     criarDadosGraficoFinanceiro(
-      concluidos,
+      registrosFinanceiros,
       periodo
     );
 
@@ -7773,6 +9040,19 @@ async function obterDadosPdfFinanceiro() {
         );
       });
 
+  const assinaturasPlanos = respostaMovimentacoes.docs
+    .map((documento) => ({
+      id: documento.id,
+      ...documento.data()
+    }))
+    .filter((movimentacao) =>
+      movimentacao.tipo === "entrada" &&
+      movimentacao.origem === "plano" &&
+      movimentacao.data >= periodo.inicioTexto &&
+      movimentacao.data <= periodo.fimTexto &&
+      barbeiroSelecionado === "todos"
+    );
+
   let faturamentoBruto = 0;
   let totalServicos = 0;
   let totalProdutos = 0;
@@ -7919,6 +9199,39 @@ async function obterDadosPdfFinanceiro() {
       }
     }
   );
+
+  assinaturasPlanos.forEach((assinatura) => {
+    const valorPlano = Number(assinatura.valor) || 0;
+    const nomePlano = `${assinatura.planoNome || "Plano"} (Plano)`;
+
+    faturamentoBruto += valorPlano;
+    totalServicos += valorPlano;
+
+    if (assinatura.formaPagamento === "Pix") {
+      totalPix += valorPlano;
+      quantidadePix++;
+    }
+
+    if (assinatura.formaPagamento === "Dinheiro") {
+      totalDinheiro += valorPlano;
+      quantidadeDinheiro++;
+    }
+
+    if (assinatura.formaPagamento === "Cartão") {
+      totalCartao += valorPlano;
+      quantidadeCartao++;
+    }
+
+    if (!rankingServicos[nomePlano]) {
+      rankingServicos[nomePlano] = {
+        valor: 0,
+        quantidade: 0
+      };
+    }
+
+    rankingServicos[nomePlano].valor += valorPlano;
+    rankingServicos[nomePlano].quantidade++;
+  });
 
   const totalDescontos =
     descontos.reduce(
@@ -9076,6 +10389,21 @@ async function atualizarHistoricoFinanceiro() {
           transformarAtendimentoEmEntrada
         );
 
+    const entradasPlanos = respostaMovimentacoes.docs
+      .map((documento) => ({
+        id: documento.id,
+        ...documento.data()
+      }))
+      .filter((movimentacao) =>
+        movimentacao.tipo === "entrada" &&
+        movimentacao.origem === "plano"
+      )
+      .map((movimentacao) => ({
+        ...movimentacao,
+        barbeiro: movimentacao.barbeiro || "",
+        prioridadeHistorico: 1
+      }));
+
     /* ===============================
        SAÍDAS
     =============================== */
@@ -9096,6 +10424,7 @@ async function atualizarHistoricoFinanceiro() {
 
     const todasMovimentacoes = [
       ...entradas,
+      ...entradasPlanos,
       ...saidas
     ];
 
@@ -9325,6 +10654,7 @@ async function atualizarHistoricoFinanceiro() {
       <div>Data e hora</div>
       <div>Movimentação</div>
       <div>Barbeiro</div>
+      <div>Cliente</div>
       <div>Pagamento</div>
       <div>Valor</div>
       <div>Tipo</div>
@@ -9372,6 +10702,10 @@ async function atualizarHistoricoFinanceiro() {
           movimentacao.barbeiro ||
           "Barbearia";
 
+        const cliente =
+          movimentacao.cliente ||
+          "—";
+
         const pagamento =
           movimentacao.formaPagamento ||
           "—";
@@ -9413,6 +10747,12 @@ async function atualizarHistoricoFinanceiro() {
           <div class="coluna-historico">
             <span>
               ${barbeiro}
+            </span>
+          </div>
+
+          <div class="coluna-historico coluna-cliente-historico">
+            <span>
+              ${cliente}
             </span>
           </div>
 
@@ -9903,6 +11243,118 @@ abaRelatorioHistorico?.addEventListener(
   "click",
   abrirRelatorioHistorico
 );
+
+/* =========================================================
+   APAGAR DADOS OPERACIONAIS
+========================================================= */
+
+const colecoesOperacionais = [
+  "agendamentos",
+  "movimentacoesFinanceiras",
+  "usosPlanos",
+  "clientes",
+  "barbeiros",
+  "planos",
+  "servicos",
+  "produtos"
+];
+
+async function esvaziarColecaoOperacional(nomeColecao) {
+  let quantidadeRemovida = 0;
+
+  while (true) {
+    const documentos = await getDocs(
+      query(collection(db, nomeColecao), limit(400))
+    );
+
+    if (documentos.empty) return quantidadeRemovida;
+
+    const lote = writeBatch(db);
+    documentos.docs.forEach((documento) => lote.delete(documento.ref));
+    await lote.commit();
+    quantidadeRemovida += documentos.size;
+  }
+}
+
+botaoApagarDados?.addEventListener("click", async () => {
+  if (tipoUsuario !== "administrador") {
+    mensagemApagarDados.textContent =
+      "Somente o administrador pode apagar os dados.";
+    return;
+  }
+
+  if (confirmacaoApagarDados.value.trim() !== "APAGAR") {
+    mensagemApagarDados.textContent =
+      "Digite APAGAR exatamente como indicado.";
+    confirmacaoApagarDados.focus();
+    return;
+  }
+
+  const senhaInformada = senhaAdministradorApagarDados.value;
+  if (!senhaInformada) {
+    mensagemApagarDados.textContent =
+      "Digite a senha atual do administrador.";
+    senhaAdministradorApagarDados.focus();
+    return;
+  }
+
+  try {
+    const documentoConfiguracao = await getDoc(configuracaoGeral);
+    const configuracoes = documentoConfiguracao.exists()
+      ? documentoConfiguracao.data()
+      : {};
+    const senhaAdministradorAtual =
+      configuracoes.senhaAdministrador ||
+      configuracoes.senha ||
+      "tradicao123";
+
+    if (senhaInformada !== senhaAdministradorAtual) {
+      mensagemApagarDados.textContent =
+        "Senha do administrador incorreta.";
+      senhaAdministradorApagarDados.value = "";
+      senhaAdministradorApagarDados.focus();
+      return;
+    }
+  } catch (erro) {
+    console.log("Erro ao validar senha do administrador:", erro);
+    mensagemApagarDados.textContent =
+      "Não foi possível validar a senha do administrador.";
+    return;
+  }
+
+  const confirmou = confirm(
+    "Confirma a exclusão permanente de todos os dados operacionais? As senhas do administrador e da recepção serão preservadas."
+  );
+  if (!confirmou) return;
+
+  botaoApagarDados.disabled = true;
+  confirmacaoApagarDados.disabled = true;
+  senhaAdministradorApagarDados.disabled = true;
+  mensagemApagarDados.textContent = "Iniciando limpeza...";
+
+  try {
+    const resumo = [];
+
+    for (const nomeColecao of colecoesOperacionais) {
+      mensagemApagarDados.textContent = `Limpando ${nomeColecao}...`;
+      const quantidade = await esvaziarColecaoOperacional(nomeColecao);
+      resumo.push(`${nomeColecao}: ${quantidade}`);
+    }
+
+    mensagemApagarDados.textContent =
+      `Limpeza concluída. Registros apagados — ${resumo.join("; ")}. ` +
+      "Administrador e recepcionista foram preservados. Atualize a página para começar.";
+    confirmacaoApagarDados.value = "";
+    senhaAdministradorApagarDados.value = "";
+  } catch (erro) {
+    console.log("Erro ao apagar dados operacionais:", erro);
+    mensagemApagarDados.textContent =
+      "A limpeza foi interrompida. Tente novamente para concluir os dados restantes.";
+    botaoApagarDados.disabled = false;
+    confirmacaoApagarDados.disabled = false;
+    senhaAdministradorApagarDados.disabled = false;
+  }
+});
 
 /* =========================================================
    TEMA
@@ -10536,5 +11988,112 @@ document
     "click",
     adicionarCampoProduto
   );
+
+/* =========================================================
+   EVENTOS DOS PLANOS
+========================================================= */
+
+if (botaoMostrarCadastroPlano) {
+  botaoMostrarCadastroPlano.addEventListener("click", async () => {
+    limparFormularioPlano();
+    await carregarServicos();
+    preencherServicosDoPlano();
+    formCadastroPlano.classList.toggle("escondida");
+  });
+}
+
+if (cancelarEdicaoPlano) {
+  cancelarEdicaoPlano.addEventListener("click", () => {
+    limparFormularioPlano();
+    formCadastroPlano.classList.add("escondida");
+  });
+}
+
+if (valorNovoPlano) {
+  valorNovoPlano.addEventListener("input", () => {
+    formatarCampoValor(valorNovoPlano);
+  });
+}
+
+if (pesquisaPlano) {
+  pesquisaPlano.addEventListener("input", mostrarListaDePlanos);
+}
+
+if (formCadastroPlano) {
+  formCadastroPlano.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    mensagemPlano.textContent = "";
+
+    if (!usuarioPodeGerenciarPlanos()) {
+      mensagemPlano.textContent = "Você não tem permissão para alterar planos.";
+      return;
+    }
+
+    const nome = nomeNovoPlano.value.trim();
+    const valor = converterValorParaNumero(valorNovoPlano.value);
+    const servicoId = servicoNovoPlano.value;
+    const usosMensais = Number(usosNovoPlano.value);
+    const servico = servicos.find((item) => item.id === servicoId);
+
+    if (!nome || valor <= 0 || !servico || !Number.isInteger(usosMensais) || usosMensais <= 0) {
+      mensagemPlano.textContent = "Preencha corretamente os dados do plano.";
+      return;
+    }
+
+    const idEdicao = planoIdEdicao.value;
+    const planoAnterior = planos.find((plano) => plano.id === idEdicao);
+
+    const dados = {
+      nome,
+      valor,
+      servicoId: servico.id,
+      servicoNome: servico.nome,
+      usosMensais,
+      clientesIds: Array.isArray(planoAnterior?.clientesIds)
+        ? planoAnterior.clientesIds
+        : [],
+      clientesPlano: Array.isArray(planoAnterior?.clientesPlano)
+        ? planoAnterior.clientesPlano
+        : [],
+      ativo: true,
+      atualizadoEm: Date.now()
+    };
+
+    try {
+      if (idEdicao) {
+        await updateDoc(doc(db, "planos", idEdicao), dados);
+        mensagemPlano.textContent = "Plano atualizado com sucesso.";
+      } else {
+        await addDoc(collection(db, "planos"), {
+          ...dados,
+          dataCadastro: Date.now(),
+          criadoPor: nomeUsuario
+        });
+        mensagemPlano.textContent = "Plano criado com sucesso.";
+      }
+
+      await carregarPlanos();
+      mostrarListaDePlanos();
+      limparFormularioPlano();
+      formCadastroPlano.classList.add("escondida");
+    } catch (erro) {
+      console.log("Erro ao salvar plano:", erro);
+      mensagemPlano.textContent = "Não foi possível salvar o plano.";
+    }
+  });
+}
+
+if (botaoPlanoSemExtras) {
+  botaoPlanoSemExtras.addEventListener("click", finalizarAtendimentoSomentePlano);
+}
+
+if (botaoPlanoComExtras) {
+  botaoPlanoComExtras.addEventListener("click", async () => {
+    atendimentoPeloPlano = true;
+    atendimentoPlanoComExtras = true;
+    fecharModal("modal-extras-plano");
+    await abrirConclusaoAtendimento(true);
+  });
+}
 
 iniciarDashboard();

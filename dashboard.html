@@ -508,6 +508,101 @@
           </div>
         </section>
 
+
+        <!-- =====================================================
+             PLANOS
+        ====================================================== -->
+
+        <section
+          id="tela-planos"
+          class="tela-gerenciamento escondida"
+        >
+          <div class="topo-gerenciamento topo-planos">
+            <div>
+              <p class="texto-pequeno">Assinaturas da barbearia</p>
+              <h3>Planos</h3>
+            </div>
+          </div>
+
+          <div class="linha-principal linha-planos">
+            <button
+              id="botao-mostrar-cadastro-plano"
+              class="botao-principal botao-cadastrar"
+              type="button"
+            >
+              Criar novo plano
+            </button>
+
+            <input
+              id="pesquisa-plano"
+              class="barra-pesquisa"
+              type="text"
+              placeholder="Pesquisar plano..."
+              autocomplete="off"
+            />
+          </div>
+
+          <form
+            id="form-cadastro-plano"
+            class="form-cadastro form-plano escondida"
+          >
+            <input id="plano-id-edicao" type="hidden" />
+
+            <label for="nome-novo-plano">Nome do plano</label>
+            <input
+              id="nome-novo-plano"
+              type="text"
+              placeholder="Ex.: Plano Corte Mensal"
+              autocomplete="off"
+              required
+            />
+
+            <label for="valor-novo-plano">Valor mensal</label>
+            <input
+              id="valor-novo-plano"
+              type="text"
+              inputmode="decimal"
+              placeholder="R$ 0,00"
+              autocomplete="off"
+              required
+            />
+
+            <label for="servico-novo-plano">Serviço incluído</label>
+            <select id="servico-novo-plano" required>
+              <option value="">Selecione o serviço</option>
+            </select>
+
+            <label for="usos-novo-plano">Quantidade de usos por mês</label>
+            <input
+              id="usos-novo-plano"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Ex.: 4"
+              required
+            />
+
+            <div class="botoes-form-plano">
+              <button class="botao-principal botao-salvar" type="submit">
+                Salvar plano
+              </button>
+              <button
+                id="cancelar-edicao-plano"
+                class="botao-secundario"
+                type="button"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+
+          <p id="mensagem-plano" class="mensagem"></p>
+
+          <div id="lista-planos" class="lista-planos">
+            <p class="lista-vazia">Nenhum plano cadastrado.</p>
+          </div>
+        </section>
+
         <!-- =====================================================
              CONFIGURAÇÕES
         ====================================================== -->
@@ -647,6 +742,55 @@
               id="mensagem-senha"
               class="mensagem"
             ></p>
+          </div>
+
+          <div
+            id="configuracao-apagar-dados"
+            class="cartao-configuracao cartao-configuracao-perigo escondida"
+          >
+            <h4>Apagar banco de dados</h4>
+
+            <p>
+              Apaga todos os dados operacionais para iniciar o aplicativo do zero.
+              As senhas do administrador e da recepção serão preservadas.
+            </p>
+
+            <div class="aviso-apagar-dados">
+              Serão apagados barbeiros, clientes, agendamentos, movimentações,
+              planos, usos de planos, serviços e produtos. Esta ação não pode ser desfeita.
+            </div>
+
+            <label for="confirmacao-apagar-dados">
+              Digite <strong>APAGAR</strong> para confirmar
+            </label>
+
+            <input
+              id="confirmacao-apagar-dados"
+              type="text"
+              autocomplete="off"
+              placeholder="APAGAR"
+            />
+
+            <label for="senha-administrador-apagar-dados">
+              Senha atual do administrador
+            </label>
+
+            <input
+              id="senha-administrador-apagar-dados"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Digite a senha do administrador"
+            />
+
+            <button
+              id="botao-apagar-dados"
+              class="botao-perigo"
+              type="button"
+            >
+              Apagar todos os dados operacionais
+            </button>
+
+            <p id="mensagem-apagar-dados" class="mensagem"></p>
           </div>
         </section>
 
@@ -1399,6 +1543,134 @@
       </div>
     </div>
 
+
+    <!-- =====================================================
+         MODAL CLIENTES DO PLANO
+    ====================================================== -->
+
+    <div id="modal-clientes-plano" class="modal escondido">
+      <div class="janela janela-plano">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-clientes-plano"
+        >×</button>
+
+        <h2 id="titulo-clientes-plano">Adicionar cliente</h2>
+        <p id="resumo-clientes-plano"></p>
+
+        <p class="texto-ajuda-plano">
+          Escolha um cliente já cadastrado para adicionar a este plano.
+        </p>
+
+        <p id="mensagem-clientes-plano" class="mensagem"></p>
+
+        <form id="form-vinculo-cliente-plano" class="form-vinculo-cliente-plano escondida">
+          <input id="cliente-id-vinculo-plano" type="hidden" />
+
+          <div class="cliente-selecionado-plano">
+            Cliente: <strong id="nome-cliente-vinculo-plano"></strong>
+          </div>
+
+          <label for="pagamento-vinculo-plano">Forma de pagamento</label>
+          <select id="pagamento-vinculo-plano" required>
+            <option value="">Selecione</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Pix">Pix</option>
+            <option value="Cartão">Cartão</option>
+          </select>
+
+          <label for="valor-vinculo-plano">Valor pago pelo plano</label>
+          <input id="valor-vinculo-plano" type="text" inputmode="decimal" required />
+
+          <fieldset class="inicio-ciclo-plano">
+            <legend>Início do ciclo</legend>
+            <label>
+              <input type="radio" name="inicio-ciclo-plano" value="hoje" checked />
+              Começar hoje
+            </label>
+            <label>
+              <input type="radio" name="inicio-ciclo-plano" value="data" />
+              Escolher uma data
+            </label>
+          </fieldset>
+
+          <div id="campo-data-inicio-ciclo-plano" class="escondida">
+            <label for="data-inicio-ciclo-plano">Data de início do ciclo</label>
+            <input id="data-inicio-ciclo-plano" type="date" />
+          </div>
+
+          <div class="botoes-vinculo-plano">
+            <button type="button" id="cancelar-vinculo-cliente-plano" class="botao-secundario">Voltar</button>
+            <button type="submit" class="botao-principal">Confirmar inclusão</button>
+          </div>
+        </form>
+
+        <div
+          id="lista-clientes-disponiveis-plano"
+          class="lista-clientes-disponiveis-plano"
+        ></div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL VERIFICAR PLANO NO ATENDIMENTO
+    ====================================================== -->
+
+    <div id="modal-verificar-plano" class="modal escondido">
+      <div class="janela janela-plano-atendimento">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-verificar-plano"
+        >×</button>
+
+        <h2 id="titulo-verificar-plano">Plano do cliente</h2>
+        <div id="conteudo-verificar-plano" class="conteudo-verificar-plano"></div>
+        <p id="mensagem-verificar-plano" class="mensagem"></p>
+
+        <div id="botoes-verificar-plano" class="botoes-modal"></div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL EXTRAS DO PLANO
+    ====================================================== -->
+
+    <div id="modal-extras-plano" class="modal escondido">
+      <div class="janela janela-plano-atendimento">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-extras-plano"
+        >×</button>
+
+        <h2>Atendimento pelo plano</h2>
+        <p id="texto-extras-plano">
+          O serviço principal será contabilizado no plano.
+        </p>
+
+        <div class="pergunta-extras-plano">
+          <strong>Teve algum produto ou serviço extra?</strong>
+        </div>
+
+        <div class="botoes-modal">
+          <button
+            id="plano-sem-extras"
+            class="botao-secundario"
+            type="button"
+          >Não</button>
+          <button
+            id="plano-com-extras"
+            class="botao-principal"
+            type="button"
+          >Sim</button>
+        </div>
+
+        <p id="mensagem-extras-plano" class="mensagem"></p>
+      </div>
+    </div>
+
     <!-- =====================================================
          MODAL CONCLUIR ATENDIMENTO
     ====================================================== -->
@@ -1416,11 +1688,11 @@
           ×
         </button>
 
-        <h2>
+        <h2 id="titulo-conclusao-atendimento">
           Concluir atendimento
         </h2>
 
-        <p>
+        <p id="descricao-conclusao-atendimento">
           Informe o serviço realizado, o produto vendido e a forma de pagamento.
         </p>
 
@@ -1445,7 +1717,7 @@
 
           <div class="bloco-itens-atendimento">
 
-            <label>
+            <label id="label-servico-atendimento">
               Serviço realizado
             </label>
 
@@ -1456,7 +1728,6 @@
                 <select
                   id="servico-atendimento"
                   class="select-servico-atendimento"
-                  required
                 >
                   <option value="">
                     Selecione o serviço
