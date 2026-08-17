@@ -21,6 +21,8 @@
           Barber Shop
         </h1>
 
+        <p class="marca-subtitulo">Gestão profissional</p>
+
         <nav id="menu"></nav>
       </aside>
 
@@ -92,6 +94,44 @@
                 +
               </button>
             </div>
+          </div>
+
+          <div class="painel-resumo-dia" aria-label="Resumo da agenda de hoje">
+            <article class="indicador-dashboard indicador-total">
+              <span class="indicador-icone">01</span>
+              <div>
+                <small>Agenda de hoje</small>
+                <strong id="resumo-agendados-hoje">0</strong>
+                <p>horários marcados</p>
+              </div>
+            </article>
+
+            <article class="indicador-dashboard indicador-proximo">
+              <span class="indicador-icone">02</span>
+              <div>
+                <small>Próximo horário</small>
+                <strong id="resumo-proximo-horario">—</strong>
+                <p id="resumo-proximo-cliente">Nenhum cliente</p>
+              </div>
+            </article>
+
+            <article class="indicador-dashboard indicador-concluido">
+              <span class="indicador-icone">03</span>
+              <div>
+                <small>Concluídos hoje</small>
+                <strong id="resumo-concluidos-hoje">0</strong>
+                <p>atendimentos finalizados</p>
+              </div>
+            </article>
+
+            <article class="indicador-dashboard indicador-pendente">
+              <span class="indicador-icone">04</span>
+              <div>
+                <small>Pendentes hoje</small>
+                <strong id="resumo-pendentes-hoje">0</strong>
+                <p>atendimentos restantes</p>
+              </div>
+            </article>
           </div>
 
           <div
@@ -1537,7 +1577,7 @@
             class="botao-perigo"
             type="button"
           >
-            Agendamento cancelado
+            Desmarcar agendamento
           </button>
         </div>
       </div>
@@ -1862,7 +1902,6 @@
             </option>
           </select>
 
-
           <!-- =================================================
               TOTAL
           ================================================== -->
@@ -2118,6 +2157,58 @@
     </div>
 
     <!-- =====================================================
+         MODAL RENOVAR PAGAMENTO DO PLANO
+    ====================================================== -->
+
+    <div id="modal-renovar-plano" class="modal escondido">
+      <div class="janela janela-renovar-plano">
+        <button
+          class="fechar-modal"
+          type="button"
+          data-fechar="modal-renovar-plano"
+        >
+          &times;
+        </button>
+
+        <h2>Renovar pagamento</h2>
+        <div id="resumo-renovacao-plano" class="resumo-renovacao-plano">
+          <span id="cliente-renovacao-plano"></span>
+          <span id="nome-renovacao-plano"></span>
+          <strong id="valor-renovacao-plano"></strong>
+        </div>
+
+        <form id="form-renovar-plano">
+          <label for="forma-pagamento-renovacao-plano">
+            Forma de pagamento
+          </label>
+
+          <select id="forma-pagamento-renovacao-plano" required>
+            <option value="">Selecione a forma de pagamento</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Pix">Pix</option>
+            <option value="Cart&atilde;o">Cart&atilde;o</option>
+          </select>
+
+          <p id="mensagem-renovacao-plano" class="mensagem"></p>
+
+          <div class="botoes-modal">
+            <button
+              class="botao-secundario"
+              type="button"
+              data-fechar="modal-renovar-plano"
+            >
+              Voltar
+            </button>
+
+            <button class="botao-principal" type="submit">
+              Confirmar pagamento
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =====================================================
          MODAL SAIR
     ====================================================== -->
 
@@ -2170,7 +2261,7 @@
 
     <script
       type="module"
-      src="dashboard.js"
+      src="dashboard.js?v=historico-motivo-desconto-2"
     ></script>
 
   </body>

@@ -20,7 +20,35 @@ import {
 ========================================================= */
 
 const nomeUsuario = sessionStorage.getItem("nomeUsuario");
-const tipoUsuario = sessionStorage.getItem("tipoUsuario");
+
+function normalizarTipoUsuario(tipo) {
+  const tipoNormalizado = String(tipo || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  if (
+    tipoNormalizado === "admin" ||
+    tipoNormalizado === "administrador"
+  ) {
+    return "administrador";
+  }
+
+  if (
+    tipoNormalizado === "recepcao" ||
+    tipoNormalizado === "presenca" ||
+    tipoNormalizado === "recepcionista"
+  ) {
+    return "recepcionista";
+  }
+
+  return tipoNormalizado;
+}
+
+const tipoUsuario = normalizarTipoUsuario(
+  sessionStorage.getItem("tipoUsuario")
+);
 const usuarioId = sessionStorage.getItem("usuarioId");
 
 if (!nomeUsuario || !tipoUsuario || !usuarioId) {
@@ -243,6 +271,12 @@ const formaPagamentoAtendimento =
     "#forma-pagamento-atendimento"
   );
 
+const resumoAgendadosHoje = document.querySelector("#resumo-agendados-hoje");
+const resumoProximoHorario = document.querySelector("#resumo-proximo-horario");
+const resumoProximoCliente = document.querySelector("#resumo-proximo-cliente");
+const resumoConcluidosHoje = document.querySelector("#resumo-concluidos-hoje");
+const resumoPendentesHoje = document.querySelector("#resumo-pendentes-hoje");
+
 const mensagemConclusaoAtendimento =
   document.querySelector(
     "#mensagem-conclusao-atendimento"
@@ -263,6 +297,10 @@ function garantirCamposDesconto() {
 
   let valorDesconto = document.querySelector(
     "#valor-desconto-atendimento"
+  );
+
+  let descricaoDesconto = document.querySelector(
+    "#descricao-desconto-atendimento"
   );
 
   let valorFinal = document.querySelector(
@@ -308,6 +346,17 @@ function garantirCamposDesconto() {
           placeholder="R$ 0,00"
           autocomplete="off"
         />
+
+        <label for="descricao-desconto-atendimento">
+          Descrição do desconto
+        </label>
+
+        <textarea
+          id="descricao-desconto-atendimento"
+          rows="3"
+          maxlength="200"
+          placeholder="Ex.: desconto para policial ou aniversariante"
+        ></textarea>
       </div>
 
       <div class="total-final-atendimento">
@@ -345,6 +394,10 @@ function garantirCamposDesconto() {
       "#valor-desconto-atendimento"
     );
 
+    descricaoDesconto = document.querySelector(
+      "#descricao-desconto-atendimento"
+    );
+
     valorFinal = document.querySelector(
       "#valor-final-atendimento"
     );
@@ -354,6 +407,7 @@ function garantirCamposDesconto() {
     teveDesconto,
     areaDesconto,
     valorDesconto,
+    descricaoDesconto,
     valorFinal
   };
 }
@@ -369,6 +423,9 @@ const areaDescontoAtendimento =
 
 const valorDescontoAtendimento =
   camposDesconto.valorDesconto;
+
+const descricaoDescontoAtendimento =
+  camposDesconto.descricaoDesconto;
 
 const valorFinalAtendimento =
   camposDesconto.valorFinal;
@@ -881,40 +938,7 @@ async function gerarPdfHistorico() {
             );
           }
         )
-        .sort(
-          (a, b) => {
-            const diferencaData =
-              criarDataHora(
-                b.data,
-                b.hora ||
-                  "00:00"
-              ) -
-              criarDataHora(
-                a.data,
-                a.hora ||
-                  "00:00"
-              );
-
-            if (
-              diferencaData !== 0
-            ) {
-              return diferencaData;
-            }
-
-            return (
-              (
-                Number(
-                  b.prioridadeHistorico
-                ) || 0
-              ) -
-              (
-                Number(
-                  a.prioridadeHistorico
-                ) || 0
-              )
-            );
-          }
-        );
+        .sort(ordenarMovimentacoesMaisRecentes);
 
     /* =========================================
        TOTAIS DO PERÍODO
@@ -1672,6 +1696,18 @@ const valorVinculoPlano = document.querySelector("#valor-vinculo-plano");
 const campoDataInicioCicloPlano = document.querySelector("#campo-data-inicio-ciclo-plano");
 const dataInicioCicloPlano = document.querySelector("#data-inicio-ciclo-plano");
 const cancelarVinculoClientePlano = document.querySelector("#cancelar-vinculo-cliente-plano");
+const modalRenovarPlano = document.querySelector("#modal-renovar-plano");
+const formRenovarPlano = document.querySelector("#form-renovar-plano");
+const resumoRenovacaoPlano = document.querySelector("#resumo-renovacao-plano");
+const clienteRenovacaoPlano = document.querySelector("#cliente-renovacao-plano");
+const nomeRenovacaoPlano = document.querySelector("#nome-renovacao-plano");
+const valorRenovacaoPlano = document.querySelector("#valor-renovacao-plano");
+const formaPagamentoRenovacaoPlano = document.querySelector(
+  "#forma-pagamento-renovacao-plano"
+);
+const mensagemRenovacaoPlano = document.querySelector(
+  "#mensagem-renovacao-plano"
+);
 
 const modalVerificarPlano = document.querySelector(
   "#modal-verificar-plano"
@@ -1754,6 +1790,7 @@ let usosPlanos = [];
 
 let planoSelecionadoParaClientes = null;
 let planoAtendimentoSelecionado = null;
+let renovacaoPlanoSelecionada = null;
 let atendimentoPeloPlano = false;
 let atendimentoPlanoComExtras = false;
 
@@ -1795,6 +1832,46 @@ function usuarioPodeGerenciarPlanos() {
   );
 }
 
+function usuarioPodeFinalizarAtendimento() {
+  return (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  );
+}
+
+function usuarioPodeCancelarAgendamento(agendamento) {
+  if (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  ) {
+    return true;
+  }
+
+  return (
+    tipoUsuario === "barbeiro" &&
+    Boolean(agendamento) &&
+    (
+      agendamento.barbeiroId === usuarioId ||
+      agendamento.barbeiro === nomeUsuario
+    )
+  );
+}
+
+function agendamentoEstaMarcadoParaHoje(agendamento) {
+  return Boolean(
+    agendamento?.data &&
+    agendamento.data === formatarDataParaSalvar(new Date())
+  );
+}
+
+function mensagemDataPermitidaDoAgendamento(agendamento) {
+  const dataFormatada = agendamento?.data
+    ? dataPorTexto(agendamento.data).toLocaleDateString("pt-BR")
+    : "data não informada";
+
+  return `Você só pode concluir ou marcar como não realizado no dia agendado: ${dataFormatada}.`;
+}
+
 function usuarioPodeVisualizarRelatorioGeral() {
   return (
     tipoUsuario === "administrador" ||
@@ -1803,7 +1880,26 @@ function usuarioPodeVisualizarRelatorioGeral() {
 }
 
 function usuarioPodeVisualizarFinanceiro() {
-  return tipoUsuario === "administrador";
+  return (
+    tipoUsuario === "administrador" ||
+    tipoUsuario === "recepcionista"
+  );
+}
+
+function limitarFinanceiroDaRecepcaoAoDiario() {
+  if (tipoUsuario !== "recepcionista") return;
+
+  [periodoRelatorioFinanceiro, periodoRelatorioHistorico]
+    .filter(Boolean)
+    .forEach((seletor) => {
+      seletor.innerHTML = `
+        <option value="diario" selected>Diário</option>
+      `;
+      seletor.value = "diario";
+    });
+
+  dataFinanceiro = new Date();
+  dataHistorico = new Date();
 }
 
 /* =========================================================
@@ -2118,10 +2214,20 @@ async function abrirTelaBarbeiros() {
   mensagemBarbeiro.textContent = "";
   pesquisaBarbeiro.value = "";
 
-  botaoMostrarCadastroBarbeiro.style.display =
-    usuarioPodeGerenciarBarbeiros()
-      ? ""
-      : "none";
+  const podeGerenciarBarbeiros =
+    usuarioPodeGerenciarBarbeiros();
+
+  botaoMostrarCadastroBarbeiro.hidden =
+    !podeGerenciarBarbeiros;
+
+  botaoMostrarCadastroBarbeiro.classList.toggle(
+    "escondida",
+    !podeGerenciarBarbeiros
+  );
+
+  botaoMostrarCadastroBarbeiro.style.removeProperty(
+    "display"
+  );
 
   await carregarBarbeiros();
 
@@ -2294,6 +2400,127 @@ function cicloDoClienteEstaPago(ciclo) {
   return pagamentoInicialRegistrado && ciclo.chave === vinculo.inicioCiclo;
 }
 
+async function renovarPagamentoDoPlano(
+  plano,
+  cliente,
+  ciclo,
+  formaPagamento
+) {
+  if (!usuarioPodeGerenciarPlanos() || !plano || !cliente || !ciclo) {
+    return;
+  }
+
+  const vinculo = ciclo.vinculo;
+  const valorPlano = Number(vinculo?.valorPlano) || Number(plano.valor) || 0;
+
+  const vinculosAtualizados = vinculosDoPlano(plano).map((item) => {
+    if (item.clienteId !== cliente.id) return item;
+
+    const ciclosPagos = Array.isArray(item.ciclosPagos)
+      ? item.ciclosPagos
+      : [];
+
+    return {
+      ...item,
+      ciclosPagos: [...new Set([...ciclosPagos, ciclo.chave])],
+      ultimoPagamentoEm: Date.now(),
+      renovadoPor: nomeUsuario
+    };
+  });
+
+  const agora = new Date();
+  const dataPagamento = formatarDataParaSalvar(agora);
+  const horaPagamento = `${String(agora.getHours()).padStart(2, "0")}:${String(agora.getMinutes()).padStart(2, "0")}`;
+  const idMovimentacao = `renovacao_plano_${plano.id}_${cliente.id}_${ciclo.chave}`;
+
+  const lote = writeBatch(db);
+  lote.update(doc(db, "planos", plano.id), {
+    clientesPlano: vinculosAtualizados,
+    atualizadoEm: Date.now()
+  });
+  lote.set(doc(db, "movimentacoesFinanceiras", idMovimentacao), {
+    tipo: "entrada",
+    origem: "plano",
+    categoria: "plano",
+    descricao: `Renova\u00e7\u00e3o do plano ${plano.nome}`,
+    valor: valorPlano,
+    data: dataPagamento,
+    hora: horaPagamento,
+    formaPagamento,
+    planoId: plano.id,
+    planoNome: plano.nome,
+    cliente: cliente.nome,
+    clienteId: cliente.id,
+    inicioCiclo: ciclo.inicio,
+    criadoPor: nomeUsuario,
+    usuarioId,
+    dataCadastro: Date.now()
+  });
+
+  await lote.commit();
+  await carregarPlanos();
+  mostrarListaDePlanos();
+  mensagemPlano.textContent = `Pagamento de ${cliente.nome} renovado e contabilizado.`;
+}
+
+function abrirRenovacaoPagamento(plano, cliente, ciclo) {
+  const valorPlano =
+    Number(ciclo?.vinculo?.valorPlano) || Number(plano?.valor) || 0;
+
+  renovacaoPlanoSelecionada = { plano, cliente, ciclo };
+  if (
+    clienteRenovacaoPlano &&
+    nomeRenovacaoPlano &&
+    valorRenovacaoPlano
+  ) {
+    clienteRenovacaoPlano.textContent = cliente.nome;
+    nomeRenovacaoPlano.textContent = plano.nome;
+    valorRenovacaoPlano.textContent = formatarValorEmReal(valorPlano);
+  } else if (resumoRenovacaoPlano) {
+    resumoRenovacaoPlano.textContent =
+      `${cliente.nome} | ${plano.nome} | ${formatarValorEmReal(valorPlano)}`;
+  }
+
+  formaPagamentoRenovacaoPlano.value = "";
+  mensagemRenovacaoPlano.textContent = "";
+  modalRenovarPlano.classList.remove("escondido");
+}
+
+formRenovarPlano?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const formaPagamento = formaPagamentoRenovacaoPlano.value;
+  if (!formaPagamento || !renovacaoPlanoSelecionada) {
+    mensagemRenovacaoPlano.textContent =
+      "Selecione a forma de pagamento.";
+    return;
+  }
+
+  const botaoConfirmar = formRenovarPlano.querySelector(
+    'button[type="submit"]'
+  );
+  botaoConfirmar.disabled = true;
+  mensagemRenovacaoPlano.textContent = "Registrando pagamento...";
+
+  try {
+    const { plano, cliente, ciclo } = renovacaoPlanoSelecionada;
+    await renovarPagamentoDoPlano(
+      plano,
+      cliente,
+      ciclo,
+      formaPagamento
+    );
+    renovacaoPlanoSelecionada = null;
+    fecharModal("modal-renovar-plano");
+  } catch (erro) {
+    console.log("Erro ao renovar pagamento do plano:", erro);
+    mensagemRenovacaoPlano.textContent =
+      "N\u00e3o foi poss\u00edvel renovar e contabilizar o pagamento.";
+  } finally {
+    botaoConfirmar.disabled = false;
+  }
+});
+
 async function carregarPlanos() {
   const resposta = await getDocs(
     collection(db, "planos")
@@ -2461,6 +2688,10 @@ function mostrarListaDePlanos() {
         if (cicloPago) itemCliente.classList.add("pago");
         else if (ciclo) itemCliente.classList.add("pendente");
 
+        if (cicloPago && limite > 0 && usos > limite) {
+          itemCliente.classList.add("limite-atingido");
+        }
+
         const informacoesCliente = document.createElement("div");
         informacoesCliente.className = "informacoes-cliente-plano";
 
@@ -2492,11 +2723,22 @@ function mostrarListaDePlanos() {
 
         itemCliente.append(informacoesCliente, contador);
 
+        if (!cicloPago && ciclo && usuarioPodeGerenciarPlanos()) {
+          const botaoRenovarPagamento = document.createElement("button");
+          botaoRenovarPagamento.type = "button";
+          botaoRenovarPagamento.className = "renovar-pagamento-plano";
+          botaoRenovarPagamento.textContent = "Renovar pagamento";
+          botaoRenovarPagamento.addEventListener("click", () => {
+            abrirRenovacaoPagamento(plano, cliente, ciclo);
+          });
+          itemCliente.appendChild(botaoRenovarPagamento);
+        }
+
         if (usuarioPodeGerenciarPlanos()) {
           const botaoRemoverCliente = document.createElement("button");
           botaoRemoverCliente.type = "button";
           botaoRemoverCliente.className = "remover-cliente-plano";
-          botaoRemoverCliente.textContent = "Apagar";
+          botaoRemoverCliente.textContent = "Excluir cliente";
           botaoRemoverCliente.title = `Remover ${cliente.nome} deste plano`;
           botaoRemoverCliente.addEventListener("click", async () => {
             if (!confirm(`Remover "${cliente.nome}" do plano "${plano.nome}"?`)) {
@@ -2545,7 +2787,7 @@ function mostrarListaDePlanos() {
       const botaoEditar = document.createElement("button");
       botaoEditar.type = "button";
       botaoEditar.className = "botao-secundario";
-      botaoEditar.textContent = "Editar";
+      botaoEditar.textContent = "Editar plano";
       botaoEditar.addEventListener("click", () => {
         planoIdEdicao.value = plano.id;
         nomeNovoPlano.value = plano.nome || "";
@@ -2560,9 +2802,9 @@ function mostrarListaDePlanos() {
       const botaoExcluir = document.createElement("button");
       botaoExcluir.type = "button";
       botaoExcluir.className = "botao-perigo";
-      botaoExcluir.textContent = "Excluir";
+      botaoExcluir.textContent = "Cancelar plano";
       botaoExcluir.addEventListener("click", async () => {
-        if (!confirm(`Excluir o plano "${plano.nome}"? O histórico de usos será mantido.`)) {
+        if (!confirm(`Cancelar o plano "${plano.nome}"? O histórico de usos será mantido.`)) {
           return;
         }
 
@@ -2571,8 +2813,8 @@ function mostrarListaDePlanos() {
           await carregarPlanos();
           mostrarListaDePlanos();
         } catch (erro) {
-          console.log("Erro ao excluir plano:", erro);
-          mensagemPlano.textContent = "Não foi possível excluir o plano.";
+          console.log("Erro ao cancelar plano:", erro);
+          mensagemPlano.textContent = "Não foi possível cancelar o plano.";
         }
       });
       acoes.appendChild(botaoExcluir);
@@ -2869,6 +3111,8 @@ async function abrirTelaConfiguracoes() {
     tipoUsuario ===
     "administrador"
   ) {
+    usuarioAlterarSenha.disabled = false;
+
     descricaoConfiguracaoSenha.textContent =
       "Altere a senha do administrador, da recepcionista ou de qualquer barbeiro cadastrado.";
 
@@ -3395,7 +3639,40 @@ function encontrarAgendamentos(
   );
 }
 
+function atualizarResumoDoDashboard() {
+  const hoje = formatarDataParaSalvar(new Date());
+  const agora = new Date();
+  const agendamentosHoje = agendamentos.filter(
+    (agendamento) =>
+      agendamento.data === hoje &&
+      agendamento.status !== "cancelado"
+  );
+
+  const concluidos = agendamentosHoje.filter(
+    (agendamento) => agendamento.status === "concluido"
+  );
+  const pendentes = agendamentosHoje.filter(
+    (agendamento) =>
+      agendamento.status !== "concluido" &&
+      agendamento.status !== "nao_realizado"
+  );
+  const proximo = pendentes
+    .filter((agendamento) => criarDataHora(agendamento.data, agendamento.hora) >= agora)
+    .sort(
+      (a, b) =>
+        criarDataHora(a.data, a.hora) - criarDataHora(b.data, b.hora)
+    )[0];
+
+  resumoAgendadosHoje.textContent = agendamentosHoje.length;
+  resumoConcluidosHoje.textContent = concluidos.length;
+  resumoPendentesHoje.textContent = pendentes.length;
+  resumoProximoHorario.textContent = proximo?.hora || "—";
+  resumoProximoCliente.textContent = proximo?.cliente || "Nenhum cliente";
+}
+
 function mostrarProximosAgendamentos() {
+  atualizarResumoDoDashboard();
+
   listaProximosAgendamentos.innerHTML =
     "";
 
@@ -4029,6 +4306,12 @@ function abrirDetalhes(
   detalheHora.textContent =
     agendamento.hora;
 
+  const podeFinalizar = usuarioPodeFinalizarAtendimento();
+  const podeCancelar = usuarioPodeCancelarAgendamento(agendamento);
+  botaoConcluirAgendamento.style.display = podeFinalizar ? "" : "none";
+  botaoCancelarAgendamento.style.display = podeCancelar ? "" : "none";
+  botaoNaoRealizadoAgendamento.style.display = podeFinalizar ? "" : "none";
+
   modalDetalhes.classList.remove(
     "escondido"
   );
@@ -4189,7 +4472,14 @@ function criarBotaoModalPlano(texto, classe, acao) {
 }
 
 async function iniciarConclusaoComPlano() {
+  if (!usuarioPodeFinalizarAtendimento()) return;
+
   if (!agendamentoSelecionado) {
+    return;
+  }
+
+  if (!agendamentoEstaMarcadoParaHoje(agendamentoSelecionado)) {
+    alert(mensagemDataPermitidaDoAgendamento(agendamentoSelecionado));
     return;
   }
 
@@ -4333,11 +4623,7 @@ async function iniciarConclusaoComPlano() {
               (opcao) => opcao.plano.id === selectPlano.value
             );
 
-            if (!item || item.restante <= 0) {
-              mensagemVerificarPlano.textContent =
-                "O limite mensal deste plano já foi atingido.";
-              return;
-            }
+            if (!item) return;
 
             planoAtendimentoSelecionado = item.plano;
             atendimentoPeloPlano = true;
@@ -4379,40 +4665,135 @@ async function registrarUsoDoPlano(plano, agendamento, clienteId) {
   );
 
   if (usoJaRegistrado) {
-    return;
+    return usosPlanos.find(
+      (uso) => uso.agendamentoId === agendamento.id && uso.cancelado !== true
+    );
   }
 
-  if (usados >= limite) {
-    throw new Error("LIMITE_PLANO_ATINGIDO");
-  }
+  const novoUso = {
+    planoId: plano.id,
+    planoNome: plano.nome,
+    clienteId,
+    cliente: agendamento.cliente,
+    agendamentoId: agendamento.id,
+    servicoId: plano.servicoId,
+    servico: plano.servicoNome,
+    ciclo: ciclo.chave,
+    cicloInicio: ciclo.inicio,
+    cicloFim: ciclo.fim,
+    numeroUsoCiclo: usados + 1,
+    data: agendamento.data,
+    hora: agendamento.hora,
+    barbeiro: agendamento.barbeiro,
+    registradoPor: nomeUsuario,
+    dataCadastro: Date.now()
+  };
 
   await setDoc(
     doc(db, "usosPlanos", `uso_${agendamento.id}`),
-    {
-      planoId: plano.id,
-      planoNome: plano.nome,
-      clienteId,
-      cliente: agendamento.cliente,
-      agendamentoId: agendamento.id,
-      servicoId: plano.servicoId,
-      servico: plano.servicoNome,
-      ciclo: ciclo.chave,
-      cicloInicio: ciclo.inicio,
-      cicloFim: ciclo.fim,
-      data: agendamento.data,
-      hora: agendamento.hora,
-      barbeiro: agendamento.barbeiro,
-      registradoPor: nomeUsuario,
-      dataCadastro: Date.now()
-    },
+    novoUso,
     { merge: true }
   );
 
   await carregarUsosPlanos();
+  return novoUso;
+}
+
+function nomeDoMesAno(dataTexto) {
+  return dataPorTexto(dataTexto).toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric"
+  });
+}
+
+async function registrarSaidaDoUsoPlano(plano, agendamento, uso) {
+  if (!plano || !agendamento || !uso) return;
+
+  const servicoDoPlano = servicos.find(
+    (servico) => servico.id === plano.servicoId
+  );
+  const valorServicoPlano = Number(servicoDoPlano?.valor) || 0;
+
+  if (valorServicoPlano <= 0) {
+    throw new Error("VALOR_SERVICO_PLANO_NAO_ENCONTRADO");
+  }
+
+  const numeroUso = Number(uso.numeroUsoCiclo) || 1;
+  const cicloTexto = nomeDoMesAno(uso.cicloInicio || agendamento.data);
+
+  await setDoc(
+    doc(db, "movimentacoesFinanceiras", `uso_plano_${agendamento.id}`),
+    {
+      tipo: "saida",
+      origem: "uso_plano",
+      categoria: "plano",
+      descricao: `${numeroUso}º ${plano.servicoNome} do plano ${plano.nome} - ciclo de ${cicloTexto}`,
+      valor: valorServicoPlano,
+      data: agendamento.data,
+      hora: agendamento.hora,
+      barbeiro: agendamento.barbeiro,
+      cliente: agendamento.cliente,
+      planoId: plano.id,
+      planoNome: plano.nome,
+      servicoId: plano.servicoId,
+      servico: plano.servicoNome,
+      ciclo: uso.ciclo,
+      cicloInicio: uso.cicloInicio,
+      cicloFim: uso.cicloFim,
+      numeroUsoCiclo: numeroUso,
+      agendamentoId: agendamento.id,
+      prioridadeHistorico: 2,
+      criadoPor: nomeUsuario,
+      usuarioId,
+      dataCadastro: Date.now()
+    },
+    { merge: true }
+  );
+}
+
+function timestampDaMovimentacao(movimentacao) {
+  const data = dataPorTexto(movimentacao.data);
+  const partesHora = String(movimentacao.hora || "00:00")
+    .split(":")
+    .map((parte) => Number(parte) || 0);
+
+  data.setHours(
+    partesHora[0] || 0,
+    partesHora[1] || 0,
+    partesHora[2] || 0,
+    0
+  );
+
+  return data.getTime();
+}
+
+function ordenarMovimentacoesMaisRecentes(a, b) {
+  const diferencaDataHora =
+    timestampDaMovimentacao(b) - timestampDaMovimentacao(a);
+
+  if (diferencaDataHora !== 0) return diferencaDataHora;
+
+  const diferencaCadastro =
+    (Number(b.dataCadastro) || 0) - (Number(a.dataCadastro) || 0);
+
+  if (diferencaCadastro !== 0) return diferencaCadastro;
+
+  return (
+    (Number(b.prioridadeHistorico) || 0) -
+    (Number(a.prioridadeHistorico) || 0)
+  );
 }
 
 async function finalizarAtendimentoSomentePlano() {
+  if (!usuarioPodeFinalizarAtendimento()) return;
+
   if (!agendamentoSelecionado || !planoAtendimentoSelecionado) {
+    return;
+  }
+
+  if (!agendamentoEstaMarcadoParaHoje(agendamentoSelecionado)) {
+    mensagemExtrasPlano.textContent =
+      mensagemDataPermitidaDoAgendamento(agendamentoSelecionado);
     return;
   }
 
@@ -4429,7 +4810,12 @@ async function finalizarAtendimentoSomentePlano() {
     const agendamentoAtual = { ...agendamentoSelecionado };
     const plano = planoAtendimentoSelecionado;
 
-    await registrarUsoDoPlano(plano, agendamentoAtual, cliente.id);
+    const usoPlano = await registrarUsoDoPlano(
+      plano,
+      agendamentoAtual,
+      cliente.id
+    );
+    await registrarSaidaDoUsoPlano(plano, agendamentoAtual, usoPlano);
 
     await updateDoc(
       doc(db, "agendamentos", agendamentoAtual.id),
@@ -4492,7 +4878,14 @@ async function finalizarAtendimentoSomentePlano() {
 }
 
 async function abrirConclusaoAtendimento(modoPlano = false) {
+  if (!usuarioPodeFinalizarAtendimento()) return;
+
   if (!agendamentoSelecionado) {
+    return;
+  }
+
+  if (!agendamentoEstaMarcadoParaHoje(agendamentoSelecionado)) {
+    alert(mensagemDataPermitidaDoAgendamento(agendamentoSelecionado));
     return;
   }
 
@@ -4658,6 +5051,8 @@ async function abrirConclusaoAtendimento(modoPlano = false) {
   );
 
   formaPagamentoAtendimento.value = "";
+  descricaoDescontoAtendimento.value = "";
+  descricaoDescontoAtendimento.required = false;
 
 
   /* =========================================
@@ -4891,10 +5286,17 @@ if (teveDescontoAtendimento) {
         );
       }
 
+      if (descricaoDescontoAtendimento) {
+        descricaoDescontoAtendimento.required = temDesconto;
+      }
+
       if (!temDesconto) {
         if (valorDescontoAtendimento) {
           valorDescontoAtendimento.value =
             "";
+        }
+        if (descricaoDescontoAtendimento) {
+          descricaoDescontoAtendimento.value = "";
         }
       }
 
@@ -4927,6 +5329,12 @@ formConcluirAtendimento.addEventListener(
 
     event.preventDefault();
 
+    if (!usuarioPodeFinalizarAtendimento()) {
+      mensagemConclusaoAtendimento.textContent =
+        "Somente o administrador ou a recepção podem confirmar atendimentos.";
+      return;
+    }
+
     mensagemConclusaoAtendimento.textContent =
       "";
 
@@ -4935,6 +5343,12 @@ formConcluirAtendimento.addEventListener(
       mensagemConclusaoAtendimento.textContent =
         "Nenhum agendamento foi selecionado.";
 
+      return;
+    }
+
+    if (!agendamentoEstaMarcadoParaHoje(agendamentoSelecionado)) {
+      mensagemConclusaoAtendimento.textContent =
+        mensagemDataPermitidaDoAgendamento(agendamentoSelecionado);
       return;
     }
 
@@ -5008,6 +5422,9 @@ formConcluirAtendimento.addEventListener(
     const formaPagamento =
       formaPagamentoAtendimento.value;
 
+    const descricaoDesconto =
+      descricaoDescontoAtendimento.value.trim();
+
 
     /* =========================================
        VALIDAÇÕES
@@ -5045,7 +5462,6 @@ formConcluirAtendimento.addEventListener(
 
       return;
     }
-
 
     /* =========================================
        VALOR DOS SERVIÇOS
@@ -5151,6 +5567,13 @@ formConcluirAtendimento.addEventListener(
 
       valorDescontoAtendimento?.focus();
 
+      return;
+    }
+
+    if (temDesconto && !descricaoDesconto) {
+      mensagemConclusaoAtendimento.textContent =
+        "Informe a descrição ou o motivo do desconto.";
+      descricaoDescontoAtendimento.focus();
       return;
     }
 
@@ -5336,6 +5759,9 @@ formConcluirAtendimento.addEventListener(
 
           formaPagamento,
 
+          descricaoDesconto:
+            temDesconto ? descricaoDesconto : "",
+
           atendimentoPeloPlano:
             atendimentoPlanoComExtras,
 
@@ -5374,10 +5800,15 @@ formConcluirAtendimento.addEventListener(
       );
 
       if (atendimentoPlanoComExtras) {
-        await registrarUsoDoPlano(
+        const usoPlano = await registrarUsoDoPlano(
           planoAtendimentoSelecionado,
           agendamentoSelecionado,
           clientePlano.id
+        );
+        await registrarSaidaDoUsoPlano(
+          planoAtendimentoSelecionado,
+          agendamentoSelecionado,
+          usoPlano
         );
       }
 
@@ -5413,7 +5844,7 @@ formConcluirAtendimento.addEventListener(
               "desconto",
 
             descricao:
-              `Desconto do atendimento - ${textoServicos}`,
+              `Desconto: ${descricaoDesconto} - ${textoServicos}`,
 
             valor:
               valorDesconto,
@@ -5551,6 +5982,8 @@ formConcluirAtendimento.addEventListener(
 botaoCancelarAgendamento.addEventListener(
   "click",
   async () => {
+    if (!usuarioPodeCancelarAgendamento(agendamentoSelecionado)) return;
+
     if (!agendamentoSelecionado) {
       return;
     }
@@ -5591,7 +6024,14 @@ botaoCancelarAgendamento.addEventListener(
 botaoNaoRealizadoAgendamento.addEventListener(
   "click",
   async () => {
+    if (!usuarioPodeFinalizarAtendimento()) return;
+
     if (!agendamentoSelecionado) {
+      return;
+    }
+
+    if (!agendamentoEstaMarcadoParaHoje(agendamentoSelecionado)) {
+      alert(mensagemDataPermitidaDoAgendamento(agendamentoSelecionado));
       return;
     }
 
@@ -7199,6 +7639,8 @@ async function abrirTelaRelatorio() {
     "Relatório"
   );
 
+  limitarFinanceiroDaRecepcaoAoDiario();
+
   if (
     barbeiros.length === 0
   ) {
@@ -7920,8 +8362,12 @@ function obterPeriodoGenerico(
 }
 
 function obterPeriodoFinanceiro() {
+  const tipoPeriodo = tipoUsuario === "recepcionista"
+    ? "diario"
+    : periodoRelatorioFinanceiro.value;
+
   return obterPeriodoGenerico(
-    periodoRelatorioFinanceiro.value,
+    tipoPeriodo,
     dataFinanceiro
   );
 }
@@ -9008,18 +9454,16 @@ async function obterDadosPdfFinanceiro() {
         );
       });
 
-  const descontos =
+  const saidasOperacionais =
     respostaMovimentacoes.docs
       .map((documento) => ({
         id: documento.id,
         ...documento.data()
       }))
       .filter((movimentacao) => {
-        const desconto =
-          movimentacao.tipo ===
-            "saida" &&
-          movimentacao.origem ===
-            "desconto";
+        const saidaOperacional =
+          movimentacao.tipo === "saida" &&
+          ["desconto", "uso_plano"].includes(movimentacao.origem);
 
         const dentroPeriodo =
           movimentacao.data >=
@@ -9034,7 +9478,7 @@ async function obterDadosPdfFinanceiro() {
             barbeiroSelecionado;
 
         return (
-          desconto &&
+          saidaOperacional &&
           dentroPeriodo &&
           barbeiroCorreto
         );
@@ -9233,14 +9677,14 @@ async function obterDadosPdfFinanceiro() {
     rankingServicos[nomePlano].quantidade++;
   });
 
-  const totalDescontos =
-    descontos.reduce(
-      (total, desconto) => {
+  const totalSaidasOperacionais =
+    saidasOperacionais.reduce(
+      (total, saida) => {
         return (
           total +
           (
             Number(
-              desconto.valor
+              saida.valor
             ) || 0
           )
         );
@@ -9250,17 +9694,17 @@ async function obterDadosPdfFinanceiro() {
 
   const faturamentoLiquido =
     faturamentoBruto -
-    totalDescontos;
+    totalSaidasOperacionais;
 
   return {
     periodo,
     barbeiroSelecionado,
     atendimentos,
-    descontos,
+    saidasOperacionais,
 
     faturamentoBruto,
     faturamentoLiquido,
-    totalDescontos,
+    totalSaidasOperacionais,
 
     totalServicos,
     totalProdutos,
@@ -9464,7 +9908,7 @@ async function gerarPdfFinanceiro() {
 
       head: [[
         "Faturamento bruto",
-        "Descontos",
+        "Saídas operacionais",
         "Faturamento líquido",
         "Atendimentos"
       ]],
@@ -9475,7 +9919,7 @@ async function gerarPdfFinanceiro() {
         ),
 
         formatarValorEmReal(
-          dados.totalDescontos
+          dados.totalSaidasOperacionais
         ),
 
         formatarValorEmReal(
@@ -10239,9 +10683,9 @@ function preencherBarbeirosSaida() {
 }
 
 function obterPeriodoHistorico() {
-  const tipo =
-    periodoRelatorioHistorico?.value ||
-    "mensal";
+  const tipo = tipoUsuario === "recepcionista"
+    ? "diario"
+    : (periodoRelatorioHistorico?.value || "mensal");
 
   return obterPeriodoGenerico(
     tipo,
@@ -10266,11 +10710,7 @@ function transformarAtendimentoEmEntrada(
       agendamento.valorProduto
     ) || 0;
 
-  /*
-    A entrada mostra o valor cheio,
-    ANTES do desconto.
-  */
-  const valor =
+  const valorBruto =
     Number(
       agendamento.valorTotalBruto
     ) ||
@@ -10279,6 +10719,14 @@ function transformarAtendimentoEmEntrada(
     ) ||
     valorServico +
       valorProduto;
+
+  const valorDesconto =
+    Number(agendamento.valorDesconto) || 0;
+
+  const valorLiquido =
+    Number.isFinite(Number(agendamento.valorLiquido))
+      ? Number(agendamento.valorLiquido)
+      : Math.max(0, valorBruto - valorDesconto);
 
   let descricao =
     agendamento.servico ||
@@ -10303,7 +10751,17 @@ function transformarAtendimentoEmEntrada(
 
     descricao,
 
-    valor,
+    valor: valorLiquido,
+
+    valorBruto,
+
+    valorDesconto,
+
+    teveDesconto:
+      agendamento.teveDesconto === true || valorDesconto > 0,
+
+    descricaoDesconto:
+      agendamento.descricaoDesconto || "",
 
     data:
       agendamento.data,
@@ -10418,7 +10876,12 @@ async function atualizarHistoricoFinanceiro() {
         .filter((movimentacao) => {
           return (
             movimentacao.tipo ===
-            "saida"
+              "saida" &&
+            movimentacao.origem !==
+              "desconto" &&
+            movimentacao.categoria !==
+              "desconto" &&
+            !String(movimentacao.id || "").startsWith("desconto_")
           );
         });
 
@@ -10480,36 +10943,7 @@ async function atualizarHistoricoFinanceiro() {
 
           return tipoCorreto;
         })
-        .sort((a, b) => {
-          const diferencaData =
-            criarDataHora(
-              b.data,
-              b.hora || "00:00"
-            ) -
-            criarDataHora(
-              a.data,
-              a.hora || "00:00"
-            );
-
-          if (diferencaData !== 0) {
-            return diferencaData;
-          }
-
-          /*
-            Se a entrada e o desconto forem
-            do mesmo horário, o desconto fica
-            imediatamente acima.
-          */
-          return (
-            Number(
-              b.prioridadeHistorico
-            ) || 0
-          ) - (
-            Number(
-              a.prioridadeHistorico
-            ) || 0
-          );
-        });
+        .sort(ordenarMovimentacoesMaisRecentes);
 
     /* ===============================
        TOTAIS
@@ -10658,6 +11092,8 @@ async function atualizarHistoricoFinanceiro() {
       <div>Pagamento</div>
       <div>Valor</div>
       <div>Tipo</div>
+      <div>Desconto</div>
+      <div>Motivo</div>
     `;
 
     listaHistoricoFinanceiro.appendChild(
@@ -10727,6 +11163,21 @@ async function atualizarHistoricoFinanceiro() {
             ? "Saída"
             : "Entrada";
 
+        const valorDesconto =
+          Number(movimentacao.valorDesconto) || 0;
+
+        const descontoHtml =
+          movimentacao.tipo === "entrada" && valorDesconto > 0
+            ? `<strong class="valor-desconto-historico">- ${formatarValorEmReal(valorDesconto)}</strong>`
+            : movimentacao.tipo === "entrada"
+              ? `<span class="sem-desconto-historico">Sem desconto</span>`
+              : `<span class="sem-desconto-historico">N\u00e3o se aplica</span>`;
+
+        const motivoDesconto =
+          movimentacao.tipo === "entrada" && valorDesconto > 0
+            ? movimentacao.descricaoDesconto || "Motivo n\u00e3o informado"
+            : "N\u00e3o se aplica";
+
         linha.innerHTML = `
           <div class="coluna-historico coluna-data-historico">
             <strong>
@@ -10773,6 +11224,16 @@ async function atualizarHistoricoFinanceiro() {
             <span class="indicador-movimento ${movimentacao.tipo}">
               <i></i>
               ${textoTipo}
+            </span>
+          </div>
+
+          <div class="coluna-historico coluna-desconto-historico">
+            ${descontoHtml}
+          </div>
+
+          <div class="coluna-historico coluna-motivo-desconto-historico">
+            <span title="${motivoDesconto}">
+              ${motivoDesconto}
             </span>
           </div>
         `;
